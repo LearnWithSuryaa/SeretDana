@@ -51,7 +51,7 @@
       </div>
 
       <div class="mt-16">
-        <a href="#" class="gen-z-gradient text-white px-10 py-4 rounded-full text-xl font-semibold shadow-xl hover:opacity-90 transform hover:scale-105 transition duration-300 btn-primary">
+        <a href="/auth" class="gen-z-gradient text-white px-10 py-4 rounded-full text-xl font-semibold shadow-xl hover:opacity-90 transform hover:scale-105 transition duration-300 btn-primary">
           Coba Aplikasi Sekarang!
         </a>
       </div>
@@ -60,11 +60,7 @@
 </template>
 
 <script setup>
-// No specific Heroicon needed for this new layout, PlayCircleIcon was for video
-// Keeping it here for consistency if it was used elsewhere, but removing if not needed.
-// For this specific component, PlayCircleIcon is no longer directly used in the template.
-// If it's not used anywhere else in the project, it can be removed from imports.
-// import { PlayCircleIcon } from '@heroicons/vue/24/outline';
+
 </script>
 
 <style scoped>

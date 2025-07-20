@@ -2,120 +2,93 @@
   <div class="min-h-screen flex flex-col md:flex-row bg-gray-100 font-inter">
     <!-- Sidebar / Navigation -->
     <aside
-      :class="{
-        'translate-x-0': isSidebarOpen,
-        '-translate-x-full': !isSidebarOpen,
-      }"
-      class="w-full md:w-64 bg-white shadow-lg p-6 flex flex-col fixed inset-y-0 left-0 z-30 md:relative md:translate-x-0 transition-transform duration-300 ease-in-out"
+      :class="[
+        isSidebarOpen ? 'translate-x-0' : '-translate-x-full',
+        isSidebarCollapsed ? 'md:w-20' : 'md:w-64',
+      ]"
+      class="w-full bg-white shadow-lg p-4 flex flex-col fixed inset-y-0 left-0 z-30 md:relative md:translate-x-0 transition-all duration-300 ease-in-out border-r border-gray-100"
     >
+      <!-- Logo dan Collapse Button -->
       <div class="flex items-center justify-between mb-8">
-        <span class="text-2xl font-bold gen-z-text-gradient">Seret Dana</span>
-        <!-- Close button for mobile sidebar -->
+        <!-- Logo -->
+        <span
+          class="text-2xl font-bold text-gray-800 gen-z-text-gradient transition-all"
+          v-show="!isSidebarCollapsed"
+        >
+          Seret Dana
+        </span>
+
+        <!-- Collapse Button (Mobile) -->
         <button
           @click="toggleSidebar"
           class="md:hidden text-gray-600 hover:text-blue-500 focus:outline-none"
         >
           <XMarkIcon class="w-7 h-7" />
         </button>
+
+        <!-- Collapse Button (Desktop) -->
+        <button
+          @click="toggleCollapse"
+          class="hidden md:flex items-center justify-center w-9 h-9 ml-2 rounded-full bg-gray-100 hover:bg-gray-200 transition"
+        >
+          <ChevronDoubleLeftIcon
+            v-if="!isSidebarCollapsed"
+            class="w-5 h-5 text-gray-600"
+          />
+          <ChevronDoubleRightIcon v-else class="w-5 h-5 text-gray-600" />
+        </button>
       </div>
 
+      <!-- Navigation Menu -->
       <nav class="flex-grow">
-        <ul class="space-y-3">
-          <li>
+        <ul class="space-y-2">
+          <li v-for="item in menuItems" :key="item.key">
             <a
               href="#"
               @click.prevent="
-                activeTab = 'overview';
+                activeTab = item.key;
                 toggleSidebar();
               "
-              :class="{
-                'bg-blue-100 text-blue-700': activeTab === 'overview',
-                'text-gray-600 hover:bg-gray-50': activeTab !== 'overview',
-              }"
-              class="flex items-center p-3 rounded-lg font-medium transition duration-200"
+              :class="[
+                'flex items-center gap-3 px-3 py-2 rounded-xl font-medium transition duration-200 group',
+                activeTab === item.key
+                  ? 'bg-blue-100 text-blue-700'
+                  : 'text-gray-600 hover:bg-gray-50',
+              ]"
             >
-              <HomeIcon class="w-5 h-5 mr-3" />
-              Overview
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              @click.prevent="
-                activeTab = 'transactions';
-                toggleSidebar();
-              "
-              :class="{
-                'bg-blue-100 text-blue-700': activeTab === 'transactions',
-                'text-gray-600 hover:bg-gray-50': activeTab !== 'transactions',
-              }"
-              class="flex items-center p-3 rounded-lg font-medium transition duration-200"
-            >
-              <ListBulletIcon class="w-5 h-5 mr-3" />
-              Transaksi
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              @click.prevent="
-                activeTab = 'budgets';
-                toggleSidebar();
-              "
-              :class="{
-                'bg-blue-100 text-blue-700': activeTab === 'budgets',
-                'text-gray-600 hover:bg-gray-50': activeTab !== 'budgets',
-              }"
-              class="flex items-center p-3 rounded-lg font-medium transition duration-200"
-            >
-              <ChartPieIcon class="w-5 h-5 mr-3" />
-              Anggaran
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              @click.prevent="
-                activeTab = 'goals';
-                toggleSidebar();
-              "
-              :class="{
-                'bg-blue-100 text-blue-700': activeTab === 'goals',
-                'text-gray-600 hover:bg-gray-50': activeTab !== 'goals',
-              }"
-              class="flex items-center p-3 rounded-lg font-medium transition duration-200"
-            >
-              <SparklesIcon class="w-5 h-5 mr-3" />
-              Tujuan Keuangan
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              @click.prevent="
-                activeTab = 'profile';
-                toggleSidebar();
-              "
-              :class="{
-                'bg-blue-100 text-blue-700': activeTab === 'profile',
-                'text-gray-600 hover:bg-gray-50': activeTab !== 'profile',
-              }"
-              class="flex items-center p-3 rounded-lg font-medium transition duration-200"
-            >
-              <UserCircleIcon class="w-5 h-5 mr-3" />
-              Profil
+              <component
+                :is="item.icon"
+                :class="[
+                  isSidebarCollapsed ? 'w-6 h-6' : 'w-5 h-5',
+                  'transition-all duration-200',
+                ]"
+              />
+              <span
+                v-show="!isSidebarCollapsed"
+                class="hidden md:inline transition-opacity duration-200"
+              >
+                {{ item.label }}
+              </span>
             </a>
           </li>
         </ul>
       </nav>
 
+      <!-- Logout Button -->
       <div class="mt-8 pt-4 border-t border-gray-200">
         <button
           @click="handleLogout"
-          class="flex items-center p-3 rounded-lg font-medium text-red-600 hover:bg-red-50 w-full transition duration-200"
+          class="flex items-center gap-3 px-3 py-2 rounded-xl font-medium text-red-600 hover:bg-red-50 w-full transition duration-200 cursor-pointer"
         >
-          <ArrowLeftOnRectangleIcon class="w-5 h-5 mr-3" />
-          Logout
+          <ArrowLeftOnRectangleIcon
+            :class="[isSidebarCollapsed ? 'w-6 h-6' : 'w-5 h-5']"
+          />
+          <span
+            v-show="!isSidebarCollapsed"
+            class="hidden md:inline transition-opacity duration-200"
+          >
+            Logout
+          </span>
         </button>
       </div>
     </aside>
@@ -168,455 +141,70 @@
         <span class="block sm:inline">{{ error }}</span>
       </div>
 
-      <!-- Overview Tab Content -->
-      <!-- Only render content if not loading AND no error -->
-      <div
+      <!-- Render child components based on activeTab -->
+      <DashboardOverview
         v-if="activeTab === 'overview' && !isLoading && !error"
-        class="space-y-8"
-      >
-        <h2 class="text-3xl font-bold text-gray-800 mb-6">
-          Halo, {{ userProfile.name || "Mahasiswa Rantau" }}! 👋
-        </h2>
+        :user-profile="userProfile"
+        :current-balance="currentBalance"
+        :last-update="lastUpdate"
+        :monthly-budget-total="monthlyBudgetTotal"
+        :monthly-budget-spent="monthlyBudgetSpent"
+        :budget-progress="budgetProgress"
+        :upcoming-bills="upcomingBills"
+        :expense-categories="expenseCategories"
+        :recent-transactions="recentTransactions"
+        :categories="categories"
+        @add-transaction="addTransaction"
+      />
 
-        <!-- Balance Card -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div
-            class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-blue-500 animate-fade-in-up"
-          >
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-xl font-semibold text-gray-700">
-                Saldo Saat Ini
-              </h3>
-              <WalletIcon class="w-7 h-7 text-blue-500" />
-            </div>
-            <span class="text-green-600 font-bold text-3xl"
-              >Rp {{ formatCurrency(currentBalance) }}</span
-            >
-            <p class="text-gray-500 text-sm mt-2">
-              Update terakhir: {{ lastUpdate }}
-            </p>
-          </div>
-
-          <!-- Monthly Budget Progress -->
-          <div
-            class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-purple-500 animate-fade-in-up delay-100"
-          >
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-xl font-semibold text-gray-700">
-                Anggaran Bulan Ini
-              </h3>
-              <ChartBarIcon class="w-7 h-7 text-purple-500" />
-            </div>
-            <div class="text-gray-800 font-bold text-3xl mb-2">
-              Rp {{ formatCurrency(monthlyBudgetSpent) }} / Rp
-              {{ formatCurrency(monthlyBudgetTotal) }}
-            </div>
-            <div class="w-full bg-gray-200 rounded-full h-2.5">
-              <div
-                class="gen-z-gradient h-2.5 rounded-full"
-                :style="{ width: budgetProgress + '%' }"
-              ></div>
-            </div>
-            <p class="text-gray-500 text-sm mt-2">
-              {{ budgetProgress.toFixed(1) }}% Terpakai
-            </p>
-          </div>
-
-          <!-- Upcoming Bills -->
-          <div
-            class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-red-500 animate-fade-in-up delay-200"
-          >
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-xl font-semibold text-gray-700">
-                Tagihan Mendatang
-              </h3>
-              <CalendarDaysIcon class="w-7 h-7 text-red-500" />
-            </div>
-            <ul
-              class="space-y-2"
-              v-if="upcomingBills && upcomingBills.length > 0"
-            >
-              <li
-                v-for="bill in upcomingBills"
-                :key="bill.id"
-                class="flex justify-between text-gray-700 text-sm"
-              >
-                <span>{{ bill.name }} ({{ formatDate(bill.due_date) }})</span>
-                <span class="font-semibold text-red-600"
-                  >- Rp {{ formatCurrency(bill.amount) }}</span
-                >
-              </li>
-            </ul>
-            <p v-else class="text-gray-500 italic text-sm">
-              Tidak ada tagihan mendatang.
-            </p>
-          </div>
-        </div>
-
-        <!-- Quick Action: Add Transaction -->
-        <div
-          class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-green-500 animate-fade-in-up delay-300"
-        >
-          <h3 class="text-xl font-semibold text-gray-700 mb-4">
-            Catat Transaksi Baru
-          </h3>
-          <form @submit.prevent="addTransaction" class="space-y-4">
-            <div>
-              <label
-                for="amount"
-                class="block text-sm font-medium text-gray-700"
-                >Jumlah (Rp)</label
-              >
-              <input
-                type="number"
-                id="amount"
-                v-model.number="newTransaction.amount"
-                required
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
-              />
-            </div>
-            <div>
-              <label
-                for="description"
-                class="block text-sm font-medium text-gray-700"
-                >Deskripsi</label
-              >
-              <input
-                type="text"
-                id="description"
-                v-model="newTransaction.description"
-                required
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
-              />
-            </div>
-            <div>
-              <label for="type" class="block text-sm font-medium text-gray-700"
-                >Tipe</label
-              >
-              <select
-                id="type"
-                v-model="newTransaction.type"
-                required
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
-              >
-                <option value="income">Pemasukan</option>
-                <option value="expense">Pengeluaran</option>
-              </select>
-            </div>
-            <div>
-              <label
-                for="category"
-                class="block text-sm font-medium text-gray-700"
-                >Kategori (Pengeluaran)</label
-              >
-              <select
-                id="category"
-                v-model="newTransaction.category_id"
-                :disabled="newTransaction.type === 'income'"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 disabled:bg-gray-50 disabled:cursor-not-allowed"
-              >
-                <option value="">Pilih Kategori</option>
-                <option
-                  v-for="cat in expenseCategories"
-                  :key="cat.id"
-                  :value="cat.id"
-                >
-                  {{ cat.name }}
-                </option>
-              </select>
-            </div>
-            <button
-              type="submit"
-              class="w-full gen-z-gradient text-white py-2 px-4 rounded-md font-semibold hover:opacity-90 transition duration-300"
-            >
-              Tambah Transaksi
-            </button>
-          </form>
-        </div>
-
-        <!-- Recent Transactions -->
-        <div
-          class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-yellow-500 animate-fade-in-up delay-400"
-        >
-          <h3 class="text-xl font-semibold text-gray-700 mb-4">
-            Transaksi Terbaru
-          </h3>
-          <ul
-            class="space-y-3"
-            v-if="recentTransactions && recentTransactions.length > 0"
-          >
-            <li
-              v-for="transaction in recentTransactions"
-              :key="transaction.id"
-              class="flex justify-between items-center p-3 rounded-md bg-gray-50 border border-gray-200"
-            >
-              <div>
-                <p class="font-medium">{{ transaction.description }}</p>
-                <p class="text-sm text-gray-500">
-                  {{ formatDate(transaction.transaction_date) }}
-                  <span v-if="transaction.category_id" class="text-gray-400"
-                    >({{ getCategoryName(transaction.category_id) }})</span
-                  >
-                </p>
-              </div>
-              <span
-                :class="{
-                  'text-green-600': transaction.type === 'income',
-                  'text-red-600': transaction.type === 'expense',
-                }"
-                class="font-semibold"
-              >
-                {{ transaction.type === "income" ? "+" : "-" }} Rp
-                {{ formatCurrency(transaction.amount) }}
-              </span>
-            </li>
-          </ul>
-          <p v-else class="text-center text-gray-500 italic">
-            Belum ada transaksi.
-          </p>
-        </div>
-      </div>
-
-      <!-- Transactions Tab Content -->
-      <div
+      <TransactionsList
         v-if="activeTab === 'transactions' && !isLoading && !error"
-        class="space-y-8"
-      >
-        <h2 class="text-3xl font-bold text-gray-800 mb-6">Riwayat Transaksi</h2>
-        <div class="bg-white p-6 rounded-xl shadow-lg animate-fade-in-up">
-          <div
-            class="mb-4 flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4"
-          >
-            <input
-              type="text"
-              v-model="transactionFilter.search"
-              placeholder="Cari deskripsi..."
-              class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
-            />
-            <select
-              v-model="transactionFilter.type"
-              class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
-            >
-              <option value="">Semua Tipe</option>
-              <option value="income">Pemasukan</option>
-              <option value="expense">Pengeluaran</option>
-            </select>
-            <select
-              v-model="transactionFilter.category_id"
-              class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
-            >
-              <option value="">Semua Kategori</option>
-              <option
-                v-for="cat in expenseCategories"
-                :key="cat.id"
-                :value="cat.id"
-              >
-                {{ cat.name }}
-              </option>
-            </select>
-          </div>
-          <ul
-            class="space-y-3"
-            v-if="filteredTransactions && filteredTransactions.length > 0"
-          >
-            <li
-              v-for="transaction in filteredTransactions"
-              :key="transaction.id"
-              class="flex justify-between items-center p-3 rounded-md bg-gray-50 border border-gray-200"
-            >
-              <div>
-                <p class="font-medium">{{ transaction.description }}</p>
-                <p class="text-sm text-gray-500">
-                  {{ formatDate(transaction.transaction_date) }}
-                  <span v-if="transaction.category_id" class="text-gray-400"
-                    >({{ getCategoryName(transaction.category_id) }})</span
-                  >
-                </p>
-              </div>
-              <span
-                :class="{
-                  'text-green-600': transaction.type === 'income',
-                  'text-red-600': transaction.type === 'expense',
-                }"
-                class="font-semibold"
-              >
-                {{ transaction.type === "income" ? "+" : "-" }} Rp
-                {{ formatCurrency(transaction.amount) }}
-              </span>
-            </li>
-          </ul>
-          <p v-else class="text-center text-gray-500 italic">
-            Tidak ada transaksi yang cocok.
-          </p>
-        </div>
-      </div>
+        :transactions="transactions"
+        :categories="categories"
+      />
 
-      <!-- Budgets Tab Content -->
-      <div
+      <BudgetsAnalytics
         v-if="activeTab === 'budgets' && !isLoading && !error"
-        class="space-y-8"
-      >
-        <h2 class="text-3xl font-bold text-gray-800 mb-6">
-          Anggaran & Analisis
-        </h2>
-        <div class="bg-white p-6 rounded-xl shadow-lg animate-fade-in-up">
-          <h3 class="text-xl font-semibold text-gray-700 mb-4">
-            Ringkasan Anggaran Bulan Ini
-          </h3>
-          <div
-            class="space-y-4"
-            v-if="monthlyBudgets && monthlyBudgets.length > 0"
-          >
-            <div
-              v-for="budget in monthlyBudgets"
-              :key="budget.category_id"
-              class="border p-4 rounded-lg"
-            >
-              <div class="flex justify-between items-center mb-2">
-                <span class="font-medium text-gray-800">{{
-                  getCategoryName(budget.category_id)
-                }}</span>
-                <span class="font-semibold text-gray-700"
-                  >Rp {{ formatCurrency(budget.spent) }} / Rp
-                  {{ formatCurrency(budget.limit_amount) }}</span
-                >
-              </div>
-              <div class="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  :class="{
-                    'bg-red-500':
-                      (budget.spent / budget.limit_amount) * 100 > 100,
-                    'bg-blue-500':
-                      (budget.spent / budget.limit_amount) * 100 <= 100,
-                  }"
-                  class="h-2 rounded-full"
-                  :style="{
-                    width:
-                      Math.min(
-                        100,
-                        (budget.spent / budget.limit_amount) * 100
-                      ) + '%',
-                  }"
-                ></div>
-              </div>
-              <p class="text-sm text-gray-500 mt-1">
-                {{ ((budget.spent / budget.limit_amount) * 100).toFixed(1) }}%
-                Terpakai
-                <span
-                  v-if="(budget.spent / budget.limit_amount) * 100 > 100"
-                  class="text-red-500 font-semibold"
-                  >(Overbudget!)</span
-                >
-              </p>
-            </div>
-          </div>
-          <p v-else class="text-center text-gray-500 italic">
-            Belum ada anggaran yang diatur.
-          </p>
-          <p class="text-sm text-gray-500 mt-4">
-            Visualisasi grafik akan tersedia di pembaruan selanjutnya!
-          </p>
-        </div>
-      </div>
+        :budgets="budgets"
+        :transactions="transactions"
+        :categories="categories"
+        @add-budget="addBudget"
+        @update-budget="updateBudget"
+      />
 
-      <!-- Goals Tab Content -->
-      <div
+      <BillsList
+        v-if="activeTab === 'bills' && !isLoading && !error"
+        :bills="bills"
+        :categories="categories"
+        @add-bill="addBill"
+        @update-bill="updateBill"
+      />
+
+      <SavingsGoals
         v-if="activeTab === 'goals' && !isLoading && !error"
-        class="space-y-8"
-      >
-        <h2 class="text-3xl font-bold text-gray-800 mb-6">
-          Tujuan Keuangan Saya
-        </h2>
-        <div class="bg-white p-6 rounded-xl shadow-lg animate-fade-in-up">
-          <h3 class="text-xl font-semibold text-gray-700 mb-4">
-            Target Tabungan
-          </h3>
-          <ul class="space-y-4" v-if="savingsGoals && savingsGoals.length > 0">
-            <li
-              v-for="goal in savingsGoals"
-              :key="goal.id"
-              class="border p-4 rounded-lg border-l-4 border-blue-400"
-            >
-              <div class="flex justify-between items-center mb-2">
-                <span class="font-medium text-gray-800">{{ goal.name }}</span>
-                <span class="font-semibold text-gray-700"
-                  >Rp {{ formatCurrency(goal.saved_amount) }} / Rp
-                  {{ formatCurrency(goal.target_amount) }}</span
-                >
-              </div>
-              <div class="w-full bg-gray-200 rounded-full h-2">
-                <div
-                  class="bg-green-500 h-2 rounded-full"
-                  :style="{
-                    width:
-                      Math.min(
-                        100,
-                        (goal.saved_amount / goal.target_amount) * 100
-                      ) + '%',
-                  }"
-                ></div>
-              </div>
-              <p class="text-sm text-gray-500 mt-1">
-                {{
-                  ((goal.saved_amount / goal.target_amount) * 100).toFixed(1)
-                }}% Tercapai
-                <span
-                  v-if="goal.saved_amount >= goal.target_amount"
-                  class="text-green-500 font-semibold"
-                  >(Tercapai!)</span
-                >
-              </p>
-            </li>
-          </ul>
-          <p v-else class="text-center text-gray-500 italic">
-            Belum ada tujuan tabungan.
-          </p>
-        </div>
-      </div>
+        :savings-goals="savingsGoals"
+        @add-goal="addGoal"
+        @update-goal="updateGoal"
+      />
 
-      <!-- Profile Tab Content -->
-      <div
+      <CategoriesPage
+        v-if="activeTab === 'categories' && !isLoading && !error"
+        :categories="categories"
+        @add-category="addCategory"
+        @update-category="updateCategory"
+        @delete-category="deleteCategory"
+        @show-modal="showModal"
+      />
+
+      <UserProfile
         v-if="activeTab === 'profile' && !isLoading && !error"
-        class="space-y-8"
-      >
-        <h2 class="text-3xl font-bold text-gray-800 mb-6">Profil Pengguna</h2>
-        <div class="bg-white p-6 rounded-xl shadow-lg animate-fade-in-up">
-          <div class="mb-4">
-            <p class="text-gray-700 font-medium">Email:</p>
-            <p class="text-gray-900">{{ userProfile.email }}</p>
-          </div>
-          <div class="mb-4">
-            <p class="text-gray-700 font-medium">Nama Lengkap:</p>
-            <p class="text-gray-900">{{ userProfile.name }}</p>
-          </div>
-          <div class="mb-4">
-            <p class="text-gray-700 font-medium">Universitas:</p>
-            <p class="text-gray-900">
-              {{ userProfile.university || "Belum diisi" }}
-            </p>
-          </div>
-          <div class="mb-4">
-            <p class="text-gray-700 font-medium">Jurusan:</p>
-            <p class="text-gray-900">
-              {{ userProfile.major || "Belum diisi" }}
-            </p>
-          </div>
-          <div class="mb-4">
-            <p class="text-gray-700 font-medium">Kota Asal:</p>
-            <p class="text-gray-900">
-              {{ userProfile.home_city || "Belum diisi" }}
-            </p>
-          </div>
-          <button
-            class="gen-z-gradient text-white py-2 px-4 rounded-md font-semibold hover:opacity-90 transition duration-300"
-          >
-            Edit Profil
-          </button>
-        </div>
-      </div>
+        :user-profile="userProfile"
+        @update-profile="updateProfile"
+        @change-password="changePassword"
+      />
     </main>
 
-    <!-- Custom Modal Component -->
+    <!-- Custom Modal Component (General purpose alerts/confirmations) -->
     <Modal
       :is-visible="isModalVisible"
       :title="modalTitle"
@@ -638,37 +226,64 @@ import {
   HomeIcon,
   ListBulletIcon,
   ChartPieIcon,
+  ReceiptPercentIcon,
+  SparklesIcon,
+  TagIcon,
   UserCircleIcon,
   ArrowLeftOnRectangleIcon,
-  Bars3Icon,
+  ChevronDoubleLeftIcon,
+  ChevronDoubleRightIcon,
   XMarkIcon,
-  WalletIcon,
-  ChartBarIcon,
-  CalendarDaysIcon,
-  SparklesIcon,
+  Bars3Icon,
 } from "@heroicons/vue/24/outline";
-import supabase from "../lib/supabaseClient";
-import Modal from "./Modal.vue"; // Import the new Modal component
+
+const isSidebarCollapsed = ref(false);
+const toggleCollapse = () => {
+  isSidebarCollapsed.value = !isSidebarCollapsed.value;
+};
+
+const menuItems = [
+  { key: "overview", label: "Overview", icon: HomeIcon },
+  { key: "transactions", label: "Transaksi", icon: ListBulletIcon },
+  { key: "budgets", label: "Anggaran", icon: ChartPieIcon },
+  { key: "bills", label: "Tagihan", icon: ReceiptPercentIcon },
+  { key: "goals", label: "Tujuan Keuangan", icon: SparklesIcon },
+  { key: "categories", label: "Kategori", icon: TagIcon },
+  { key: "profile", label: "Profil", icon: UserCircleIcon },
+];
+
+import supabase from "../lib/supabaseClient"; // Pastikan path benar
+
+// Import komponen modular
+import DashboardOverview from "./DashboardOverview.vue";
+import TransactionsList from "./TransactionsList.vue";
+import BudgetsAnalytics from "./BudgetsAnalytics.vue";
+import BillsList from "./BillsList.vue";
+import SavingsGoals from "./SavingsGoals.vue";
+import UserProfile from "./UserProfile.vue";
+import CategoriesPage from "./CategoriesPage.vue"; // Import CategoriesPage
+import Modal from "./Modal.vue"; // Modal serbaguna (alert/konfirmasi)
 
 const router = useRouter();
 
-// Reactive states
+// --- Reactive States ---
 const activeTab = ref("overview");
 const isSidebarOpen = ref(false);
 const isLoading = ref(true);
 const error = ref(null);
 
-// Modal states
+// States untuk Modal serbaguna
 const isModalVisible = ref(false);
 const modalTitle = ref("");
 const modalMessage = ref("");
 const modalType = ref("info"); // 'info', 'success', 'error', 'warning', 'confirm'
 const modalCancelButton = ref(false);
 const modalConfirmButtonText = ref("Oke");
-let modalCallback = null; // Callback function for confirm actions
+let modalCallback = null; // Callback function untuk aksi konfirmasi modal
 
-// Data from Supabase
+// Data dari Supabase
 const userProfile = ref({
+  id: "",
   email: "",
   name: "",
   university: "",
@@ -681,24 +296,8 @@ const budgets = ref([]);
 const savingsGoals = ref([]);
 const bills = ref([]);
 
-// Form for new transaction
-const newTransaction = ref({
-  amount: null,
-  description: "",
-  type: "expense",
-  category_id: "",
-});
-
-// Filters for transactions tab
-const transactionFilter = ref({
-  search: "",
-  type: "",
-  category_id: "",
-});
-
-// Computed properties for Dashboard Overview
+// --- Computed Properties (Mengagregasi/memproses data dari berbagai sumber) ---
 const currentBalance = computed(() => {
-  // Ensure transactions.value is an array before reducing
   if (!Array.isArray(transactions.value)) return 0;
   return transactions.value.reduce((sum, t) => {
     return t.type === "income" ? sum + t.amount : sum - t.amount;
@@ -708,16 +307,12 @@ const currentBalance = computed(() => {
 const lastUpdate = computed(() => {
   if (!Array.isArray(transactions.value) || transactions.value.length === 0)
     return "N/A";
-  // Sort by created_at to find the latest transaction
   const sortedTransactions = [...transactions.value].sort((a, b) => {
-    // Add fallback for created_at to ensure Date constructor receives valid input
     const dateA = new Date(a.created_at || 0);
     const dateB = new Date(b.created_at || 0);
     return dateB.getTime() - dateA.getTime();
   });
   const latestTransaction = sortedTransactions[0];
-
-  // Ensure latestTransaction.created_at is valid before formatting
   if (!latestTransaction || !latestTransaction.created_at) return "N/A";
   return new Date(latestTransaction.created_at).toLocaleDateString("id-ID", {
     year: "numeric",
@@ -758,19 +353,16 @@ const upcomingBills = computed(() => {
   return bills.value
     .filter((bill) => {
       const dueDate = new Date(bill.due_date);
-      const diffTime = dueDate.getTime() - today.getTime(); // Calculate difference in milliseconds
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Convert to days
-      // Filter for bills due in the future (diffDays >= 0) and within the next 30 days
-      // Also check if it's not marked as paid for the current period
+      const diffTime = dueDate.getTime() - today.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       return diffDays >= 0 && diffDays <= 30 && !bill.is_paid_current_period;
     })
     .sort((a, b) => {
-      // Add fallback for due_date to ensure Date constructor receives valid input
       const dateA = new Date(a.due_date || 0).getTime();
       const dateB = new Date(b.due_date || 0).getTime();
       return dateA - dateB;
     })
-    .slice(0, 3);
+    .slice(0, 3); // Hanya menampilkan 3 tagihan terdekat
 });
 
 const expenseCategories = computed(() => {
@@ -782,72 +374,17 @@ const expenseCategories = computed(() => {
 
 const recentTransactions = computed(() => {
   if (!Array.isArray(transactions.value)) return [];
-  return [...transactions.value]
-    .sort(
-      (a, b) =>
-        new Date(b.transaction_date).getTime() -
-        new Date(a.transaction_date).getTime()
-    )
-    .slice(0, 5);
+  return transactions.value
+    .slice()
+    .sort((a, b) => {
+      const dateA = new Date(a.created_at || 0);
+      const dateB = new Date(b.created_at || 0);
+      return dateB.getTime() - dateA.getTime();
+    })
+    .slice(0, 5); // Hanya menampilkan 5 transaksi terbaru
 });
 
-const monthlyBudgets = computed(() => {
-  if (!Array.isArray(budgets.value) || !Array.isArray(transactions.value))
-    return [];
-  const currentMonth = new Date().getMonth() + 1;
-  const currentYear = new Date().getFullYear();
-
-  return budgets.value
-    .filter((b) => b.month === currentMonth && b.year === currentYear)
-    .map((budget) => {
-      const spent = transactions.value
-        .filter(
-          (t) =>
-            t.type === "expense" &&
-            t.category_id === budget.category_id &&
-            new Date(t.transaction_date).getMonth() + 1 === currentMonth
-        )
-        .reduce((sum, t) => sum + t.amount, 0);
-      return { ...budget, spent };
-    });
-});
-
-// Computed properties for Transactions Tab
-const filteredTransactions = computed(() => {
-  if (!Array.isArray(transactions.value)) return [];
-  let filtered = transactions.value;
-
-  if (transactionFilter.value.search) {
-    const searchTerm = transactionFilter.value.search.toLowerCase();
-    filtered = filtered.filter((t) =>
-      t.description.toLowerCase().includes(searchTerm)
-    );
-  }
-  if (transactionFilter.value.type) {
-    filtered = filtered.filter((t) => t.type === transactionFilter.value.type);
-  }
-  if (transactionFilter.value.category_id) {
-    filtered = filtered.filter(
-      (t) => t.category_id === transactionFilter.value.category_id
-    );
-  }
-
-  return filtered.slice().sort((a, b) => {
-    // Add fallback for transaction_date to ensure Date constructor receives valid input
-    const dateA = new Date(a.transaction_date || 0).getTime();
-    const dateB = new Date(b.transaction_date || 0).getTime();
-    return dateB - dateA;
-  });
-});
-
-// Helper to get category name by ID
-const getCategoryName = (categoryId) => {
-  if (!Array.isArray(categories.value)) return "Tidak Dikategorikan";
-  const category = categories.value.find((cat) => cat.id === categoryId);
-  return category ? category.name : "Tidak Dikategorikan";
-};
-
-// Modal functions
+// Modal functions (untuk alert/konfirmasi umum)
 const showModal = (
   title,
   message,
@@ -867,7 +404,7 @@ const showModal = (
 
 const closeModal = () => {
   isModalVisible.value = false;
-  modalCallback = null; // Clear callback
+  modalCallback = null;
 };
 
 const handleModalConfirm = () => {
@@ -884,7 +421,7 @@ const handleModalCancel = () => {
   closeModal();
 };
 
-// Methods for data fetching and manipulation
+// Helper methods (bisa dipindahkan ke file utilitas)
 const formatCurrency = (value) => {
   return value.toLocaleString("id-ID");
 };
@@ -898,6 +435,7 @@ const formatDate = (dateString) => {
   });
 };
 
+// --- Supabase Data Fetching ---
 const fetchDashboardData = async () => {
   isLoading.value = true;
   error.value = null;
@@ -905,16 +443,19 @@ const fetchDashboardData = async () => {
     const {
       data: { user },
     } = await supabase.auth.getUser();
+    console.log("User object from Supabase:", user);
     if (!user) {
       throw new Error("User not authenticated.");
     }
+    userProfile.value.id = user.id; // Simpan ID user
 
-    // Fetch Profile
+    // Ambil Profil
     const { data: profileData, error: profileError } = await supabase
       .from("profiles")
       .select("name, university, major, home_city")
       .eq("id", user.id)
       .limit(1);
+    console.log("Profile data fetched:", profileData);
     if (profileError) {
       if (
         profileError.code === "PGRST116" ||
@@ -922,12 +463,10 @@ const fetchDashboardData = async () => {
       ) {
         console.warn("No profile found for user, initializing with default.");
         userProfile.value = {
+          ...userProfile.value,
           email: user.email,
           name: user.email,
-          university: "",
-          major: "",
-          home_city: "",
-        };
+        }; // Keep existing ID if any
       } else {
         throw profileError;
       }
@@ -939,28 +478,28 @@ const fetchDashboardData = async () => {
       };
     } else {
       userProfile.value = {
+        ...userProfile.value,
         email: user.email,
         name: user.email,
-        university: "",
-        major: "",
-        home_city: "",
       };
     }
 
-    // Fetch Categories
+    // Ambil Kategori
     const { data: categoriesData, error: categoriesError } = await supabase
       .from("categories")
       .select("*")
       .or(`user_id.eq.${user.id},user_id.is.null`);
+    console.log("Categories data fetched:", categoriesData);
     if (categoriesError) throw categoriesError;
     categories.value = categoriesData;
 
-    // Fetch Transactions
+    // Ambil Transaksi
     const { data: transactionsData, error: transactionsError } = await supabase
       .from("transactions")
       .select("*")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
+    console.log("Transactions data fetched:", transactionsData);
     if (transactionsError) throw transactionsError;
     transactions.value = transactionsData.map((t) => ({
       ...t,
@@ -968,27 +507,30 @@ const fetchDashboardData = async () => {
       created_at: new Date(t.created_at),
     }));
 
-    // Fetch Budgets
+    // Ambil Anggaran
     const { data: budgetsData, error: budgetsError } = await supabase
       .from("budgets")
       .select("*")
       .eq("user_id", user.id);
+    console.log("Budgets data fetched:", budgetsData);
     if (budgetsError) throw budgetsError;
     budgets.value = budgetsData;
 
-    // Fetch Savings Goals
+    // Ambil Tujuan Tabungan
     const { data: goalsData, error: goalsError } = await supabase
       .from("savings_goals")
       .select("*")
       .eq("user_id", user.id);
+    console.log("Savings Goals data fetched:", goalsData);
     if (goalsError) throw goalsError;
     savingsGoals.value = goalsData;
 
-    // Fetch Bills
+    // Ambil Tagihan
     const { data: billsData, error: billsError } = await supabase
       .from("bills")
       .select("*")
       .eq("user_id", user.id);
+    console.log("Bills data fetched:", billsData);
     if (billsError) throw billsError;
     bills.value = billsData.map((b) => ({
       ...b,
@@ -1000,11 +542,15 @@ const fetchDashboardData = async () => {
     showModal("Error", "Gagal memuat data: " + err.message, "error");
   } finally {
     isLoading.value = false;
+    console.log("isLoading set to false. Final error state:", error.value);
   }
 };
 
-const addTransaction = async () => {
-  if (!newTransaction.value.amount || !newTransaction.value.description) {
+// --- CRUD Operations for Modals (dipicu oleh komponen anak) ---
+
+// Transaksi CRUD
+const addTransaction = async (newTransactionData) => {
+  if (!newTransactionData.amount || !newTransactionData.description) {
     showModal(
       "Input Tidak Lengkap",
       "Jumlah dan deskripsi transaksi harus diisi.",
@@ -1013,8 +559,8 @@ const addTransaction = async () => {
     return;
   }
   if (
-    newTransaction.value.type === "expense" &&
-    !newTransaction.value.category_id
+    newTransactionData.type === "expense" &&
+    !newTransactionData.category_id
   ) {
     showModal(
       "Kategori Belum Dipilih",
@@ -1034,13 +580,13 @@ const addTransaction = async () => {
 
     const transactionToInsert = {
       user_id: user.id,
-      amount: newTransaction.value.amount,
-      description: newTransaction.value.description,
-      type: newTransaction.value.type,
+      amount: newTransactionData.amount,
+      description: newTransactionData.description,
+      type: newTransactionData.type,
       transaction_date: new Date().toISOString().split("T")[0],
       category_id:
-        newTransaction.value.type === "expense"
-          ? newTransaction.value.category_id
+        newTransactionData.type === "expense"
+          ? newTransactionData.category_id
           : null,
     };
 
@@ -1051,16 +597,665 @@ const addTransaction = async () => {
     if (insertError) throw insertError;
 
     showModal("Berhasil!", "Transaksi berhasil ditambahkan!", "success");
-    await fetchDashboardData();
-    newTransaction.value = {
-      amount: null,
-      description: "",
-      type: "expense",
-      category_id: "",
-    };
+    await fetchDashboardData(); // Ambil ulang semua data untuk memperbarui dashboard
   } catch (err) {
     console.error("Error adding transaction:", err.message);
-    showModal("Error", "Gagal menambahkan transaksi: " + err.message, "error");
+    if (
+      err.message.includes("permission denied") ||
+      err.message.includes("violates row-level security policy")
+    ) {
+      showModal(
+        "Error Izin",
+        'Gagal menambahkan transaksi: Pastikan kebijakan RLS INSERT untuk tabel "transactions" sudah benar.',
+        "error"
+      );
+    } else {
+      showModal(
+        "Error",
+        "Gagal menambahkan transaksi: " + err.message,
+        "error"
+      );
+    }
+  }
+};
+
+// Anggaran CRUD
+const addBudget = async (newBudgetData) => {
+  if (
+    !newBudgetData.category_id ||
+    !newBudgetData.limit_amount ||
+    !newBudgetData.month ||
+    !newBudgetData.year
+  ) {
+    showModal(
+      "Input Tidak Lengkap",
+      "Semua kolom anggaran harus diisi.",
+      "warning"
+    );
+    return;
+  }
+
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error("User not authenticated.");
+    }
+
+    const budgetToInsert = {
+      user_id: user.id,
+      category_id: newBudgetData.category_id,
+      limit_amount: newBudgetData.limit_amount,
+      month: newBudgetData.month,
+      year: newBudgetData.year,
+    };
+
+    const { error: insertError } = await supabase
+      .from("budgets")
+      .insert([budgetToInsert]);
+
+    if (insertError) throw insertError;
+
+    showModal("Berhasil!", "Anggaran berhasil ditambahkan!", "success");
+    await fetchDashboardData();
+  } catch (err) {
+    console.error("Error adding budget:", err.message);
+    if (
+      err.message.includes("duplicate key value violates unique constraint")
+    ) {
+      showModal(
+        "Error Anggaran",
+        "Anggaran untuk kategori dan bulan/tahun ini sudah ada.",
+        "error"
+      );
+    } else if (
+      err.message.includes("permission denied") ||
+      err.message.includes("violates row-level security policy")
+    ) {
+      showModal(
+        "Error Izin",
+        'Gagal menambahkan anggaran: Pastikan kebijakan RLS INSERT untuk tabel "budgets" sudah benar.',
+        "error"
+      );
+    } else {
+      showModal("Error", "Gagal menambahkan anggaran: " + err.message, "error");
+    }
+  }
+};
+
+const updateBudget = async (updatedBudgetData) => {
+  if (!updatedBudgetData.id) {
+    showModal("Error", "ID anggaran tidak ditemukan untuk pembaruan.", "error");
+    return;
+  }
+  if (
+    !updatedBudgetData.category_id ||
+    !updatedBudgetData.limit_amount ||
+    !updatedBudgetData.month ||
+    !updatedBudgetData.year
+  ) {
+    showModal(
+      "Input Tidak Lengkap",
+      "Semua kolom anggaran harus diisi.",
+      "warning"
+    );
+    return;
+  }
+
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error("User not authenticated.");
+    }
+
+    const { error: updateError } = await supabase
+      .from("budgets")
+      .update({
+        category_id: updatedBudgetData.category_id,
+        limit_amount: updatedBudgetData.limit_amount,
+        month: updatedBudgetData.month,
+        year: updatedBudgetData.year,
+      })
+      .eq("id", updatedBudgetData.id)
+      .eq("user_id", user.id); // Pastikan user hanya bisa memperbarui anggarannya sendiri
+
+    if (updateError) throw updateError;
+
+    showModal("Berhasil!", "Anggaran berhasil diperbarui!", "success");
+    await fetchDashboardData();
+  } catch (err) {
+    console.error("Error updating budget:", err.message);
+    if (
+      err.message.includes("duplicate key value violates unique constraint")
+    ) {
+      showModal(
+        "Error Anggaran",
+        "Anggaran untuk kategori dan bulan/tahun ini sudah ada.",
+        "error"
+      );
+    } else if (
+      err.message.includes("permission denied") ||
+      err.message.includes("violates row-level security policy")
+    ) {
+      showModal(
+        "Error Izin",
+        'Gagal memperbarui anggaran: Pastikan kebijakan RLS UPDATE untuk tabel "budgets" sudah benar.',
+        "error"
+      );
+    } else {
+      showModal("Error", "Gagal memperbarui anggaran: " + err.message, "error");
+    }
+  }
+};
+
+// Tagihan CRUD
+const addBill = async (newBillData) => {
+  if (
+    !newBillData.name ||
+    !newBillData.amount ||
+    !newBillData.due_date ||
+    !newBillData.frequency
+  ) {
+    showModal(
+      "Input Tidak Lengkap",
+      "Semua kolom tagihan harus diisi.",
+      "warning"
+    );
+    return;
+  }
+
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error("User not authenticated.");
+    }
+
+    const billToInsert = {
+      user_id: user.id,
+      name: newBillData.name,
+      amount: newBillData.amount,
+      due_date: newBillData.due_date,
+      frequency: newBillData.frequency,
+      category_id: newBillData.category_id || null,
+      is_paid_current_period: newBillData.is_paid_current_period,
+    };
+
+    const { error: insertError } = await supabase
+      .from("bills")
+      .insert([billToInsert]);
+
+    if (insertError) throw insertError;
+
+    showModal("Berhasil!", "Tagihan berhasil ditambahkan!", "success");
+    await fetchDashboardData();
+  } catch (err) {
+    console.error("Error adding bill:", err.message);
+    if (
+      err.message.includes("permission denied") ||
+      err.message.includes("violates row-level security policy")
+    ) {
+      showModal(
+        "Error Izin",
+        'Gagal menambahkan tagihan: Pastikan kebijakan RLS INSERT untuk tabel "bills" sudah benar.',
+        "error"
+      );
+    } else {
+      showModal("Error", "Gagal menambahkan tagihan: " + err.message, "error");
+    }
+  }
+};
+
+const updateBill = async (updatedBillData) => {
+  if (!updatedBillData.id) {
+    showModal("Error", "ID tagihan tidak ditemukan untuk pembaruan.", "error");
+    return;
+  }
+  if (
+    !updatedBillData.name ||
+    !updatedBillData.amount ||
+    !updatedBillData.due_date ||
+    !updatedBillData.frequency
+  ) {
+    showModal(
+      "Input Tidak Lengkap",
+      "Semua kolom tagihan harus diisi.",
+      "warning"
+    );
+    return;
+  }
+
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error("User not authenticated.");
+    }
+
+    const { error: updateError } = await supabase
+      .from("bills")
+      .update({
+        name: updatedBillData.name,
+        amount: updatedBillData.amount,
+        due_date: updatedBillData.due_date,
+        frequency: updatedBillData.frequency,
+        category_id: updatedBillData.category_id || null,
+        is_paid_current_period: updatedBillData.is_paid_current_period,
+      })
+      .eq("id", updatedBillData.id)
+      .eq("user_id", user.id); // Pastikan user hanya bisa memperbarui tagihannya sendiri
+
+    if (updateError) throw updateError;
+
+    showModal("Berhasil!", "Tagihan berhasil diperbarui!", "success");
+    await fetchDashboardData();
+  } catch (err) {
+    console.error("Error updating bill:", err.message);
+    if (
+      err.message.includes("permission denied") ||
+      err.message.includes("violates row-level security policy")
+    ) {
+      showModal(
+        "Error Izin",
+        'Gagal memperbarui tagihan: Pastikan kebijakan RLS UPDATE untuk tabel "bills" sudah benar.',
+        "error"
+      );
+    } else {
+      showModal("Error", "Gagal memperbarui tagihan: " + err.message, "error");
+    }
+  }
+};
+
+// Tujuan Keuangan CRUD
+const addGoal = async (newGoalData) => {
+  if (!newGoalData.name || !newGoalData.target_amount) {
+    showModal(
+      "Input Tidak Lengkap",
+      "Nama tujuan dan target jumlah harus diisi.",
+      "warning"
+    );
+    return;
+  }
+
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error("User not authenticated.");
+    }
+
+    const goalToInsert = {
+      user_id: user.id,
+      name: newGoalData.name,
+      target_amount: newGoalData.target_amount,
+      saved_amount: newGoalData.saved_amount || 0,
+      due_date: newGoalData.due_date || null,
+      is_completed: newGoalData.is_completed,
+    };
+
+    const { error: insertError } = await supabase
+      .from("savings_goals")
+      .insert([goalToInsert]);
+
+    if (insertError) throw insertError;
+
+    showModal("Berhasil!", "Tujuan keuangan berhasil ditambahkan!", "success");
+    await fetchDashboardData();
+  } catch (err) {
+    console.error("Error adding goal:", err.message);
+    if (
+      err.message.includes("permission denied") ||
+      err.message.includes("violates row-level security policy")
+    ) {
+      showModal(
+        "Error Izin",
+        'Gagal menambahkan tujuan: Pastikan kebijakan RLS INSERT untuk tabel "savings_goals" sudah benar.',
+        "error"
+      );
+    } else {
+      showModal("Error", "Gagal menambahkan tujuan: " + err.message, "error");
+    }
+  }
+};
+
+const updateGoal = async (updatedGoalData) => {
+  if (!updatedGoalData.id) {
+    showModal("Error", "ID tujuan tidak ditemukan untuk pembaruan.", "error");
+    return;
+  }
+  if (!updatedGoalData.name || !updatedGoalData.target_amount) {
+    showModal(
+      "Input Tidak Lengkap",
+      "Nama tujuan dan target jumlah harus diisi.",
+      "warning"
+    );
+    return;
+  }
+
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error("User not authenticated.");
+    }
+
+    const { error: updateError } = await supabase
+      .from("savings_goals")
+      .update({
+        name: updatedGoalData.name,
+        target_amount: updatedGoalData.target_amount,
+        saved_amount: updatedGoalData.saved_amount,
+        due_date: updatedGoalData.due_date || null,
+        is_completed: updatedGoalData.is_completed,
+      })
+      .eq("id", updatedGoalData.id)
+      .eq("user_id", user.id); // Pastikan user hanya bisa memperbarui tujuannya sendiri
+
+    if (updateError) throw updateError;
+
+    showModal("Berhasil!", "Tujuan keuangan berhasil diperbarui!", "success");
+    await fetchDashboardData();
+  } catch (err) {
+    console.error("Error updating goal:", err.message);
+    if (
+      err.message.includes("permission denied") ||
+      err.message.includes("violates row-level security policy")
+    ) {
+      showModal(
+        "Error Izin",
+        'Gagal memperbarui tujuan: Pastikan kebijakan RLS UPDATE untuk tabel "savings_goals" sudah benar.',
+        "error"
+      );
+    } else {
+      showModal("Error", "Gagal memperbarui tujuan: " + err.message, "error");
+    }
+  }
+};
+
+// Kategori CRUD
+const addCategory = async (newCategoryData) => {
+  if (!newCategoryData.name || !newCategoryData.type) {
+    showModal(
+      "Input Tidak Lengkap",
+      "Nama dan tipe kategori harus diisi.",
+      "warning"
+    );
+    return;
+  }
+
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error("User not authenticated.");
+    }
+
+    const categoryToInsert = {
+      user_id: user.id, // Kategori adalah user-specific
+      name: newCategoryData.name,
+      type: newCategoryData.type,
+    };
+
+    const { error: insertError } = await supabase
+      .from("categories")
+      .insert([categoryToInsert]);
+
+    if (insertError) throw insertError;
+
+    showModal("Berhasil!", "Kategori berhasil ditambahkan!", "success");
+    await fetchDashboardData();
+  } catch (err) {
+    console.error("Error adding category:", err.message);
+    if (
+      err.message.includes("duplicate key value violates unique constraint")
+    ) {
+      showModal(
+        "Error Kategori",
+        "Kategori dengan nama dan tipe ini sudah ada.",
+        "error"
+      );
+    } else if (
+      err.message.includes("permission denied") ||
+      err.message.includes("violates row-level security policy")
+    ) {
+      showModal(
+        "Error Izin",
+        'Gagal menambahkan kategori: Pastikan kebijakan RLS INSERT untuk tabel "categories" sudah benar.',
+        "error"
+      );
+    } else {
+      showModal("Error", "Gagal menambahkan kategori: " + err.message, "error");
+    }
+  }
+};
+
+const updateCategory = async (updatedCategoryData) => {
+  if (!updatedCategoryData.id) {
+    showModal("Error", "ID kategori tidak ditemukan untuk pembaruan.", "error");
+    return;
+  }
+  if (!updatedCategoryData.name || !updatedCategoryData.type) {
+    showModal(
+      "Input Tidak Lengkap",
+      "Nama dan tipe kategori harus diisi.",
+      "warning"
+    );
+    return;
+  }
+
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error("User not authenticated.");
+    }
+
+    const { error: updateError } = await supabase
+      .from("categories")
+      .update({
+        name: updatedCategoryData.name,
+        type: updatedCategoryData.type,
+      })
+      .eq("id", updatedCategoryData.id)
+      .eq("user_id", user.id); // Pastikan user hanya bisa memperbarui kategorinya sendiri
+
+    if (updateError) throw updateError;
+
+    showModal("Berhasil!", "Kategori berhasil diperbarui!", "success");
+    await fetchDashboardData();
+  } catch (err) {
+    console.error("Error updating category:", err.message);
+    if (
+      err.message.includes("duplicate key value violates unique constraint")
+    ) {
+      showModal(
+        "Error Kategori",
+        "Kategori dengan nama dan tipe ini sudah ada.",
+        "error"
+      );
+    } else if (
+      err.message.includes("permission denied") ||
+      err.message.includes("violates row-level security policy")
+    ) {
+      showModal(
+        "Error Izin",
+        'Gagal memperbarui kategori: Pastikan kebijakan RLS UPDATE untuk tabel "categories" sudah benar.',
+        "error"
+      );
+    } else {
+      showModal("Error", "Gagal memperbarui kategori: " + err.message, "error");
+    }
+  }
+};
+
+const deleteCategory = async (categoryId) => {
+  showModal(
+    "Konfirmasi Hapus Kategori",
+    "Apakah Anda yakin ingin menghapus kategori ini? Tindakan ini tidak dapat dibatalkan dan transaksi terkait mungkin terpengaruh.",
+    "confirm",
+    true,
+    "Hapus",
+    async (confirmed) => {
+      if (confirmed) {
+        try {
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
+          if (!user) {
+            throw new Error("User not authenticated.");
+          }
+
+          console.log(
+            "DashboardPage: Deleting category with ID:",
+            categoryId,
+            "for user:",
+            user.id
+          );
+          const { error: deleteError } = await supabase
+            .from("categories")
+            .delete()
+            .eq("id", categoryId)
+            .eq("user_id", user.id); // Pastikan user hanya bisa menghapus kategorinya sendiri
+
+          if (deleteError) throw deleteError;
+
+          showModal("Berhasil!", "Kategori berhasil dihapus!", "success");
+          await fetchDashboardData();
+        } catch (err) {
+          console.error("Error deleting category:", err.message);
+          if (
+            err.message.includes("permission denied") ||
+            err.message.includes("violates row-level security policy")
+          ) {
+            showModal(
+              "Error Izin",
+              'Gagal menghapus kategori: Pastikan kebijakan RLS DELETE untuk tabel "categories" sudah benar.',
+              "error"
+            );
+          } else if (err.message.includes("violates foreign key constraint")) {
+            showModal(
+              "Error Hapus",
+              "Kategori tidak dapat dihapus karena masih digunakan oleh transaksi atau anggaran. Harap hapus atau ubah transaksi/anggaran terkait terlebih dahulu.",
+              "error"
+            );
+          } else {
+            showModal(
+              "Error",
+              "Gagal menghapus kategori: " + err.message,
+              "error"
+            );
+          }
+        }
+      }
+    }
+  );
+};
+
+// Profil CRUD
+const updateProfile = async (updatedProfileData) => {
+  if (!userProfile.value.id) {
+    showModal("Error", "ID profil tidak ditemukan untuk pembaruan.", "error");
+    return;
+  }
+  if (!updatedProfileData.name) {
+    showModal("Input Tidak Lengkap", "Nama lengkap harus diisi.", "warning");
+    return;
+  }
+
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error("User not authenticated.");
+    }
+
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({
+        name: updatedProfileData.name,
+        university: updatedProfileData.university,
+        major: updatedProfileData.major,
+        home_city: updatedProfileData.home_city,
+        updated_at: new Date().toISOString(), // Perbarui timestamp
+      })
+      .eq("id", userProfile.value.id)
+      .eq("id", user.id); // Pastikan user hanya bisa memperbarui profilnya sendiri
+
+    if (updateError) throw updateError;
+
+    showModal("Berhasil!", "Profil berhasil diperbarui!", "success");
+    await fetchDashboardData(); // Ambil ulang data untuk memperbarui UI
+  } catch (err) {
+    console.error("Error updating profile:", err.message);
+    if (
+      err.message.includes("permission denied") ||
+      err.message.includes("violates row-level security policy")
+    ) {
+      showModal(
+        "Error Izin",
+        'Gagal memperbarui profil: Pastikan kebijakan RLS UPDATE untuk tabel "profiles" sudah benar.',
+        "error"
+      );
+    } else {
+      showModal("Error", "Gagal memperbarui profil: " + err.message, "error");
+    }
+  }
+};
+
+// Password Change
+const changePassword = async (passwordData) => {
+  if (!passwordData.new_password || passwordData.new_password.length < 6) {
+    showModal(
+      "Input Tidak Valid",
+      "Password baru minimal 6 karakter.",
+      "warning"
+    );
+    return;
+  }
+  if (passwordData.new_password !== passwordData.confirm_new_password) {
+    showModal(
+      "Konfirmasi Password",
+      "Password baru dan konfirmasi tidak cocok.",
+      "warning"
+    );
+    return;
+  }
+
+  try {
+    const { data, error: updateError } = await supabase.auth.updateUser({
+      password: passwordData.new_password,
+    });
+
+    if (updateError) throw updateError;
+
+    showModal("Berhasil!", "Password berhasil diperbarui!", "success");
+    // Supabase secara otomatis akan me-refresh sesi
+  } catch (err) {
+    console.error("Error changing password:", err.message);
+    // Supabase update password memerlukan user untuk re-authenticate jika sesi sudah lama
+    if (
+      err.message.includes(
+        "AuthApiError: For security purposes, you must re-authenticate to change your password."
+      )
+    ) {
+      showModal(
+        "Error Ubah Password",
+        "Untuk alasan keamanan, Anda harus login ulang untuk mengubah password. Silakan logout dan login kembali, lalu coba ubah password.",
+        "error"
+      );
+    } else {
+      showModal("Error", "Gagal mengubah password: " + err.message, "error");
+    }
   }
 };
 
@@ -1071,7 +1266,7 @@ const handleLogout = async () => {
     "Konfirmasi Logout",
     "Apakah Anda yakin ingin keluar?",
     "confirm",
-    true, // Show cancel button
+    true,
     "Ya, Logout",
     async (confirmed) => {
       if (confirmed) {
@@ -1080,7 +1275,7 @@ const handleLogout = async () => {
           if (logoutError) throw logoutError;
           console.log("User logged out.");
           emit("logout");
-          router.push({ name: "Auth" });
+          router.push({ name: "Landing" });
         } catch (err) {
           console.error("Error logging out:", err.message);
           showModal("Error Logout", "Gagal logout: " + err.message, "error");

@@ -5,6 +5,22 @@
     <div
       class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md transform transition-all duration-300 hover:shadow-2xl"
     >
+      <!-- Back Button for Registration -->
+      <div v-if="!isLogin" class="flex justify-start mb-4">
+        <button
+          @click.prevent="
+            isLogin = true;
+            errorMessage = '';
+            successMessage = '';
+            resetRegistrationFields();
+          "
+          class="text-gray-600 hover:text-blue-500 focus:outline-none p-2 rounded-full hover:bg-gray-100 transition duration-200"
+          aria-label="Kembali ke halaman login"
+        >
+          <ArrowLeftIcon class="w-6 h-6" />
+        </button>
+      </div>
+
       <!-- Heading -->
       <div class="text-center mb-8">
         <h1 class="text-3xl font-bold gen-z-text-gradient mb-2">
@@ -80,27 +96,94 @@
           </div>
         </div>
 
-        <!-- Confirm Password -->
-        <div v-if="!isLogin" class="mb-6">
-          <label
-            for="confirm-password"
-            class="block text-gray-700 text-sm font-semibold mb-2"
-            >Konfirmasi Password</label
-          >
-          <div class="relative">
+        <!-- Registration Fields (Only visible during registration) -->
+        <div v-if="!isLogin" class="space-y-4 mb-6">
+          <div class="mb-5">
+            <label
+              for="confirm-password"
+              class="block text-gray-700 text-sm font-semibold mb-2"
+              >Konfirmasi Password</label
+            >
+            <div class="relative">
+              <input
+                :type="passwordFieldType"
+                id="confirm-password"
+                v-model="confirmPassword"
+                class="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 focus:outline-none"
+                placeholder="Ulangi password Anda"
+                required
+              />
+              <div
+                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+              >
+                <LockClosedIcon class="w-5 h-5 text-gray-400" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Name -->
+          <div>
+            <label
+              for="name"
+              class="block text-gray-700 text-sm font-semibold mb-2"
+              >Nama Lengkap</label
+            >
             <input
-              :type="passwordFieldType"
-              id="confirm-password"
-              v-model="confirmPassword"
-              class="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 focus:outline-none"
-              placeholder="Ulangi password Anda"
+              type="text"
+              id="name"
+              v-model="name"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 focus:outline-none"
+              placeholder="Nama Lengkap Anda"
               required
             />
-            <div
-              class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+          </div>
+
+          <!-- University (Optional) -->
+          <div>
+            <label
+              for="university"
+              class="block text-gray-700 text-sm font-semibold mb-2"
+              >Universitas (Opsional)</label
             >
-              <LockClosedIcon class="w-5 h-5 text-gray-400" />
-            </div>
+            <input
+              type="text"
+              id="university"
+              v-model="university"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 focus:outline-none"
+              placeholder="Contoh: Universitas Maju Jaya"
+            />
+          </div>
+
+          <!-- Major (Optional) -->
+          <div>
+            <label
+              for="major"
+              class="block text-gray-700 text-sm font-semibold mb-2"
+              >Jurusan (Opsional)</label
+            >
+            <input
+              type="text"
+              id="major"
+              v-model="major"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 focus:outline-none"
+              placeholder="Contoh: Ilmu Komputer"
+            />
+          </div>
+
+          <!-- Home City (Optional) -->
+          <div>
+            <label
+              for="home-city"
+              class="block text-gray-700 text-sm font-semibold mb-2"
+              >Kota Asal (Opsional)</label
+            >
+            <input
+              type="text"
+              id="home-city"
+              v-model="homeCity"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 focus:outline-none"
+              placeholder="Contoh: Bandung"
+            />
           </div>
         </div>
 
@@ -125,6 +208,7 @@
               isLogin = false;
               errorMessage = '';
               successMessage = '';
+              resetRegistrationFields(); // Reset fields when switching to register
             "
             class="text-blue-600 hover:underline font-semibold"
             >Daftar Sekarang</a
@@ -138,6 +222,7 @@
               isLogin = true;
               errorMessage = '';
               successMessage = '';
+              resetRegistrationFields(); // Reset fields when switching to login
             "
             class="text-blue-600 hover:underline font-semibold"
             >Masuk</a
@@ -164,18 +249,26 @@
 
 <script setup>
 import { ref } from "vue";
-import supabase from "../lib/supabaseClient";
+import supabase from "../lib/supabaseClient"; // Corrected path
 import {
   EyeIcon,
   EyeSlashIcon,
   EnvelopeIcon,
   LockClosedIcon,
+  ArrowLeftIcon, // Import the new icon
 } from "@heroicons/vue/24/outline";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const isLogin = ref(true);
 const email = ref("");
 const password = ref("");
 const confirmPassword = ref("");
+const name = ref(""); // New field
+const university = ref(""); // New field
+const major = ref(""); // New field
+const homeCity = ref(""); // New field
 const passwordFieldType = ref("password");
 const errorMessage = ref("");
 const successMessage = ref("");
@@ -186,9 +279,14 @@ const togglePasswordVisibility = () => {
     passwordFieldType.value === "password" ? "text" : "password";
 };
 
-import { useRouter } from "vue-router";
-
-const router = useRouter();
+const resetRegistrationFields = () => {
+  name.value = '';
+  university.value = '';
+  major.value = '';
+  homeCity.value = '';
+  password.value = ''; // Also clear password for security/fresh start
+  confirmPassword.value = ''; // Clear confirm password
+};
 
 const handleSubmit = async () => {
   errorMessage.value = "";
@@ -213,10 +311,17 @@ const handleSubmit = async () => {
     return;
   }
 
-  if (!isLogin.value && password.value !== confirmPassword.value) {
-    errorMessage.value = "Konfirmasi password tidak cocok.";
-    isLoading.value = false;
-    return;
+  if (!isLogin.value) { // Only validate these for registration
+    if (password.value !== confirmPassword.value) {
+      errorMessage.value = "Konfirmasi password tidak cocok.";
+      isLoading.value = false;
+      return;
+    }
+    if (!name.value) { // Name is required for registration
+      errorMessage.value = "Nama lengkap harus diisi untuk pendaftaran.";
+      isLoading.value = false;
+      return;
+    }
   }
 
   try {
@@ -232,7 +337,6 @@ const handleSubmit = async () => {
 
       successMessage.value = "Login berhasil! Mengarahkan ke dashboard...";
 
-      // Tunggu 1 detik supaya pesan muncul dulu
       setTimeout(() => {
         router.push("/dashboard");
       }, 1000);
@@ -241,10 +345,19 @@ const handleSubmit = async () => {
       ({ data, error } = await supabase.auth.signUp({
         email: email.value,
         password: password.value,
+        options: {
+          data: { // Store additional profile data in user_metadata
+            name: name.value, // Use 'name' here as it matches our profiles table
+            university: university.value,
+            major: major.value,
+            home_city: homeCity.value,
+          },
+        },
       }));
       if (error) throw error;
-      successMessage.value = "Registrasi berhasil! Silakan cek email Anda.";
-      isLogin.value = true;
+      successMessage.value = "Registrasi berhasil! Silakan cek email Anda untuk verifikasi.";
+      isLogin.value = true; // Switch to login form after successful registration
+      resetRegistrationFields(); // Clear fields after successful registration
     }
   } catch (err) {
     console.error("Auth error:", err.message);

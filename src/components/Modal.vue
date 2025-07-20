@@ -14,10 +14,10 @@
         <div class="p-6">
           <p class="text-gray-700 mb-6">{{ message }}</p>
           <div class="flex justify-end space-x-3">
-            <button v-if="cancelButton" @click="cancel" class="px-5 py-2 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-50 transition duration-200">
+            <button v-if="cancelButton" @click="cancel" class="px-5 py-2 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-50 transition duration-200 cursor-pointer">
               {{ cancelButtonText }}
             </button>
-            <button @click="confirm" :class="confirmButtonClass" class="px-5 py-2 rounded-full text-white font-semibold transition duration-200">
+            <button @click="confirm" :class="confirmButtonClass" class="px-5 py-2 rounded-full text-white font-semibold transition duration-200 cursor-pointer">
               {{ confirmButtonText }}
             </button>
           </div>
