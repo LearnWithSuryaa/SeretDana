@@ -90,23 +90,19 @@
                 >Kategori</label
               >
               <div
-                v-if="currentCategories.length === 0"
+                v-if="newTransaction.type === 'expense' && currentCategories.length === 0"
                 class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative text-sm"
               >
                 <strong class="font-bold">Perhatian!</strong>
                 <span class="block sm:inline"
-                  >Anda belum memiliki kategori
-                  {{
-                    newTransaction.type === "expense"
-                      ? "pengeluaran"
-                      : "pemasukan"
-                  }}. Silakan buat di halaman Kategori terlebih dahulu.</span
+                  >Anda belum memiliki kategori pengeluaran. Silakan buat di
+                  halaman Kategori terlebih dahulu.</span
                 >
               </div>
               <select
                 id="modal-category"
                 v-model="newTransaction.category_id"
-                :disabled="currentCategories.length === 0"
+                :disabled="newTransaction.type === 'expense' && currentCategories.length === 0"
                 class="modern-input disabled:bg-gray-100 disabled:cursor-not-allowed cursor-pointer"
               >
                 <option value="">Pilih Kategori</option>
@@ -142,7 +138,7 @@
               </button>
               <button
                 type="submit"
-                :disabled="currentCategories.length === 0"
+                :disabled="isSubmitDisabled"
                 class="px-5 py-2 rounded-full font-semibold text-white bg-gradient-to-r from-teal-400 via-blue-500 to-purple-600 hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 Tambah
@@ -162,7 +158,6 @@ import { XMarkIcon } from "@heroicons/vue/24/outline";
 const props = defineProps({
   isVisible: Boolean,
   categories: {
-    // categories prop now contains ALL categories (income, expense, all)
     type: Array,
     default: () => [],
   },
@@ -181,12 +176,25 @@ const newTransaction = ref({
 const currentCategories = computed(() => {
   if (!Array.isArray(props.categories)) return [];
   const type = newTransaction.value.type;
-  return props.categories.filter(
-    (cat) => cat.type === type || cat.type === "all"
-  );
+  if (type === 'expense') {
+    return props.categories.filter(cat => cat.type === 'expense' || cat.type === 'all');
+  } else if (type === 'income') {
+    return props.categories.filter(cat => cat.type === 'income' || cat.type === 'all');
+  }
+  return [];
 });
 
-// Reset category_id when transaction type changes
+// Computed property to control submit button disabled state
+const isSubmitDisabled = computed(() => {
+  // If type is expense AND no expense categories are available
+  if (newTransaction.value.type === 'expense' && currentCategories.value.length === 0) {
+    return true;
+  }
+  // Otherwise, allow submission (HTML 'required' will handle empty amount/description)
+  return false;
+});
+
+// Watch for type change to reset category_id
 watch(
   () => newTransaction.value.type,
   (newType) => {
@@ -195,6 +203,8 @@ watch(
 );
 
 const submitTransaction = () => {
+  // No need for explicit category_id validation here as the button is disabled
+  // if expense type and no categories.
   emit("add-transaction", { ...newTransaction.value });
   resetForm();
 };
@@ -208,62 +218,40 @@ const resetForm = () => {
   newTransaction.value = {
     amount: null,
     description: "",
-    type: "expense",
+    type: "expense", // Reset to 'expense'
     category_id: "",
   };
 };
 </script>
 
-<style scoped>
-/* Consistent gradients from DashboardPage */
-.gen-z-gradient {
-  background: linear-gradient(135deg, #6ee7b7, #3b82f6, #9333ea);
-}
-.gen-z-text-gradient {
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  background-image: linear-gradient(45deg, #6ee7b7, #3b82f6, #9333ea);
+<style scoped lang="postcss">
+.modern-input {
+  @apply mt-1 block w-full rounded-lg border border-gray-300 bg-white shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-400 text-sm p-2 transition;
 }
 
-/* Modal transition styles (copied from Modal.vue for consistency) */
+/* Modal transition */
 .modal-fade-enter-active,
 .modal-fade-leave-active {
-  transition: opacity 0.3s ease;
+  transition: all 0.3s ease;
 }
-
 .modal-fade-enter-from,
 .modal-fade-leave-to {
   opacity: 0;
+  transform: scale(0.95);
 }
 
+/* Custom content animation */
 .modal-content {
-  animation: pop-in 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  animation: pop-in 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
-
-.modal-fade-leave-active .modal-content {
-  animation: pop-out 0.3s ease-out forwards;
-}
-
 @keyframes pop-in {
   0% {
-    transform: scale(0.8);
+    transform: scale(0.9);
     opacity: 0;
   }
   100% {
     transform: scale(1);
     opacity: 1;
-  }
-}
-
-@keyframes pop-out {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(0.8);
-    opacity: 0;
   }
 }
 </style>
