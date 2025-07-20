@@ -28,7 +28,7 @@
       </div>
 
       <!-- Type Selector -->
-      <div class="flex items-center gap-2 cursor-pointer">
+      <div class="flex items-center gap-2">
         <button
           @click="filter.type = ''"
           :class="filter.type === '' ? activeFilterClass : inactiveFilterClass"
