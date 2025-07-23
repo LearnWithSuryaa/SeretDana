@@ -5,17 +5,12 @@
     <div
       class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md transform transition-all duration-300 hover:shadow-2xl"
     >
-      <!-- Back Button for Registration -->
-      <div v-if="!isLogin" class="flex justify-start mb-4">
+      <!-- Back Button (Visible on both Login and Registration) -->
+      <div class="flex justify-start mb-4">
         <button
-          @click.prevent="
-            isLogin = true;
-            errorMessage = '';
-            successMessage = '';
-            resetRegistrationFields();
-          "
+          @click.prevent="goBackToLanding"
           class="text-gray-600 hover:text-blue-500 focus:outline-none p-2 rounded-full hover:bg-gray-100 transition duration-200"
-          aria-label="Kembali ke halaman login"
+          aria-label="Kembali ke halaman utama"
         >
           <ArrowLeftIcon class="w-6 h-6" />
         </button>
@@ -255,7 +250,7 @@ import {
   EyeSlashIcon,
   EnvelopeIcon,
   LockClosedIcon,
-  ArrowLeftIcon, // Import the new icon
+  ArrowLeftIcon,
 } from "@heroicons/vue/24/outline";
 import { useRouter } from "vue-router";
 
@@ -265,10 +260,10 @@ const isLogin = ref(true);
 const email = ref("");
 const password = ref("");
 const confirmPassword = ref("");
-const name = ref(""); // New field
-const university = ref(""); // New field
-const major = ref(""); // New field
-const homeCity = ref(""); // New field
+const name = ref("");
+const university = ref("");
+const major = ref("");
+const homeCity = ref("");
 const passwordFieldType = ref("password");
 const errorMessage = ref("");
 const successMessage = ref("");
@@ -280,12 +275,20 @@ const togglePasswordVisibility = () => {
 };
 
 const resetRegistrationFields = () => {
-  name.value = '';
-  university.value = '';
-  major.value = '';
-  homeCity.value = '';
-  password.value = ''; // Also clear password for security/fresh start
-  confirmPassword.value = ''; // Clear confirm password
+  name.value = "";
+  university.value = "";
+  major.value = "";
+  homeCity.value = "";
+  password.value = "";
+  confirmPassword.value = "";
+};
+
+const goBackToLanding = () => {
+  router.push("/");
+  errorMessage.value = "";
+  successMessage.value = "";
+  isLogin.value = true;
+  resetRegistrationFields();
 };
 
 const handleSubmit = async () => {
@@ -311,13 +314,13 @@ const handleSubmit = async () => {
     return;
   }
 
-  if (!isLogin.value) { // Only validate these for registration
+  if (!isLogin.value) {
     if (password.value !== confirmPassword.value) {
       errorMessage.value = "Konfirmasi password tidak cocok.";
       isLoading.value = false;
       return;
     }
-    if (!name.value) { // Name is required for registration
+    if (!name.value) {
       errorMessage.value = "Nama lengkap harus diisi untuk pendaftaran.";
       isLoading.value = false;
       return;
@@ -347,7 +350,7 @@ const handleSubmit = async () => {
         password: password.value,
         options: {
           data: { // Store additional profile data in user_metadata
-            name: name.value, // Use 'name' here as it matches our profiles table
+            name: name.value,
             university: university.value,
             major: major.value,
             home_city: homeCity.value,
@@ -356,8 +359,8 @@ const handleSubmit = async () => {
       }));
       if (error) throw error;
       successMessage.value = "Registrasi berhasil! Silakan cek email Anda untuk verifikasi.";
-      isLogin.value = true; // Switch to login form after successful registration
-      resetRegistrationFields(); // Clear fields after successful registration
+      isLogin.value = true;
+      resetRegistrationFields();
     }
   } catch (err) {
     console.error("Auth error:", err.message);

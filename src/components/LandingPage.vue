@@ -78,14 +78,14 @@
             {{ link.label }}
           </a>
           <a
-            href="#"
+            href="/auth"
             @click="toggleMobileMenu"
             class="bg-blue-500 text-white px-5 py-3 rounded-full text-center shadow-md hover:bg-blue-600 transition duration-300"
           >
             Login
           </a>
           <a
-            href="#"
+            href="/auth"
             @click="toggleMobileMenu"
             class="border border-blue-500 text-blue-500 px-5 py-3 rounded-full text-center hover:bg-blue-50 transition duration-300"
           >
@@ -233,84 +233,8 @@
       </div>
     </section>
 
-    <section
-      id="how-it-works"
-      class="py-20 px-6 md:px-12 bg-gray-50 relative overflow-hidden"
-    >
-      <div class="container mx-auto max-w-5xl">
-        <h2
-          class="text-3xl md:text-4xl font-bold mb-16 text-center gen-z-text-gradient"
-        >
-          Gimana Cara Kerjanya? Gampang Banget!
-        </h2>
-        <div
-          class="relative grid grid-cols-1 md:grid-cols-3 gap-y-16 md:gap-y-24"
-        >
-          <!-- Vertical Timeline Line -->
-          <div
-            class="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-blue-400 via-green-400 to-purple-400 rounded-full"
-          ></div>
-
-          <!-- Step 1 -->
-          <div class="flex justify-end md:pr-8">
-            <div class="text-right max-w-xs">
-              <h3 class="text-xl font-semibold mb-2">Daftar & Login</h3>
-              <p class="text-gray-600 text-sm">
-                Buat akun dengan cepat atau login jika sudah punya. Gratis!
-              </p>
-            </div>
-          </div>
-          <div class="flex justify-center">
-            <div
-              class="bg-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg ring-4 ring-white z-10"
-            >
-              <UserPlusIcon class="w-8 h-8" />
-            </div>
-          </div>
-          <div></div>
-
-          <!-- Step 2 -->
-          <div></div>
-          <div class="flex justify-center">
-            <div
-              class="bg-green-500 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg ring-4 ring-white z-10"
-            >
-              <PencilIcon class="w-8 h-8" />
-            </div>
-          </div>
-          <div class="flex justify-start md:pl-8">
-            <div class="text-left max-w-xs">
-              <h3 class="text-xl font-semibold mb-2">
-                Catat Pengeluaran/Pemasukan
-              </h3>
-              <p class="text-gray-600 text-sm">
-                Setiap kali ada transaksi, langsung catat di aplikasi. Cuma
-                butuh beberapa tap!
-              </p>
-            </div>
-          </div>
-
-          <!-- Step 3 -->
-          <div class="flex justify-end md:pr-8">
-            <div class="text-right max-w-xs">
-              <h3 class="text-xl font-semibold mb-2">Pantau & Rencanakan</h3>
-              <p class="text-gray-600 text-sm">
-                Lihat laporan keuanganmu, atur anggaran, dan capai tujuan
-                finansialmu!
-              </p>
-            </div>
-          </div>
-          <div class="flex justify-center">
-            <div
-              class="bg-purple-500 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg ring-4 ring-white z-10"
-            >
-              <ChartBarIcon class="w-8 h-8" />
-            </div>
-          </div>
-          <div></div>
-        </div>
-      </div>
-    </section>
+    <!-- How It Works Section -->
+    <HowItWorks />
 
     <!-- Demo Section (New Component) -->
     <DemoSection />
@@ -344,9 +268,9 @@
               />
               <div>
                 <p class="font-semibold text-gray-800">
-                  Andi, Mahasiswa Teknik
+                  Alpin, Mahasiswa Teknik
                 </p>
-                <p class="text-sm text-gray-500">Universitas X</p>
+                <p class="text-sm text-gray-500">Universitas Muhammadiyah Malang</p>
               </div>
             </div>
           </div>
@@ -361,15 +285,15 @@
             </p>
             <div class="flex items-center">
               <img
-                src="https://placehold.co/60x60/FFD1DC/FFFFFF?text=B"
+                src="https://placehold.co/60x60/90D5FF/FFFFFF?text=C"
                 alt="Avatar Mahasiswi B"
-                class="w-12 h-12 rounded-full mr-4 border-2 border-pink-400"
+                class="w-12 h-12 rounded-full mr-4 border-2 border-blue-400"
               />
               <div>
                 <p class="font-semibold text-gray-800">
-                  Bunga, Mahasiswi Desain
+                  Chraitong, Mahasiswa Informatika
                 </p>
-                <p class="text-sm text-gray-500">Institut Y</p>
+                <p class="text-sm text-gray-500">Universitas Muhammadiyah Malang</p>
               </div>
             </div>
           </div>
@@ -454,9 +378,9 @@
       <div class="container mx-auto text-center">
         <p>&copy; 2025 Seret Dana. Semua Hak Dilindungi.</p>
         <div class="mt-4 space-x-4 text-sm">
-          <a href="#" class="hover:text-blue-400">Kebijakan Privasi</a>
-          <a href="#" class="hover:text-blue-400">Syarat & Ketentuan</a>
-          <a href="#" class="hover:text-blue-400">Kontak</a>
+          <a href="/privacy-policy" class="hover:text-blue-400">Kebijakan Privasi</a>
+          <a href="/terms-and-conditions" class="hover:text-blue-400">Syarat & Ketentuan</a>
+          <a href="/contact" class="hover:text-blue-400">Kontak</a>
         </div>
       </div>
     </footer>
@@ -474,14 +398,13 @@ import {
   SparklesIcon,
   AcademicCapIcon,
   LightBulbIcon,
-  UserPlusIcon,
-  PencilIcon,
-  ChartBarIcon,
   Bars3Icon, // For mobile menu hamburger
   XMarkIcon, // For mobile menu close
 } from "@heroicons/vue/24/outline";
 
 // Import the new DemoSection component
+import HowItWorks from "./HowItWorks.vue";
+
 import DemoSection from "./DemoSection.vue";
 
 import HeroSection from "./HeroSection.vue";

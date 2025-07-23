@@ -7,9 +7,12 @@ import App from "./App.vue";
 import "./style.css"; // Pastikan path ini benar
 
 // Import komponen halaman Anda
-import LandingPage from "./components/LandingPage.vue"; // Pastikan path benar
-import AuthPage from "./components/AuthPage.vue"; // Pastikan path benar
-import DashboardPage from "./components/DashboardPage.vue"; // Pastikan path benar
+import LandingPage from "./components/LandingPage.vue";
+import AuthPage from "./components/AuthPage.vue";
+import DashboardPage from "./components/DashboardPage.vue";
+import PrivacyPolicyPage from "./components/PrivacyPolicyPage.vue"; // Import Kebijakan Privasi
+import TermsAndConditionsPage from "./components/TermsAndConditionsPage.vue"; // Import Syarat & Ketentuan
+import ContactPage from "./components/ContactPage.vue"; // Import Kontak
 import supabase from "./lib/supabaseClient"; // Pastikan path benar
 
 // 1. Definisikan rute-rute Anda
@@ -31,6 +34,24 @@ const routes = [
     name: "Dashboard",
     component: DashboardPage,
     meta: { requiresAuth: true },
+  },
+  {
+    path: "/privacy-policy",
+    name: "PrivacyPolicy",
+    component: PrivacyPolicyPage,
+    meta: { requiresAuth: false },
+  },
+  {
+    path: "/terms-and-conditions",
+    name: "TermsAndConditions",
+    component: TermsAndConditionsPage,
+    meta: { requiresAuth: false },
+  },
+  {
+    path: "/contact",
+    name: "Contact",
+    component: ContactPage,
+    meta: { requiresAuth: false },
   },
   // 404 fallback
   {
