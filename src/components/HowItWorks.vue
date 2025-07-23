@@ -6,7 +6,7 @@
   >
     <div class="container mx-auto max-w-6xl">
       <h2
-        class="text-4xl md:text-5xl font-bold mb-20 text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-pink-500 to-yellow-500 drop-shadow-md transition-all duration-1000 ease-out py-1"
+        class="text-4xl md:text-5xl font-bold mb-20 text-center text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-pink-500 to-yellow-500 drop-shadow-md transition-all duration-1000 ease-out py-2"
         :class="visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'"
       >
         Gimana Cara Kerjanya? Gampang Banget!

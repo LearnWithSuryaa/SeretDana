@@ -102,7 +102,7 @@
     <section id="features" class="py-16 px-6 md:px-12 bg-gray-50 relative z-10">
       <div class="container mx-auto">
         <h2
-          class="text-3xl md:text-4xl font-bold text-center mb-12 gen-z-text-gradient animate-on-scroll"
+          class="text-3xl md:text-4xl font-bold text-center mb-12 gen-z-text-gradient animate-on-scroll py-4"
         >
           Fitur Unggulan Seret Dana
         </h2>
@@ -246,7 +246,7 @@
     >
       <div class="container mx-auto">
         <h2
-          class="text-3xl md:text-4xl font-bold text-center mb-12 gen-z-text-gradient animate-on-scroll"
+          class="text-3xl md:text-4xl font-bold text-center mb-12 gen-z-text-gradient animate-on-scroll py-2"
         >
           Kata Mereka yang Sudah Pakai Seret Dana
         </h2>
@@ -308,7 +308,7 @@
     >
       <div class="container mx-auto max-w-3xl">
         <h2
-          class="text-3xl md:text-4xl font-extrabold text-center mb-14 bg-gradient-to-r from-pink-500 to-purple-500 text-transparent bg-clip-text animate-fade-up"
+          class="text-3xl md:text-4xl font-extrabold text-center mb-14 bg-gradient-to-r from-pink-500 to-purple-500 text-transparent bg-clip-text animate-fade-up py-1"
         >
           Pertanyaan Sering Diajukan (FAQ)
         </h2>
@@ -356,7 +356,7 @@
       <div
         class="container mx-auto max-w-3xl bg-white p-10 rounded-2xl shadow-lg relative z-10 border-4 border-purple-200 animate-on-scroll"
       >
-        <h2 class="text-3xl md:text-4xl font-bold mb-6 gen-z-text-gradient">
+        <h2 class="text-3xl md:text-4xl font-bold mb-6 gen-z-text-gradient py-1">
           Siap Bebas Drama Keuangan?
         </h2>
         <p class="text-lg text-gray-700 mb-8">
