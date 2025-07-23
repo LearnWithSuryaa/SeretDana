@@ -356,7 +356,7 @@
       <div
         class="container mx-auto max-w-3xl bg-white p-10 rounded-2xl shadow-lg relative z-10 border-4 border-purple-200 animate-on-scroll"
       >
-        <h2 class="text-3xl md:text-4xl font-bold mb-6 gen-z-text-gradient py-1">
+        <h2 class="text-3xl md:text-4xl font-bold mb-3 gen-z-text-gradient py-1">
           Siap Bebas Drama Keuangan?
         </h2>
         <p class="text-lg text-gray-700 mb-8">
