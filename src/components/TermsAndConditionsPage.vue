@@ -17,7 +17,7 @@
         class="text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-violet-500 to-pink-500 py-2 flex justify-center items-center gap-3"
       >
         <DocumentDuplicateIcon class="w-8 h-8 text-blue-500 animate-bounce-slow" />
-        Syarat & Ketentuan Penggunaan Seret Dana
+        Syarat & Ketentuan Penggunaan Fluidana
       </h1>
       <p class="text-sm text-gray-500 dark:text-gray-400 flex justify-center items-center gap-1">
         <ClockIcon class="w-4 h-4 inline text-blue-500" />
@@ -29,7 +29,7 @@
     <section class="relative z-10 space-y-12 text-base md:text-lg leading-relaxed">
       <div>
         <p>
-          Selamat datang di Seret Dana! Syarat & Ketentuan Penggunaan ("Syarat")
+          Selamat datang di Fluidana! Syarat & Ketentuan Penggunaan ("Syarat")
           ini mengatur akses dan penggunaan Anda atas aplikasi dan layanan Seret
           Dana ("Layanan"). Dengan mengakses atau menggunakan Layanan kami, Anda
           setuju untuk terikat oleh Syarat ini. Jika Anda tidak setuju dengan
@@ -126,7 +126,7 @@ const sections = [
     icon: BanknotesIcon,
     color: "text-emerald-600 dark:text-emerald-400",
     content: `
-      <p>Layanan dan seluruh kontennya adalah milik eksklusif Seret Dana dan pemberi lisensinya.</p>
+      <p>Layanan dan seluruh kontennya adalah milik eksklusif Fluidana dan pemberi lisensinya.</p>
     `,
   },
   {
@@ -142,7 +142,7 @@ const sections = [
     icon: ExclamationTriangleIcon,
     color: "text-yellow-600 dark:text-yellow-400",
     content: `
-      <p>Seret Dana tidak bertanggung jawab atas kerugian tidak langsung, kehilangan data, dan lainnya.</p>
+      <p>Fluidana tidak bertanggung jawab atas kerugian tidak langsung, kehilangan data, dan lainnya.</p>
     `,
   },
   {

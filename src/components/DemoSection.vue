@@ -1,117 +1,110 @@
 <template>
-  <section
-    id="demo"
-    class="relative overflow-hidden bg-gradient-to-br from-blue-50 to-purple-50 py-20 px-6 md:px-12 text-center"
-  >
-    <div class="container mx-auto max-w-5xl relative z-10">
-      <!-- Judul -->
-      <h2 class="text-3xl md:text-4xl font-extrabold mb-6 gen-z-text-gradient animate-on-scroll">
-        Lihat Seret Dana Beraksi!
+  <section id="demo" class="relative overflow-hidden bg-gradient-to-b from-sky-950 via-indigo-950 to-purple-950 py-24 px-6 md:px-12 text-white">
+    <!-- Top Decorative Wave -->
+    <div class="absolute top-0 left-0 w-full z-0">
+      <svg viewBox="0 0 1440 200" class="w-full h-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          fill="url(#waveGradient)"
+          d="M0,160 C360,80 1080,240 1440,120 L1440,0 L0,0 Z"
+          opacity="0.4"
+        />
+        <defs>
+          <linearGradient id="waveGradient" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stop-color="#38bdf8"/>
+            <stop offset="100%" stop-color="#9333ea"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <!-- Container -->
+    <div class="relative z-10 max-w-6xl mx-auto text-center">
+      <!-- Header -->
+      <h2 class="text-4xl md:text-5xl font-extrabold mb-6 gen-z-text-gradient">
+        Demo Aplikasi Fluidana
       </h2>
-      <p
-        class="text-lg text-gray-700 mb-14 max-w-2xl mx-auto animate-on-scroll delay-100"
-      >
-        Saksikan bagaimana Seret Dana memudahkan pencatatan keuangan harianmu dengan antarmuka yang intuitif dan fungsional.
+      <p class="text-lg text-white/80 mb-16 max-w-2xl mx-auto">
+        Rasakan langsung kemudahan mencatat dan memahami keuanganmu dengan antarmuka yang jernih dan mengalir.
       </p>
 
       <!-- Demo Steps -->
-      <div class="space-y-24">
-        <!-- Langkah 1 -->
-        <div class="flex flex-col md:flex-row items-center gap-10 animate-on-scroll delay-200">
-          <div class="md:w-1/2 text-center md:text-left">
-            <h3 class="text-2xl font-semibold mb-4 text-blue-600">
-              1. Catat Transaksi Cepat & Akurat
-            </h3>
-            <p class="text-gray-700 leading-relaxed">
-              Input pemasukan atau pengeluaranmu hanya dalam beberapa detik. Pilih kategori, masukkan jumlah, dan tambahkan deskripsi. Semudah itu!
-            </p>
+      <div class="grid md:grid-cols-3 gap-10">
+        <!-- Step Card -->
+        <div v-for="(step, index) in steps" :key="index" class="bg-white/5 rounded-2xl p-6 shadow-xl hover:scale-[1.03] transition transform duration-300 backdrop-blur-sm">
+          <div class="mb-4 rounded-xl overflow-hidden border border-white/20 shadow-lg">
+            <video
+              autoplay
+              loop
+              muted
+              playsinline
+              class="w-full h-56 object-cover"
+            >
+              <source :src="step.video" type="video/mp4" />
+            </video>
           </div>
-          <div class="md:w-1/2 w-full">
-            <img
-              src="/input-transaksi.png"
-              alt="Screenshot Input Transaksi"
-              class="w-full rounded-2xl shadow-xl border-4 border-blue-300 hover:scale-105 transition-transform duration-300"
-            />
-          </div>
-        </div>
-
-        <!-- Langkah 2 -->
-        <div class="flex flex-col md:flex-row-reverse items-center gap-10 animate-on-scroll delay-300">
-          <div class="md:w-1/2 text-center md:text-right">
-            <h3 class="text-2xl font-semibold mb-4 text-green-600">
-              2. Pantau Ringkasan Keuanganmu
-            </h3>
-            <p class="text-gray-700 leading-relaxed">
-              Lihat saldo terkini, transaksi terbaru, dan ringkasan pengeluaranmu di satu tempat. Dashboard yang bersih membantumu tetap fokus.
-            </p>
-          </div>
-          <div class="md:w-1/2 w-full">
-            <img
-              src="/dashboard-overview.png"
-              alt="Screenshot Dashboard Overview"
-              class="w-full rounded-2xl shadow-xl border-4 border-green-300 hover:scale-105 transition-transform duration-300"
-            />
-          </div>
-        </div>
-
-        <!-- Langkah 3 -->
-        <div class="flex flex-col md:flex-row items-center gap-10 animate-on-scroll delay-400">
-          <div class="md:w-1/2 text-center md:text-left">
-            <h3 class="text-2xl font-semibold mb-4 text-purple-600">
-              3. Analisis Anggaran Visual & Mudah
-            </h3>
-            <p class="text-gray-700 leading-relaxed">
-              Pahami pola pengeluaranmu dengan grafik yang mudah dimengerti. Identifikasi area di mana kamu bisa berhemat dan capai tujuan finansialmu.
-            </p>
-          </div>
-          <div class="md:w-1/2 w-full">
-            <img
-              src="/budget-analytics.png"
-              alt="Screenshot Budget Analytics"
-              class="w-full rounded-2xl shadow-xl border-4 border-purple-300 hover:scale-105 transition-transform duration-300"
-            />
-          </div>
+          <h3 :class="`text-xl font-semibold mb-2 ${step.color}`">{{ step.title }}</h3>
+          <p class="text-sm text-white/80">{{ step.desc }}</p>
         </div>
       </div>
 
-      <!-- CTA Button -->
+      <!-- CTA -->
       <div class="mt-20">
         <a
           href="/auth"
-          class="gen-z-gradient text-white px-10 py-4 rounded-full text-lg font-semibold shadow-lg hover:opacity-90 hover:scale-105 transition duration-300 inline-block"
+          class="inline-block bg-gradient-to-r from-sky-400 to-blue-600 text-white px-10 py-4 rounded-full text-lg font-semibold shadow-lg hover:scale-105 transition duration-300"
         >
-          Coba Aplikasi Sekarang!
+          Coba Fluidana Sekarang
         </a>
       </div>
+    </div>
+
+    <!-- Bottom Decorative Wave -->
+    <div class="absolute bottom-0 left-0 w-full z-0 rotate-180">
+      <svg viewBox="0 0 1440 200" class="w-full h-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          fill="url(#waveGradientBottom)"
+          d="M0,160 C360,80 1080,240 1440,120 L1440,0 L0,0 Z"
+          opacity="0.4"
+        />
+        <defs>
+          <linearGradient id="waveGradientBottom" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stop-color="#38bdf8"/>
+            <stop offset="100%" stop-color="#9333ea"/>
+          </linearGradient>
+        </defs>
+      </svg>
     </div>
   </section>
 </template>
 
+<script setup>
+const steps = [
+  {
+    title: 'Catat Transaksi',
+    desc: 'Masukkan pengeluaran atau pemasukanmu secara instan, kapan pun dibutuhkan.',
+    video: 'https://videocdn.cdnpk.net/videos/72d0d679-cb78-4bf7-8fa1-ffbbbb06764c/horizontal/previews/clear/small.mp4?token=exp=1753345332~hmac=53bb3c2214a9d088bc7e74688059e67b3e32031ef55c764e942551216a645af8',
+    color: 'text-blue-300'
+  },
+  {
+    title: 'Pantau Dashboard',
+    desc: 'Lihat ringkasan saldo, grafik harian, dan kategori utama dengan jelas.',
+    video: 'https://videocdn.cdnpk.net/videos/72d0d679-cb78-4bf7-8fa1-ffbbbb06764c/horizontal/previews/clear/small.mp4?token=exp=1753345332~hmac=53bb3c2214a9d088bc7e74688059e67b3e32031ef55c764e942551216a645af8',
+    color: 'text-teal-300'
+  },
+  {
+    title: 'Analisis Pola',
+    desc: 'Identifikasi pola boros dan temukan potensi penghematan lewat visualisasi.',
+    video: 'https://videocdn.cdnpk.net/videos/72d0d679-cb78-4bf7-8fa1-ffbbbb06764c/horizontal/previews/clear/small.mp4?token=exp=1753345332~hmac=53bb3c2214a9d088bc7e74688059e67b3e32031ef55c764e942551216a645af8',
+    color: 'text-purple-300'
+  }
+];
+</script>
+
 <style scoped>
-.gen-z-gradient {
-  background: linear-gradient(135deg, #6EE7B7, #3B82F6, #9333EA);
-}
 .gen-z-text-gradient {
-  background-image: linear-gradient(45deg, #6EE7B7, #3B82F6, #9333EA);
+  background-image: linear-gradient(45deg, #6ee7b7, #3b82f6, #9333ea);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
-
-/* Scroll animations */
-.animate-on-scroll {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-}
-.animate-on-scroll.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Delay classes for staggered animations */
-.delay-100 { transition-delay: 0.1s; }
-.delay-200 { transition-delay: 0.2s; }
-.delay-300 { transition-delay: 0.3s; }
-.delay-400 { transition-delay: 0.4s; }
 </style>

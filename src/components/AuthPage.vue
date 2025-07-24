@@ -19,7 +19,7 @@
       <!-- Heading -->
       <div class="text-center mb-8">
         <h1 class="text-3xl font-bold gen-z-text-gradient mb-2">
-          {{ isLogin ? "Masuk ke Seret Dana" : "Daftar Akun Baru" }}
+          {{ isLogin ? "Masuk ke Fluidana" : "Daftar Akun Baru" }}
         </h1>
         <p class="text-gray-600">
           {{

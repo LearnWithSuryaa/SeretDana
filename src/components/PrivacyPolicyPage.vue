@@ -16,7 +16,7 @@
       <h1
         class="text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-pink-500 dark:from-blue-400 dark:to-pink-400 py-2"
       >
-        Kebijakan Privasi Seret Dana
+        Kebijakan Privasi Fluidana
       </h1>
       <p class="text-sm flex justify-center items-center gap-2 text-gray-500 dark:text-gray-400">
         <ShieldCheckIcon class="w-5 h-5 text-blue-500 dark:text-blue-400" />
@@ -30,7 +30,7 @@
     <!-- Isi Konten Kebijakan -->
     <section class="space-y-10 text-base md:text-lg leading-relaxed px-2 md:px-10">
       <p class="text-gray-700 dark:text-gray-300">
-        Selamat datang di Seret Dana! Privasi Anda adalah prioritas kami. Halaman ini menjelaskan bagaimana kami mengumpulkan, menggunakan, dan melindungi informasi pribadi Anda.
+        Selamat datang di Fluidana! Privasi Anda adalah prioritas kami. Halaman ini menjelaskan bagaimana kami mengumpulkan, menggunakan, dan melindungi informasi pribadi Anda.
       </p>
 
       <div>

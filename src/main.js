@@ -1,6 +1,7 @@
 // main.js
 import { createApp } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
+import { MotionPlugin } from '@vueuse/motion'
 import App from "./App.vue";
 
 // Impor gaya global Anda
@@ -91,5 +92,6 @@ router.beforeEach(async (to, from, next) => {
 
 // 4. Buat dan mount aplikasi Vue
 const app = createApp(App);
+app.use(MotionPlugin); // Gunakan Motion Plugin
 app.use(router); // Gunakan router di aplikasi Vue
 app.mount("#app");

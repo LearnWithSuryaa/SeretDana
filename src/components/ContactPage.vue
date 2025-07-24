@@ -28,7 +28,7 @@
     <!-- Intro -->
     <p class="mb-4 text-gray-700 leading-relaxed text-center">
       Kami senang mendengar dari Anda! Jika Anda memiliki pertanyaan, masukan,
-      atau membutuhkan bantuan terkait <span class="font-semibold text-blue-600">Seret Dana</span>, hubungi kami melalui WhatsApp resmi.
+      atau membutuhkan bantuan terkait <span class="font-semibold text-blue-600">Fluidana</span>, hubungi kami melalui WhatsApp resmi.
     </p>
     <p class="mb-8 text-gray-700 leading-relaxed text-center">
       Tim kami akan merespons secepat mungkin selama jam operasional.
@@ -64,7 +64,7 @@
     </ul>
 
     <p class="mt-8 text-center text-gray-700 italic">
-      Terima kasih telah menggunakan <span class="font-bold text-blue-600">Seret Dana</span> —
+      Terima kasih telah menggunakan <span class="font-bold text-blue-600">Fluidana</span> —
       kami selalu siap membantu Anda! 🚀
     </p>
   </div>

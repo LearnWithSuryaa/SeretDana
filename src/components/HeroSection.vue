@@ -8,7 +8,7 @@
     <!-- Background -->
     <div class="absolute inset-0 z-0">
       <div
-        class="absolute inset-0 bg-gradient-to-br from-blue-800 via-purple-800 to-indigo-900 opacity-80"
+        class="absolute inset-0 bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900 opacity-90"
       ></div>
       <div class="absolute inset-0 backdrop-blur-md bg-white/5"></div>
       <svg
@@ -35,27 +35,26 @@
       <h1
         class="text-4xl md:text-6xl font-extrabold leading-tight mb-6 tracking-tight"
       >
-        Dompet Aman, Kuliah Lancar! <br class="hidden sm:block" />
-        <span class="text-yellow-300">Catat Uang Harian Anti Ribet.</span>
+        Atur Keuangan, Hidup Tenang. <br class="hidden sm:block" />
+        <span class="text-blue-400">Fluidana, Mengalirkan Kendali Uangmu.</span>
       </h1>
-      <p class="text-lg md:text-xl mb-10 opacity-90">
-        Aplikasi keuangan harian yang dirancang khusus untuk mahasiswa rantau.
-        Bikin kamu melek finansial, bebas drama akhir bulan, dan bisa nabung
-        buat masa depan!
+      <p class="text-lg md:text-xl mb-10 text-gray-300">
+        Fluidana adalah aplikasi keuangan harian untuk mahasiswa rantau. Catat
+        pengeluaran, kontrol anggaran, dan wujudkan tabungan masa depan — semua dalam satu alur yang simpel dan lancar.
       </p>
       <div class="flex flex-col sm:flex-row justify-center gap-4">
         <a
           href="/auth"
-          class="bg-white text-blue-600 px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:bg-blue-50 hover:scale-105 transition duration-300"
+          class="bg-white text-blue-600 px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:bg-blue-100 hover:scale-105 transition duration-300"
         >
-          Gaspol, Cobain Gratis!
+          Mulai Sekarang Gratis
         </a>
         <a
           href="#how-it-works"
           @click.prevent="scrollToSection('how-it-works')"
           class="border border-white text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-white hover:text-blue-600 hover:scale-105 transition duration-300"
         >
-          Intip Fitur Kerennya
+          Jelajahi Fiturnya
         </a>
       </div>
     </div>
@@ -67,7 +66,7 @@
       :style="{
         transform: `translate(${cursor.x}px, ${cursor.y}px)`,
         background:
-          'radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(250,204,21,0.5) 40%, transparent 100%)',
+          'radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(96,165,250,0.5) 40%, transparent 100%)',
         filter: 'blur(50px)',
         opacity: 1,
       }"
@@ -83,7 +82,7 @@ const cursorVisible = ref(false);
 
 const handleMouseMove = (e) => {
   cursor.value = {
-    x: e.clientX - 72, 
+    x: e.clientX - 72,
     y: e.clientY - 72,
   };
 };

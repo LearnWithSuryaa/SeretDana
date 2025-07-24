@@ -15,7 +15,7 @@
           class="text-2xl font-bold text-gray-800 gen-z-text-gradient transition-all"
           v-show="!isSidebarCollapsed"
         >
-          Seret Dana
+          Fluidana
         </span>
 
         <!-- Collapse Button (Mobile) -->

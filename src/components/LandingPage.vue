@@ -12,12 +12,12 @@
       >
         <!-- Logo -->
         <div class="flex items-center space-x-2">
-          <span class="text-2xl font-extrabold gen-z-text-gradient"
-            >Seret Dana</span
-          >
-          <span class="text-sm font-medium text-gray-500 hidden md:block"
-            >#UangAmanJiwaTenang</span
-          >
+          <span class="text-2xl font-extrabold gen-z-text-gradient">
+            Fluidana
+          </span>
+          <span class="text-sm font-medium text-gray-500 hidden md:block">
+            #AlirkanUangmu
+          </span>
         </div>
 
         <!-- Desktop Menu -->
@@ -98,135 +98,94 @@
     <!-- Hero Section -->
     <HeroSection />
 
-    <!-- Features Section - Staggered Grid -->
-    <section id="features" class="py-16 px-6 md:px-12 bg-gray-50 relative z-10">
-      <div class="container mx-auto">
-        <h2
-          class="text-3xl md:text-4xl font-bold text-center mb-12 gen-z-text-gradient animate-on-scroll py-4"
+    <!--Feature Section-->
+    <FeatureSection />
+    
+    <section
+      id="why-us"
+      class="relative py-28 px-6 md:px-12 overflow-hidden bg-gradient-to-br from-sky-50 via-white to-indigo-100 z-10"
+    >
+      <!-- Background Dekoratif SVG -->
+      <div class="absolute inset-0 -z-10">
+        <svg
+          class="absolute top-0 left-0 w-full h-[300px] opacity-20"
+          viewBox="0 0 1440 320"
         >
-          Fitur Unggulan Seret Dana
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <!-- Feature 1: Pencatatan Cepat & Mudah -->
-          <div
-            class="bg-white p-8 rounded-2xl shadow-lg text-center transform hover:scale-105 transition duration-300 border-b-4 border-blue-400 animate-on-scroll"
-          >
-            <div class="text-blue-600 text-5xl mb-4 flex justify-center">
-              <PencilSquareIcon class="w-14 h-14" />
-            </div>
-            <h3 class="text-xl font-semibold mb-2">Pencatatan Cepat</h3>
-            <p class="text-gray-600 text-sm">
-              Catat pemasukan & pengeluaran dalam hitungan detik. Anti ribet,
-              anti lupa.
-            </p>
-          </div>
-          <!-- Feature 2: Visualisasi Anggaran Interaktif -->
-          <div
-            class="bg-white p-8 rounded-2xl shadow-lg text-center transform hover:scale-105 transition duration-300 border-b-4 border-green-400 md:mt-8 animate-on-scroll delay-100"
-          >
-            <div class="text-green-600 text-5xl mb-4 flex justify-center">
-              <ChartPieIcon class="w-14 h-14" />
-            </div>
-            <h3 class="text-xl font-semibold mb-2">Visualisasi Anggaran</h3>
-            <p class="text-gray-600 text-sm">
-              Grafik interaktif biar kamu tahu uangmu ke mana dan bisa atur
-              strategi.
-            </p>
-          </div>
-          <!-- Feature 3: Target Tabungan -->
-          <div
-            class="bg-white p-8 rounded-2xl shadow-lg text-center transform hover:scale-105 transition duration-300 border-b-4 border-yellow-400 animate-on-scroll delay-200"
-          >
-            <div class="text-yellow-600 text-5xl mb-4 flex justify-center">
-              <BanknotesIcon class="w-14 h-14" />
-            </div>
-            <h3 class="text-xl font-semibold mb-2">Target Tabungan</h3>
-            <p class="text-gray-600 text-sm">
-              Wujudkan impianmu! Atur target tabungan dan pantau progresnya
-              dengan mudah.
-            </p>
-          </div>
-          <!-- Feature 4: Keamanan Data -->
-          <div
-            class="bg-white p-8 rounded-2xl shadow-lg text-center transform hover:scale-105 transition duration-300 border-b-4 border-red-400 md:mt-8 animate-on-scroll delay-300"
-          >
-            <div class="text-red-600 text-5xl mb-4 flex justify-center">
-              <LockClosedIcon class="w-14 h-14" />
-            </div>
-            <h3 class="text-xl font-semibold mb-2">Data Aman Terjamin</h3>
-            <p class="text-gray-600 text-sm">
-              Keamanan data prioritas kami. Fokus belajar, biar Seret Dana yang
-              jaga dompetmu.
-            </p>
-          </div>
-        </div>
+          <path
+            fill="#c4b5fd"
+            fill-opacity="0.3"
+            d="M0,96L80,101.3C160,107,320,117,480,112C640,107,800,85,960,90.7C1120,96,1280,128,1360,144L1440,160L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z"
+          />
+        </svg>
       </div>
-    </section>
 
-    <!-- Mengapa Seret Dana? Section - Overlapping Cards -->
-    <section id="why-us" class="py-16 px-6 md:px-12 relative z-10">
-      <div class="container mx-auto max-w-5xl">
+      <div class="max-w-6xl mx-auto text-center">
         <h2
-          class="text-3xl md:text-4xl font-bold text-center mb-12 gen-z-text-gradient animate-on-scroll"
+          class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-20 leading-tight"
         >
-          Mengapa Seret Dana Cocok Untuk Mahasiswa Rantau?
+          Mengapa
+          <span
+            class="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500"
+            >Fluidana</span
+          >
+          Cocok untuk Mahasiswa Rantau?
         </h2>
-        <div class="relative grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-x-12">
+
+        <!-- Cards -->
+        <div class="grid md:grid-cols-2 gap-10 relative z-10">
           <!-- Card 1 -->
           <div
-            class="bg-white p-8 rounded-2xl shadow-xl transform hover:scale-105 transition duration-300 relative z-10 animate-on-scroll"
+            class="bg-white p-8 rounded-3xl shadow-2xl relative hover:shadow-indigo-300/30 hover:scale-[1.02] transition duration-300 group"
           >
             <div
-              class="absolute -top-4 -left-4 bg-blue-200 w-16 h-16 rounded-full flex items-center justify-center text-blue-700 text-3xl font-bold shadow-md"
+              class="absolute -top-6 -left-6 w-14 h-14 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center shadow-md"
             >
-              <SparklesIcon class="w-8 h-8" />
+              <SparklesIcon class="w-7 h-7" />
             </div>
-            <h3 class="text-2xl font-semibold mb-4 text-blue-600 mt-6">
+            <h3 class="text-xl font-semibold text-sky-600 mt-8 mb-3">
               Desain Intuitif & Ramah Gen Z
             </h3>
-            <p class="text-gray-700 leading-relaxed text-sm">
-              Kami tahu kamu sibuk dengan kuliah dan kegiatan organisasi. Seret
-              Dana didesain dengan antarmuka yang bersih, modern, dan mudah
-              digunakan. Tidak ada fitur yang rumit, hanya yang kamu butuhkan
-              untuk mengelola uang harian dengan cepat dan efisien.
+            <p class="text-gray-700 text-sm leading-relaxed">
+              Seret Dana didesain dengan antarmuka yang modern, fokus, dan bebas
+              gangguan. Cocok untuk kamu yang punya jadwal padat.
             </p>
           </div>
+
           <!-- Card 2 -->
           <div
-            class="bg-white p-8 rounded-2xl shadow-xl transform hover:scale-105 transition duration-300 relative z-20 md:-mt-10 animate-on-scroll delay-100"
+            class="bg-white p-8 rounded-3xl shadow-2xl relative hover:shadow-green-300/30 hover:scale-[1.02] transition duration-300 group md:-mt-6"
           >
             <div
-              class="absolute -top-4 -left-4 bg-green-200 w-16 h-16 rounded-full flex items-center justify-center text-green-700 text-3xl font-bold shadow-md"
+              class="absolute -top-6 -left-6 w-14 h-14 rounded-full bg-green-100 text-green-600 flex items-center justify-center shadow-md"
             >
-              <AcademicCapIcon class="w-8 h-8" />
+              <AcademicCapIcon class="w-7 h-7" />
             </div>
-            <h3 class="text-2xl font-semibold mb-4 text-green-600 mt-6">
+            <h3 class="text-xl font-semibold text-green-600 mt-8 mb-3">
               Fokus pada Kebutuhan Mahasiswa
             </h3>
-            <p class="text-gray-700 leading-relaxed text-sm">
-              Dari uang saku bulanan, biaya kos, hingga pengeluaran nongkrong,
-              Seret Dana memahami dinamika keuangan mahasiswa rantau. Kami
-              membantumu melacak setiap rupiah agar tidak ada lagi drama "uang
-              habis di tengah bulan".
+            <p class="text-gray-700 text-sm leading-relaxed">
+              Fluidana mengerti kondisi finansial mahasiswa rantau. Dari uang
+              saku hingga pengeluaran harian, semua bisa kamu lacak dengan
+              simpel.
             </p>
           </div>
+
           <!-- Card 3 -->
           <div
-            class="bg-white p-8 rounded-2xl shadow-xl transform hover:scale-105 transition duration-300 relative z-10 md:col-span-2 md:-mt-8 animate-on-scroll delay-200"
+            class="bg-white p-8 rounded-3xl shadow-2xl relative hover:shadow-purple-300/30 hover:scale-[1.02] transition duration-300 group md:col-span-2 md:-mt-8"
           >
             <div
-              class="absolute -top-4 -left-4 bg-purple-200 w-16 h-16 rounded-full flex items-center justify-center text-purple-700 text-3xl font-bold shadow-md"
+              class="absolute -top-6 -left-6 w-14 h-14 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center shadow-md"
             >
-              <LightBulbIcon class="w-8 h-8" />
+              <LightBulbIcon class="w-7 h-7" />
             </div>
-            <h3 class="text-2xl font-semibold mb-4 text-purple-600 mt-6">
+            <h3 class="text-xl font-semibold text-purple-600 mt-8 mb-3">
               Edukasi Finansial Ringan
             </h3>
-            <p class="text-gray-700 leading-relaxed text-sm">
-              Selain mencatat, Seret Dana juga memberikan insight sederhana
-              tentang kebiasaan belanjamu. Ini bukan cuma aplikasi, tapi juga
-              teman yang membantumu belajar mengelola uang sejak dini, bekal
-              penting untuk masa depanmu.
+            <p class="text-gray-700 text-sm leading-relaxed max-w-2xl mx-auto">
+              Fluidana bukan hanya alat pencatat, tapi juga sahabat finansial.
+              Memberikan insight sederhana yang membantu kamu membentuk
+              kebiasaan sehat secara perlahan.
             </p>
           </div>
         </div>
@@ -239,68 +198,8 @@
     <!-- Demo Section (New Component) -->
     <DemoSection />
 
-    <!-- Testimonials Section - Card Carousel Implied -->
-    <section
-      id="testimonials"
-      class="py-16 px-6 md:px-12 bg-white relative z-10"
-    >
-      <div class="container mx-auto">
-        <h2
-          class="text-3xl md:text-4xl font-bold text-center mb-12 gen-z-text-gradient animate-on-scroll py-2"
-        >
-          Kata Mereka yang Sudah Pakai Seret Dana
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <!-- Testimonial 1 -->
-          <div
-            class="bg-gray-50 p-6 rounded-2xl shadow-md border-l-4 border-blue-400 animate-on-scroll"
-          >
-            <p class="text-gray-700 italic mb-4">
-              "Seret Dana bener-bener penyelamat! Dulu sering bingung uang habis
-              ke mana, sekarang jadi lebih teratur dan bisa nabung buat beli
-              buku kuliah."
-            </p>
-            <div class="flex items-center">
-              <img
-                src="https://placehold.co/60x60/AEC6CF/FFFFFF?text=A"
-                alt="Avatar Mahasiswa A"
-                class="w-12 h-12 rounded-full mr-4 border-2 border-blue-400"
-              />
-              <div>
-                <p class="font-semibold text-gray-800">
-                  Alpin, Mahasiswa Teknik
-                </p>
-                <p class="text-sm text-gray-500">Universitas Muhammadiyah Malang</p>
-              </div>
-            </div>
-          </div>
-          <!-- Testimonial 2 -->
-          <div
-            class="bg-gray-50 p-6 rounded-2xl shadow-md border-l-4 border-pink-400 animate-on-scroll delay-100"
-          >
-            <p class="text-gray-700 italic mb-4">
-              "Desainnya estetik banget, nggak ngebosenin kayak aplikasi
-              keuangan lain. Fitur kategorinya juga ngebantu banget buat ngatur
-              uang jajan."
-            </p>
-            <div class="flex items-center">
-              <img
-                src="https://placehold.co/60x60/90D5FF/FFFFFF?text=C"
-                alt="Avatar Mahasiswi B"
-                class="w-12 h-12 rounded-full mr-4 border-2 border-blue-400"
-              />
-              <div>
-                <p class="font-semibold text-gray-800">
-                  Chraitong, Mahasiswa Informatika
-                </p>
-                <p class="text-sm text-gray-500">Universitas Muhammadiyah Malang</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
+    <!-- Testimonials Section -->
+     <TestimonialCarousel />
     <!-- FAQ Section -->
     <section
       id="faq"
@@ -356,7 +255,9 @@
       <div
         class="container mx-auto max-w-3xl bg-white p-10 rounded-2xl shadow-lg relative z-10 border-4 border-purple-200 animate-on-scroll"
       >
-        <h2 class="text-3xl md:text-4xl font-bold mb-3 gen-z-text-gradient py-1">
+        <h2
+          class="text-3xl md:text-4xl font-bold mb-3 gen-z-text-gradient py-1"
+        >
           Siap Bebas Drama Keuangan?
         </h2>
         <p class="text-lg text-gray-700 mb-8">
@@ -376,10 +277,14 @@
       class="bg-gray-800 text-white py-8 px-6 md:px-12 mt-10 rounded-t-3xl"
     >
       <div class="container mx-auto text-center">
-        <p>&copy; 2025 Seret Dana. Semua Hak Dilindungi.</p>
+        <p>&copy; 2025 Fluidana. Semua Hak Dilindungi.</p>
         <div class="mt-4 space-x-4 text-sm">
-          <a href="/privacy-policy" class="hover:text-blue-400">Kebijakan Privasi</a>
-          <a href="/terms-and-conditions" class="hover:text-blue-400">Syarat & Ketentuan</a>
+          <a href="/privacy-policy" class="hover:text-blue-400"
+            >Kebijakan Privasi</a
+          >
+          <a href="/terms-and-conditions" class="hover:text-blue-400"
+            >Syarat & Ketentuan</a
+          >
           <a href="/contact" class="hover:text-blue-400">Kontak</a>
         </div>
       </div>
@@ -403,27 +308,27 @@ import {
 } from "@heroicons/vue/24/outline";
 
 // Import the new DemoSection component
+import FeatureSection from "./FeatureSection.vue";
 import HowItWorks from "./HowItWorks.vue";
-
 import DemoSection from "./DemoSection.vue";
-
+import TestimonialCarousel from "./TestimonialCarousel.vue";
 import HeroSection from "./HeroSection.vue";
 
 const faqs = [
   {
-    question: "Apakah Seret Dana gratis?",
+    question: "Apakah Fluidana gratis?",
     answer:
-      "Ya, Seret Dana dapat digunakan secara gratis dengan fitur dasar yang lengkap untuk pencatatan keuangan harian. Mungkin akan ada fitur premium di masa depan, namun fitur inti akan selalu gratis.",
+      "Ya, Fluidana dapat digunakan secara gratis dengan fitur dasar yang lengkap untuk pencatatan keuangan harian. Mungkin akan ada fitur premium di masa depan, namun fitur inti akan selalu gratis.",
   },
   {
-    question: "Bagaimana Seret Dana menjaga keamanan data saya?",
+    question: "Bagaimana Fluidana menjaga keamanan data saya?",
     answer:
       "Kami menggunakan teknologi enkripsi standar industri dan mengandalkan infrastruktur keamanan dari Supabase untuk melindungi data Anda. Data Anda tidak akan pernah dibagikan kepada pihak ketiga tanpa izin Anda.",
   },
   {
-    question: "Apakah Seret Dana tersedia di mobile?",
+    question: "Apakah Fluidana tersedia di mobile?",
     answer:
-      "Seret Dana didesain responsif dan dapat diakses dengan baik melalui browser di perangkat mobile Anda. Kami sedang merencanakan pengembangan aplikasi native di masa depan!",
+      "Fluidana didesain responsif dan dapat diakses dengan baik melalui browser di perangkat mobile Anda. Kami sedang merencanakan pengembangan aplikasi native di masa depan!",
   },
 ];
 
