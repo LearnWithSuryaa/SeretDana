@@ -549,6 +549,141 @@ const fetchDashboardData = async () => {
 // --- CRUD Operations for Modals (dipicu oleh komponen anak) ---
 
 // Transaksi CRUD
+const categorizeTransactionAutomatically = (
+  description,
+  availableCategories
+) => {
+  const lowerDescription = description.toLowerCase();
+  let suggestedCategoryId = null;
+
+  // Definisi kata kunci untuk kategori pengeluaran dan 'all'
+  // Sesuaikan ini dengan kategori yang Anda miliki di Supabase
+  const keywordMap = {
+    "Makanan & Minuman": [
+      "makan",
+      "minum",
+      "kopi",
+      "cafe",
+      "restoran",
+      "warung",
+      "jajan",
+      "kuliner",
+      "food",
+      "minuman",
+      "mcd",
+      "kfc",
+      "burger",
+      "pizza",
+      "sushi",
+    ],
+    Transportasi: [
+      "ojol",
+      "gojek",
+      "grab",
+      "transpor",
+      "bensin",
+      "tol",
+      "parkir",
+      "angkot",
+      "bus",
+      "kereta",
+      "transportasi",
+      "taxi",
+      "commuter",
+      "mrt",
+      "lrt",
+    ],
+    Edukasi: [
+      "buku",
+      "kuliah",
+      "kursus",
+      "seminar",
+      "fotokopi",
+      "modul",
+      "edukasi",
+      "pendidikan",
+      "stationery",
+      "alat tulis",
+      "belajar",
+    ],
+    Hiburan: [
+      "nongkrong",
+      "bioskop",
+      "game",
+      "konser",
+      "rekreasi",
+      "liburan",
+      "hiburan",
+      "streaming",
+      "netflix",
+      "spotify",
+      "youtube premium",
+    ],
+    Tagihan: [
+      "wifi",
+      "listrik",
+      "air",
+      "kosan",
+      "kontrakan",
+      "cicilan",
+      "pulsa",
+      "tagihan",
+      "internet",
+      "pascabayar",
+    ],
+    Belanja: [
+      "belanja",
+      "pakaian",
+      "elektronik",
+      "market",
+      "supermarket",
+      "toko",
+      "fashion",
+      "gadget",
+      "online shop",
+    ],
+    "Lain-lain Pengeluaran": [
+      "lain-lain",
+      "misc",
+      "lainnya",
+      "donasi",
+      "sumbangan",
+    ],
+    // Anda bisa menambahkan kata kunci untuk kategori 'all' di sini juga jika diperlukan
+    Umum: ["umum", "general", "serba-serbi"], // Contoh kategori 'all'
+  };
+
+  // Iterasi melalui keywordMap untuk menemukan kategori yang cocok
+  for (const categoryName in keywordMap) {
+    const keywords = keywordMap[categoryName];
+    for (const keyword of keywords) {
+      if (lowerDescription.includes(keyword)) {
+        // Temukan ID kategori yang cocok dari daftar kategori yang tersedia
+        // Filter hanya untuk kategori tipe 'expense' atau 'all'
+        const matchedCategory = availableCategories.find(
+          (cat) =>
+            cat.name === categoryName &&
+            (cat.type === "expense" || cat.type === "all")
+        );
+        if (matchedCategory) {
+          suggestedCategoryId = matchedCategory.id;
+          console.log(
+            `[Auto-Categorize] Deskripsi "${description}" cocok dengan kata kunci "${keyword}", disarankan kategori "${categoryName}" (ID: ${suggestedCategoryId})`
+          );
+          return suggestedCategoryId; // Kembalikan kecocokan pertama
+        }
+      }
+    }
+  }
+  console.log(
+    `[Auto-Categorize] Deskripsi "${description}" tidak cocok dengan kategori otomatis.`
+  );
+  return suggestedCategoryId; // Akan null jika tidak ada kecocokan
+};
+
+// --- CRUD Operations ---
+
+// Transaksi CRUD
 const addTransaction = async (newTransactionData) => {
   if (!newTransactionData.amount || !newTransactionData.description) {
     showModal(
@@ -558,16 +693,35 @@ const addTransaction = async (newTransactionData) => {
     );
     return;
   }
-  if (
-    newTransactionData.type === "expense" &&
-    !newTransactionData.category_id
-  ) {
-    showModal(
-      "Kategori Belum Dipilih",
-      "Kategori harus dipilih untuk pengeluaran.",
-      "warning"
-    );
-    return;
+
+  // Logika Algoritma Kategorisasi Otomatis
+  if (newTransactionData.type === "expense") {
+    // Jika tipe pengeluaran
+    if (!newTransactionData.category_id) {
+      // Jika user belum memilih kategori secara manual
+      const autoCategorizedId = categorizeTransactionAutomatically(
+        newTransactionData.description,
+        categories.value
+      );
+      if (autoCategorizedId) {
+        newTransactionData.category_id = autoCategorizedId;
+        console.log(
+          `Transaksi pengeluaran otomatis dikategorikan ke ID: ${autoCategorizedId}`
+        );
+      } else {
+        // Jika tidak ada kategori manual DAN tidak ada kategori otomatis
+        showModal(
+          "Kategori Belum Dipilih",
+          "Untuk pengeluaran, kategori harus dipilih atau deskripsi harus cukup jelas untuk otomatisasi.",
+          "warning"
+        );
+        return; // Hentikan proses jika validasi gagal
+      }
+    }
+  } else if (newTransactionData.type === "income") {
+    // Jika tipe pemasukan, category_id harus NULL
+    newTransactionData.category_id = null;
+    // Tidak ada peringatan kategori jika tipe pemasukan
   }
 
   try {
@@ -583,11 +737,8 @@ const addTransaction = async (newTransactionData) => {
       amount: newTransactionData.amount,
       description: newTransactionData.description,
       type: newTransactionData.type,
-      transaction_date: new Date().toISOString().split("T")[0],
-      category_id:
-        newTransactionData.type === "expense"
-          ? newTransactionData.category_id
-          : null,
+      transaction_date: new Date().toISOString().split("T")[0], // Format YYYY-MM-DD
+      category_id: newTransactionData.category_id, // Gunakan kategori yang sudah ditentukan/otomatis
     };
 
     const { error: insertError } = await supabase

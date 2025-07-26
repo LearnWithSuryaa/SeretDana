@@ -41,13 +41,6 @@
               >Login</a
             >
           </li>
-          <li>
-            <a
-              href="/auth"
-              class="border border-blue-500 text-blue-500 px-5 py-2 rounded-full hover:bg-blue-50 transition duration-300"
-              >Daftar</a
-            >
-          </li>
         </ul>
 
         <!-- Mobile Menu Button -->
@@ -295,10 +288,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import {
-  PencilSquareIcon,
-  ChartPieIcon,
-  BanknotesIcon,
-  LockClosedIcon,
   ChevronDownIcon,
   SparklesIcon,
   AcademicCapIcon,
