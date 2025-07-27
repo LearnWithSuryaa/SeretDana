@@ -14,6 +14,7 @@ import DashboardPage from "./components/DashboardPage.vue";
 import PrivacyPolicyPage from "./components/PrivacyPolicyPage.vue"; // Import Kebijakan Privasi
 import TermsAndConditionsPage from "./components/TermsAndConditionsPage.vue"; // Import Syarat & Ketentuan
 import ContactPage from "./components/ContactPage.vue"; // Import Kontak
+import ResetPasswordPage from "./components/ResetPasswordPage.vue"; // Import ResetPasswordPage
 import supabase from "./lib/supabaseClient"; // Pastikan path benar
 
 // 1. Definisikan rute-rute Anda
@@ -54,6 +55,12 @@ const routes = [
     component: ContactPage,
     meta: { requiresAuth: false },
   },
+  {
+    path: "/reset-password", // Rute untuk halaman reset password
+    name: "ResetPassword",
+    component: ResetPasswordPage,
+    meta: { requiresAuth: false }, // Tidak memerlukan autentikasi
+  },
   // 404 fallback
   {
     path: "/:pathMatch(.*)*",
@@ -81,10 +88,12 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.requiresAuth && !isAuthenticated) {
     // Jika rute memerlukan autentikasi tapi user belum login, arahkan ke halaman login
     next({ name: "Auth" });
-  } else if ((to.name === "Auth" || to.name === "Landing") && isAuthenticated) {
-    // Jika user sudah login dan mencoba mengakses halaman Auth atau Landing, arahkan ke dashboard
+  }
+  // Jika user sudah login dan mencoba mengakses halaman Auth, Landing, TAPI BUKAN ResetPassword, arahkan ke dashboard
+  else if ((to.name === "Auth" || to.name === "Landing") && isAuthenticated && to.name !== "ResetPassword") {
     next({ name: "Dashboard" });
-  } else {
+  }
+  else {
     // Lanjutkan navigasi
     next();
   }

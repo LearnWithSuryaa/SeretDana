@@ -3,13 +3,13 @@
     class="min-h-screen flex items-center justify-center bg-gray-100 p-4 sm:p-6"
   >
     <div
-      class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md transform transition-all duration-300 hover:shadow-2xl"
+      class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md transform transition-all duration-300 hover:shadow-xl"
     >
       <!-- Back Button (Visible on both Login and Registration) -->
       <div class="flex justify-start mb-4">
         <button
           @click.prevent="goBackToLanding"
-          class="text-gray-600 hover:text-blue-500 focus:outline-none p-2 rounded-full hover:bg-gray-100 transition duration-200"
+          class="text-gray-600 hover:text-blue-500 focus:outline-none p-2 rounded-full hover:bg-gray-100 transition duration-200 cursor-pointer"
           aria-label="Kembali ke halaman utama"
         >
           <ArrowLeftIcon class="w-6 h-6" />
@@ -80,7 +80,7 @@
             <button
               type="button"
               @click="togglePasswordVisibility"
-              class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
+              class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700 cursor-pointer"
             >
               <EyeIcon
                 v-if="passwordFieldType === 'password'"
@@ -91,13 +91,23 @@
           </div>
         </div>
 
+        <!-- Forgot Password Link (Only visible on login form) -->
+        <div v-if="isLogin" class="text-right mb-5 text-sm">
+          <a
+            href="#"
+            @click.prevent="isForgotPasswordModalVisible = true"
+            class="text-blue-600 hover:underline font-semibold"
+            >Lupa Password?</a
+          >
+        </div>
+
         <!-- Registration Fields (Only visible during registration) -->
         <div v-if="!isLogin" class="space-y-4 mb-6">
           <div class="mb-5">
             <label
               for="confirm-password"
               class="block text-gray-700 text-sm font-semibold mb-2"
-              >Konfirmasi Password</label
+            >Konfirmasi Password</label
             >
             <div class="relative">
               <input
@@ -121,7 +131,7 @@
             <label
               for="name"
               class="block text-gray-700 text-sm font-semibold mb-2"
-              >Nama Lengkap</label
+            >Nama Lengkap</label
             >
             <input
               type="text"
@@ -138,7 +148,7 @@
             <label
               for="university"
               class="block text-gray-700 text-sm font-semibold mb-2"
-              >Universitas (Opsional)</label
+            >Universitas (Opsional)</label
             >
             <input
               type="text"
@@ -154,7 +164,7 @@
             <label
               for="major"
               class="block text-gray-700 text-sm font-semibold mb-2"
-              >Jurusan (Opsional)</label
+            >Jurusan (Opsional)</label
             >
             <input
               type="text"
@@ -170,7 +180,7 @@
             <label
               for="home-city"
               class="block text-gray-700 text-sm font-semibold mb-2"
-              >Kota Asal (Opsional)</label
+            >Kota Asal (Opsional)</label
             >
             <input
               type="text"
@@ -239,12 +249,19 @@
         {{ successMessage }}
       </div>
     </div>
+
+    <!-- Forgot Password Modal -->
+    <ForgotPasswordModal
+      :is-visible="isForgotPasswordModalVisible"
+      @close="isForgotPasswordModalVisible = false"
+      @forgot-password="handleForgotPassword"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import supabase from "../lib/supabaseClient"; // Corrected path
+import supabase from "../lib/supabaseClient";
 import {
   EyeIcon,
   EyeSlashIcon,
@@ -253,6 +270,7 @@ import {
   ArrowLeftIcon,
 } from "@heroicons/vue/24/outline";
 import { useRouter } from "vue-router";
+import ForgotPasswordModal from "./ForgotPasswordModal.vue"; // Import the new modal
 
 const router = useRouter();
 
@@ -268,6 +286,8 @@ const passwordFieldType = ref("password");
 const errorMessage = ref("");
 const successMessage = ref("");
 const isLoading = ref(false);
+
+const isForgotPasswordModalVisible = ref(false); // New state for forgot password modal
 
 const togglePasswordVisibility = () => {
   passwordFieldType.value =
@@ -349,7 +369,7 @@ const handleSubmit = async () => {
         email: email.value,
         password: password.value,
         options: {
-          data: { // Store additional profile data in user_metadata
+          data: {
             name: name.value,
             university: university.value,
             major: major.value,
@@ -369,6 +389,29 @@ const handleSubmit = async () => {
     isLoading.value = false;
   }
 };
+
+const handleForgotPassword = async (userEmail) => {
+  isLoading.value = true;
+  errorMessage.value = '';
+  successMessage.value = '';
+
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(userEmail, {
+      redirectTo: `${window.location.origin}/reset-password`, 
+    });
+
+    if (error) throw error;
+
+    successMessage.value = 'Tautan reset password telah dikirim ke email Anda. Silakan cek inbox Anda.';
+    isForgotPasswordModalVisible.value = false; // Close the modal
+  } catch (err) {
+    console.error("Forgot password error:", err.message);
+    errorMessage.value = err.message || "Gagal mengirim tautan reset password. Pastikan email benar.";
+  } finally {
+    isLoading.value = false;
+  }
+};
+
 
 const isValidEmail = (email) => {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
