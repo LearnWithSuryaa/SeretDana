@@ -93,7 +93,7 @@
 
     <!--Feature Section-->
     <FeatureSection />
-    
+
     <section
       id="why-us"
       class="relative py-28 px-6 md:px-12 overflow-hidden bg-gradient-to-br from-sky-50 via-white to-indigo-100 z-10"
@@ -192,7 +192,7 @@
     <DemoSection />
 
     <!-- Testimonials Section -->
-     <TestimonialCarousel />
+    <TestimonialCarousel />
     <!-- FAQ Section -->
     <section
       id="faq"
@@ -235,30 +235,30 @@
 
     <!-- Call to Action Section -->
     <section
-      class="py-16 px-6 md:px-12 text-center mt-10 relative overflow-hidden"
+      class="py-16 px-4 sm:px-6 md:px-12 text-center mt-10 relative overflow-hidden"
     >
       <!-- Soft background blobs -->
       <div
-        class="absolute top-[-100px] left-[-100px] w-[300px] h-[300px] bg-purple-300 opacity-30 rounded-full blur-3xl z-0"
+        class="absolute top-[-100px] left-[-100px] w-[250px] h-[250px] sm:w-[300px] sm:h-[300px] bg-purple-300 opacity-30 rounded-full blur-3xl z-0"
       ></div>
       <div
-        class="absolute bottom-[-100px] right-[-100px] w-[300px] h-[300px] bg-pink-300 opacity-30 rounded-full blur-3xl z-0"
+        class="absolute bottom-[-100px] right-[-100px] w-[250px] h-[250px] sm:w-[300px] sm:h-[300px] bg-pink-300 opacity-30 rounded-full blur-3xl z-0"
       ></div>
 
       <div
-        class="container mx-auto max-w-3xl bg-white p-10 rounded-2xl shadow-lg relative z-10 border-4 border-purple-200 animate-on-scroll"
+        class="container mx-auto max-w-xl sm:max-w-2xl bg-white px-6 sm:px-10 py-10 rounded-2xl shadow-lg relative z-10 border-4 border-purple-200 animate-fade-up"
       >
         <h2
-          class="text-3xl md:text-4xl font-bold mb-3 gen-z-text-gradient py-1"
+          class="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 gen-z-text-gradient py-1"
         >
           Siap Bebas Drama Keuangan?
         </h2>
-        <p class="text-lg text-gray-700 mb-8">
+        <p class="text-base sm:text-lg text-gray-700 mb-8">
           Jangan tunda lagi! Mulai atur keuanganmu sekarang dan rasakan bedanya.
         </p>
         <a
           href="/auth"
-          class="gen-z-gradient text-white px-10 py-4 rounded-full text-xl font-semibold shadow-xl hover:opacity-90 transform hover:scale-105 transition duration-300 btn-primary"
+          class="gen-z-gradient text-white px-6 sm:px-10 py-3 sm:py-4 rounded-full text-lg sm:text-xl font-semibold shadow-xl hover:opacity-90 transform hover:scale-105 transition duration-300 btn-primary"
         >
           Daftar Gratis Sekarang!
         </a>
