@@ -154,6 +154,7 @@
         :expense-categories="expenseCategories"
         :recent-transactions="recentTransactions"
         :categories="categories"
+        :daily-spending-limit="dailySpendingLimit"
         @add-transaction="addTransaction"
       />
 
@@ -226,15 +227,15 @@ import {
   HomeIcon,
   ListBulletIcon,
   ChartPieIcon,
-  ReceiptPercentIcon,
-  SparklesIcon,
-  TagIcon,
   UserCircleIcon,
   ArrowLeftOnRectangleIcon,
+  Bars3Icon,
+  XMarkIcon,
+  SparklesIcon,
+  ReceiptPercentIcon,
+  TagIcon,
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
-  XMarkIcon,
-  Bars3Icon,
 } from "@heroicons/vue/24/outline";
 
 const isSidebarCollapsed = ref(false);
@@ -362,7 +363,7 @@ const upcomingBills = computed(() => {
       const dateB = new Date(b.due_date || 0).getTime();
       return dateA - dateB;
     })
-    .slice(0, 3); // Hanya menampilkan 3 tagihan terdekat
+    .slice(0, 3);
 });
 
 const expenseCategories = computed(() => {
@@ -381,7 +382,71 @@ const recentTransactions = computed(() => {
       const dateB = new Date(b.created_at || 0);
       return dateB.getTime() - dateA.getTime();
     })
-    .slice(0, 5); // Hanya menampilkan 5 transaksi terbaru
+    .slice(0, 5);
+});
+
+const dailySpendingLimit = computed(() => {
+  const today = new Date();
+  const currentMonth = today.getMonth(); // 0-11
+  const currentYear = today.getFullYear();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const daysRemaining = daysInMonth - today.getDate() + 1;
+
+  if (daysRemaining <= 0) return currentBalance.value;
+
+  // 1. Hitung pengeluaran bulan ini
+  const expensesThisMonth = transactions.value
+    .filter((t) => {
+      const date = new Date(t.transaction_date);
+      return (
+        t.type === "expense" &&
+        date.getMonth() === currentMonth &&
+        date.getFullYear() === currentYear
+      );
+    })
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  // 2. Total anggaran esensial bulan ini
+  const essentialBudgetTotal = budgets.value
+    .filter((b) => b.month === currentMonth + 1 && b.year === currentYear)
+    .reduce((sum, b) => sum + b.limit_amount, 0);
+
+  // 3. Tagihan jatuh tempo bulan ini atau bulan depan & belum dibayar
+  const upcomingBillsAmount = bills.value
+    .filter((bill) => {
+      const due = new Date(bill.due_date);
+      const dueMonth = due.getMonth();
+      const dueYear = due.getFullYear();
+      return (
+        !bill.is_paid_current_period &&
+        ((dueYear === currentYear &&
+          (dueMonth === currentMonth || dueMonth === currentMonth + 1)) ||
+          (currentMonth === 11 &&
+            dueMonth === 0 &&
+            dueYear === currentYear + 1))
+      );
+    })
+    .reduce((sum, bill) => sum + bill.amount, 0);
+
+  // 4. Total kekurangan dari tujuan tabungan
+  const totalSavingsGoalsRemaining = savingsGoals.value
+    .filter((goal) => !goal.is_completed)
+    .reduce((sum, goal) => sum + (goal.target_amount - goal.saved_amount), 0);
+
+  // 5. Hitung dana tersedia (setelah dipotong tagihan & tabungan)
+  const disposableIncome =
+    currentBalance.value - upcomingBillsAmount - totalSavingsGoalsRemaining;
+
+  // 6. Tentukan sisa budget berdasarkan anggaran atau saldo
+  let remainingBudget = disposableIncome;
+  if (essentialBudgetTotal > 0) {
+    remainingBudget = essentialBudgetTotal - expensesThisMonth;
+  }
+
+  // 7. Hitung batas pengeluaran harian
+  const limit = remainingBudget / daysRemaining;
+
+  return Math.max(0, Math.floor(limit)); // pembulatan ke bawah agar aman
 });
 
 // Modal functions (untuk alert/konfirmasi umum)
@@ -548,17 +613,24 @@ const fetchDashboardData = async () => {
 
 // --- CRUD Operations for Modals (dipicu oleh komponen anak) ---
 
-// Transaksi CRUD
+// Fungsi helper untuk kategorisasi otomatis
 const categorizeTransactionAutomatically = (
   description,
   availableCategories
 ) => {
-  const lowerDescription = description.toLowerCase();
-  let suggestedCategoryId = null;
+  const normalize = (text) =>
+    text
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^\w\s]/gi, "");
 
-  // Definisi kata kunci untuk kategori pengeluaran dan 'all'
-  // Sesuaikan ini dengan kategori yang Anda miliki di Supabase
-  const keywordMap = {
+  const lowerDesc = normalize(description.toLowerCase());
+  const words = lowerDesc.split(/\s+/);
+
+  let bestScore = 0;
+  let bestCategoryName = null;
+
+  const keywordMapMahasiswaRantauModern = {
     "Makanan & Minuman": [
       "makan",
       "minum",
@@ -575,23 +647,124 @@ const categorizeTransactionAutomatically = (
       "burger",
       "pizza",
       "sushi",
+      "snack",
+      "sarapan",
+      "lunch",
+      "dinner",
+      "bakso",
+      "mie",
+      "sate",
+      "ayam geprek",
+      "nasi goreng",
+      "indomie",
+      "dimsum",
+      "es teh",
+      "boba",
+      "minuman manis",
+      // Tambahan untuk mahasiswa masa kini di Malang
+      "warteg",
+      "angkringan",
+      "nasi bungkus",
+      "nasi padang",
+      "burjo",
+      "makanan murah",
+      "promo makan",
+      "delivery",
+      "masak",
+      "bahan makanan",
+      "sembako",
+      "galon",
+      "gas",
+      "air mineral",
+      "katering",
+      "makan irit",
+      "bekal",
+      "gorengan",
+      "roti",
+      "kue",
+      "susu",
+      "telur",
+      "buah",
+      "sayur",
+      "geprek",
+      "nasi pecel",
+      "rawon",
+      "tahu campur",
+      "cwie mie",
+      "mie ayam",
+      "pangsit",
+      "soto",
+      "gudeg", // Makanan khas Malang/Jawa Timur
+      "kopi susu",
+      "matcha",
+      "croissant",
+      "brunch",
+      "fine dining",
+      "street food",
+      "prasmanan",
+      "makan tengah",
+      "cemilan",
+      "dessert",
+      "roti bakar",
+      "martabak",
+      "gorengan",
+      "es",
+      "jus",
+      "soda",
+      "minuman sachet",
+      "grabfood",
+      "gofood",
+      "shopeefood",
+      "traveloka eats",
+      "promo", // Aplikasi & promo
     ],
     Transportasi: [
       "ojol",
       "gojek",
       "grab",
-      "transpor",
+      "transportasi",
       "bensin",
       "tol",
       "parkir",
       "angkot",
       "bus",
       "kereta",
-      "transportasi",
       "taxi",
       "commuter",
       "mrt",
       "lrt",
+      "ojek",
+      "antar",
+      "jemput",
+      "logistik",
+      "sopir",
+      "travel",
+      // Tambahan untuk mahasiswa masa kini di Malang
+      "sewa motor",
+      "sewa mobil",
+      "bis kampus",
+      "jalan kaki",
+      "sepeda",
+      "tiket bus",
+      "tiket kereta",
+      "pesawat",
+      "antar kota",
+      "mudik",
+      "pulang kampung",
+      "servis motor",
+      "servis mobil",
+      "cuci motor",
+      "isi ulang e-toll",
+      "damri",
+      "transmalang",
+      "patas",
+      "ekonomi",
+      "pesawat murah",
+      "bagasi",
+      "tarif",
+      "ongkos",
+      "pulang",
+      "liburan",
     ],
     Edukasi: [
       "buku",
@@ -605,6 +778,53 @@ const categorizeTransactionAutomatically = (
       "stationery",
       "alat tulis",
       "belajar",
+      "kampus",
+      "ujian",
+      "skripsi",
+      "bimbel",
+      "perpus",
+      "kelas",
+      "e-learning",
+      "zoom class",
+      "sertifikat",
+      // Tambahan untuk mahasiswa masa kini
+      "jurnal",
+      "print",
+      "binder",
+      "spidol",
+      "pulpen",
+      "pensil",
+      "kertas",
+      "tugas",
+      "proyek",
+      "praktikum",
+      "software",
+      "aplikasi belajar",
+      "workshop",
+      "webinar",
+      "beasiswa",
+      "penelitian",
+      "presentasi",
+      "kebutuhan kampus",
+      "fotocopy murah",
+      "jilid",
+      "lamaran kerja",
+      "magang",
+      "langganan aplikasi",
+      "premium subscription",
+      "canva pro",
+      "grammarly",
+      "notion",
+      "chatgpt",
+      "ai tool",
+      "pelatihan",
+      "bootcamp",
+      "sertifikasi",
+      "portofolio",
+      "linkedin premium",
+      "skillshare",
+      "udemy",
+      "coursera",
     ],
     Hiburan: [
       "nongkrong",
@@ -618,6 +838,70 @@ const categorizeTransactionAutomatically = (
       "netflix",
       "spotify",
       "youtube premium",
+      "blindbox",
+      "labubu",
+      "tiktok",
+      "movie",
+      "mobile legends",
+      "mlbb",
+      "genshin",
+      "steam",
+      "ps",
+      "playstation",
+      "voucher game",
+      // Tambahan untuk mahasiswa masa kini di Malang
+      "karaoke",
+      "tempat wisata",
+      "wisata lokal",
+      "event kampus",
+      "gathering",
+      "healing",
+      "cafe hits",
+      "wisata kuliner",
+      "jalan-jalan",
+      "refreshing",
+      "hangout",
+      "diskusi",
+      "komunitas",
+      "olahraga",
+      "gym",
+      "futsal",
+      "basket",
+      "badminton",
+      "sewa lapangan",
+      "hobi",
+      "koleksi",
+      "fashion trend",
+      "skincare",
+      "makeup",
+      "kpop",
+      "jpop",
+      "anime",
+      "manga",
+      "wibu",
+      "cosplay",
+      "komik",
+      "novel",
+      "podcast",
+      "youtube",
+      "influencer",
+      "konser musik",
+      "festival",
+      "pameran",
+      "museum",
+      "galeri",
+      "wisata alam",
+      "hiking",
+      "camping",
+      "pantai",
+      "ngopi cantik",
+      "hunting foto",
+      "tiktok challenge",
+      "ootd",
+      "thrifting",
+      "preloved",
+      "barbershop",
+      "nail art",
     ],
     Tagihan: [
       "wifi",
@@ -630,6 +914,43 @@ const categorizeTransactionAutomatically = (
       "tagihan",
       "internet",
       "pascabayar",
+      "indihome",
+      "telkom",
+      "firstmedia",
+      "pln",
+      "pdam",
+      "kontrak",
+      "kamar",
+      "sewa",
+      // Tambahan untuk mahasiswa masa kini
+      "uang sewa",
+      "deposit kos",
+      "laundry",
+      "kebersihan",
+      "sampah",
+      "perbaikan kos",
+      "listrik token",
+      "token listrik",
+      "kasur",
+      "lemari",
+      "meja belajar",
+      "kipas angin",
+      "perlengkapan mandi",
+      "perlengkapan tidur",
+      "perabot",
+      "peralatan masak",
+      "dapur",
+      "setrika",
+      "jemuran",
+      "deterjen",
+      "bedcover",
+      "gorden",
+      "cucian",
+      "jasa bersih",
+      "kost",
+      "apartemen",
+      "sharing cost",
+      "patungan wifi",
     ],
     Belanja: [
       "belanja",
@@ -641,47 +962,188 @@ const categorizeTransactionAutomatically = (
       "fashion",
       "gadget",
       "online shop",
+      "shopee",
+      "tokopedia",
+      "lazada",
+      "zalora",
+      "blibli",
+      "handphone",
+      "hp",
+      "headset",
+      "sepatu",
+      "baju",
+      "kaos",
+      "celana",
+      "sweater",
+      "aksesoris",
+      "topi",
+      "tas",
+      // Tambahan untuk mahasiswa masa kini
+      "perlengkapan mandi",
+      "sabun",
+      "shampo",
+      "pasta gigi",
+      "sikat gigi",
+      "deodoran",
+      "parfum",
+      "handbody",
+      "masker",
+      "sanitizer",
+      "obat-obatan",
+      "vitamin",
+      "sakit",
+      "klinik",
+      "apotek",
+      "dokter",
+      "cek kesehatan",
+      "alat masak",
+      "peralatan makan",
+      "sandal",
+      "jaket",
+      "dompet",
+      "kacamata",
+      "lensa kontak",
+      "perhiasan",
+      "cukur",
+      "potong rambut",
+      "salon",
+      "makeup",
+      "skincare",
+      "sunscreen",
+      "lip tint",
+      "facial wash",
+      "power bank",
+      "charger",
+      "earphone",
+      "smartwatch",
+      "laptop",
+      "tablet",
+      "mouse",
+      "keyboard",
+      "ssd",
+      "kopi kemasan",
+      "teh kemasan",
+      "snack impor",
+      "merchandise",
+      "official store",
+      "brand lokal",
     ],
-    "Lain-lain Pengeluaran": [
+    "Lain-lain": [
       "lain-lain",
       "misc",
       "lainnya",
       "donasi",
       "sumbangan",
+      "amal",
+      "zakat",
+      "infaq",
+      "derma",
+      "sosial",
+      "pengeluaran tidak terduga",
+      "acara",
+      "event",
+      "biaya tambahan",
+      "kerusakan",
+      // Tambahan untuk mahasiswa masa kini
+      "uang kas",
+      "patungan",
+      "kado",
+      "hadiah",
+      "sumbangan duka",
+      "biaya admin",
+      "denda",
+      "service",
+      "perbaikan",
+      "kehilangan",
+      "kecelakaan",
+      "darurat",
+      "tabungan",
+      "investasi",
+      "uang saku",
+      "kiriman orang tua",
+      "dana darurat",
+      "pinjaman",
+      "hutang",
+      "arisan",
+      "biaya organisasi",
+      "oprec",
+      "uang kuliah",
+      "ukt",
+      "spp",
+      "dana pengembangan",
+      "daftar ulang",
+      "biaya wisuda",
+      "cicilan hp",
+      "cicilan laptop",
+      "bayar parkir",
+      "tip",
+      "pajak",
+      "materai",
+      "administrasi bank",
+      "top up e-wallet",
+      "ovo",
+      "dana",
+      "gopay",
+      "shopeepay",
+      "linkaja",
+      "qris",
+      "transfer",
+      "tarik tunai",
     ],
-    // Anda bisa menambahkan kata kunci untuk kategori 'all' di sini juga jika diperlukan
-    Umum: ["umum", "general", "serba-serbi"], // Contoh kategori 'all'
   };
 
-  // Iterasi melalui keywordMap untuk menemukan kategori yang cocok
-  for (const categoryName in keywordMap) {
-    const keywords = keywordMap[categoryName];
+  const weightedKeywords = {
+    donasi: 2,
+    zakat: 2,
+    sumbangan: 2,
+    warteg: 1.2,
+    kosan: 1.5,
+    listrik: 1.5,
+    shopee: 1.3,
+    spotify: 2,
+  };
+
+  for (const [category, keywords] of Object.entries(
+    keywordMapMahasiswaRantauModern
+  )) {
+    let score = 0;
+
     for (const keyword of keywords) {
-      if (lowerDescription.includes(keyword)) {
-        // Temukan ID kategori yang cocok dari daftar kategori yang tersedia
-        // Filter hanya untuk kategori tipe 'expense' atau 'all'
-        const matchedCategory = availableCategories.find(
-          (cat) =>
-            cat.name === categoryName &&
-            (cat.type === "expense" || cat.type === "all")
-        );
-        if (matchedCategory) {
-          suggestedCategoryId = matchedCategory.id;
-          console.log(
-            `[Auto-Categorize] Deskripsi "${description}" cocok dengan kata kunci "${keyword}", disarankan kategori "${categoryName}" (ID: ${suggestedCategoryId})`
-          );
-          return suggestedCategoryId; // Kembalikan kecocokan pertama
-        }
+      if (words.includes(keyword)) {
+        const weight = weightedKeywords[keyword] || 1;
+        const positionBonus = words.indexOf(keyword) <= 2 ? 1.2 : 1;
+        score += weight * positionBonus;
       }
     }
-  }
-  console.log(
-    `[Auto-Categorize] Deskripsi "${description}" tidak cocok dengan kategori otomatis.`
-  );
-  return suggestedCategoryId; // Akan null jika tidak ada kecocokan
-};
 
-// --- CRUD Operations ---
+    if (score > bestScore) {
+      bestScore = score;
+      bestCategoryName = category;
+    }
+  }
+
+  if (!bestCategoryName) {
+    console.log(
+      `[Auto-Categorize] Tidak ditemukan kecocokan untuk: "${description}"`
+    );
+    return null;
+  }
+
+  const matchedCategory = availableCategories.find(
+    (cat) =>
+      cat.name === bestCategoryName &&
+      (cat.type === "expense" || cat.type === "all")
+  );
+
+  if (matchedCategory) {
+    console.log(
+      `[Auto-Categorize] "${description}" dikategorikan sebagai "${bestCategoryName}" (ID: ${matchedCategory.id}, skor: ${bestScore})`
+    );
+    return matchedCategory.id;
+  }
+
+  return null;
+};
 
 // Transaksi CRUD
 const addTransaction = async (newTransactionData) => {
@@ -696,9 +1158,7 @@ const addTransaction = async (newTransactionData) => {
 
   // Logika Algoritma Kategorisasi Otomatis
   if (newTransactionData.type === "expense") {
-    // Jika tipe pengeluaran
     if (!newTransactionData.category_id) {
-      // Jika user belum memilih kategori secara manual
       const autoCategorizedId = categorizeTransactionAutomatically(
         newTransactionData.description,
         categories.value
@@ -709,19 +1169,16 @@ const addTransaction = async (newTransactionData) => {
           `Transaksi pengeluaran otomatis dikategorikan ke ID: ${autoCategorizedId}`
         );
       } else {
-        // Jika tidak ada kategori manual DAN tidak ada kategori otomatis
         showModal(
           "Kategori Belum Dipilih",
           "Untuk pengeluaran, kategori harus dipilih atau deskripsi harus cukup jelas untuk otomatisasi.",
           "warning"
         );
-        return; // Hentikan proses jika validasi gagal
+        return;
       }
     }
   } else if (newTransactionData.type === "income") {
-    // Jika tipe pemasukan, category_id harus NULL
     newTransactionData.category_id = null;
-    // Tidak ada peringatan kategori jika tipe pemasukan
   }
 
   try {
@@ -737,8 +1194,8 @@ const addTransaction = async (newTransactionData) => {
       amount: newTransactionData.amount,
       description: newTransactionData.description,
       type: newTransactionData.type,
-      transaction_date: new Date().toISOString().split("T")[0], // Format YYYY-MM-DD
-      category_id: newTransactionData.category_id, // Gunakan kategori yang sudah ditentukan/otomatis
+      transaction_date: new Date().toISOString().split("T")[0],
+      category_id: newTransactionData.category_id,
     };
 
     const { error: insertError } = await supabase
@@ -748,7 +1205,7 @@ const addTransaction = async (newTransactionData) => {
     if (insertError) throw insertError;
 
     showModal("Berhasil!", "Transaksi berhasil ditambahkan!", "success");
-    await fetchDashboardData(); // Ambil ulang semua data untuk memperbarui dashboard
+    await fetchDashboardData();
   } catch (err) {
     console.error("Error adding transaction:", err.message);
     if (

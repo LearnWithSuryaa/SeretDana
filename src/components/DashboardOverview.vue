@@ -1,88 +1,105 @@
 <template>
-  <div class="space-y-8">
-    <h2 class="text-3xl font-bold text-gray-800 mb-6">Halo, {{ userProfile.name || 'Mahasiswa Rantau' }}! 👋</h2>
+  <div class="space-y-10">
+    <!-- Header -->
+    <h2 class="text-3xl font-extrabold text-gray-900 leading-tight">
+      Halo, {{ userProfile.name || 'Mahasiswa Rantau' }} 👋
+    </h2>
+    <p class="text-gray-500 text-sm">Ini adalah ringkasan keuanganmu hari ini.</p>
 
-    <!-- Balance Cards Grid -->
+    <!-- Grid Ringkasan -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- Saldo Saat Ini Card -->
-      <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-blue-500 hover:shadow-lg transition duration-300 ease-in-out">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-xl font-semibold text-gray-700">Saldo Saat Ini</h3>
-          <WalletIcon class="w-7 h-7 text-blue-500" />
+      <!-- Saldo Saat Ini -->
+      <div class="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-blue-500 hover:shadow-xl transition">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="text-base font-semibold text-gray-700">Saldo Saat Ini</h3>
+          <WalletIcon class="w-6 h-6 text-blue-500" />
         </div>
-        <span class="text-green-600 font-bold text-3xl">Rp {{ formatCurrency(currentBalance) }}</span>
-        <p class="text-gray-500 text-sm mt-2">Update terakhir: {{ lastUpdate }}</p>
+        <div class="text-green-600 font-extrabold text-3xl">Rp {{ formatCurrency(currentBalance) }}</div>
+        <p class="text-gray-400 text-xs mt-1">Update terakhir: {{ lastUpdate }}</p>
       </div>
 
-      <!-- Anggaran Bulan Ini Card -->
-      <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-purple-500 hover:shadow-lg transition duration-300 ease-in-out delay-100">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-xl font-semibold text-gray-700">Anggaran Bulan Ini</h3>
-          <ChartBarIcon class="w-7 h-7 text-purple-500" />
+      <!-- Anggaran Bulan Ini -->
+      <div class="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-purple-500 hover:shadow-xl transition delay-75">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="text-base font-semibold text-gray-700">Anggaran Bulan Ini</h3>
+          <ChartBarIcon class="w-6 h-6 text-purple-500" />
         </div>
-        <div class="text-gray-800 font-bold text-3xl mb-2">
+        <div class="text-gray-800 font-bold text-xl mb-2">
           Rp {{ formatCurrency(monthlyBudgetSpent) }} / Rp {{ formatCurrency(monthlyBudgetTotal) }}
         </div>
         <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
-          <div class="gen-z-gradient h-2.5 rounded-full" :style="{ width: budgetProgress + '%' }"></div>
+          <div class="gen-z-gradient h-2.5 rounded-full transition-all" :style="{ width: budgetProgress + '%' }"></div>
         </div>
-        <p class="text-gray-500 text-sm mt-2">{{ budgetProgress.toFixed(1) }}% Terpakai</p>
+        <p class="text-gray-400 text-xs mt-1">{{ budgetProgress.toFixed(1) }}% Terpakai</p>
       </div>
 
-      <!-- Tagihan Mendatang Card -->
-      <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-red-500 hover:shadow-lg transition duration-300 ease-in-out delay-200">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="text-xl font-semibold text-gray-700">Tagihan Mendatang</h3>
-          <CalendarDaysIcon class="w-7 h-7 text-red-500" />
+      <!-- Batas Harian -->
+      <div class="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-teal-500 hover:shadow-xl transition delay-100">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="text-base font-semibold text-gray-700">Batas Pengeluaran Harian</h3>
+          <CurrencyDollarIcon class="w-6 h-6 text-teal-500" />
         </div>
-        <!-- Display only the first 3 upcoming bills -->
-        <ul class="space-y-2" v-if="upcomingBills.length > 0">
-          <li v-for="bill in upcomingBills.slice(0, 3)" :key="bill.id" class="flex justify-between items-center text-gray-700 text-sm py-1 border-b border-gray-100 last:border-b-0">
+        <div class="text-blue-600 font-extrabold text-2xl">Rp {{ formatCurrency(dailySpendingLimit) }}</div>
+        <p class="text-gray-400 text-xs mt-1">Rekomendasi sisa hari ini</p>
+      </div>
+
+      <!-- Tagihan -->
+      <div class="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-red-500 hover:shadow-xl transition delay-150">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="text-base font-semibold text-gray-700">Tagihan Mendatang</h3>
+          <CalendarDaysIcon class="w-6 h-6 text-red-500" />
+        </div>
+        <ul v-if="upcomingBills && upcomingBills.length > 0" class="space-y-2 text-sm">
+          <li v-for="bill in upcomingBills.slice(0, 3)" :key="bill.id"
+              class="flex justify-between items-center text-gray-700 border-b border-gray-100 py-1">
             <span>{{ bill.name }} ({{ formatDate(bill.due_date) }})</span>
-            <span class="font-semibold text-red-600">- Rp {{ formatCurrency(bill.amount) }}</span>
+            <span class="text-red-600 font-semibold">- Rp {{ formatCurrency(bill.amount) }}</span>
           </li>
         </ul>
-        <p v-else class="text-gray-500 italic text-sm">Tidak ada tagihan mendatang.</p>
+        <p v-else class="text-gray-400 italic text-sm">Tidak ada tagihan mendatang.</p>
       </div>
     </div>
 
-    <!-- Quick Action: Add Transaction (Button to open modal) -->
-    <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-green-500 hover:shadow-lg transition duration-300 ease-in-out delay-300">
-      <h3 class="text-xl font-semibold text-gray-700 mb-4">Catat Transaksi Baru</h3>
+    <!-- CTA: Tambah Transaksi -->
+    <div class="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-green-500 hover:shadow-xl transition delay-200">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Catat Transaksi Baru</h3>
       <button @click="isAddTransactionModalVisible = true"
-              class="w-full gen-z-gradient text-white py-3 px-4 rounded-lg font-semibold text-lg shadow-md hover:opacity-90 transition duration-300 cursor-pointer">
+              class="w-full gen-z-gradient text-white py-3 px-4 rounded-lg font-semibold text-base shadow-md hover:opacity-90 transition">
         <span class="flex items-center justify-center">
-          <PlusCircleIcon class="w-6 h-6 mr-2" /> Tambah Transaksi Cepat
+          <PlusCircleIcon class="w-5 h-5 mr-2" /> Tambah Transaksi Cepat
         </span>
       </button>
     </div>
 
-    <!-- Recent Transactions -->
-    <div class="bg-white p-6 rounded-2xl shadow-xl border-l-4 border-yellow-500 hover:shadow-lg transition duration-300 ease-in-out delay-400">
-      <h3 class="text-xl font-semibold text-gray-700 mb-4">Transaksi Terbaru</h3>
-      <ul class="space-y-3" v-if="recentTransactions && recentTransactions.length > 0">
+    <!-- Transaksi Terbaru -->
+    <div class="bg-white p-6 rounded-2xl shadow-lg border-l-4 border-yellow-500 hover:shadow-xl transition delay-300">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Transaksi Terbaru</h3>
+      <ul v-if="recentTransactions && recentTransactions.length > 0" class="space-y-3">
         <li v-for="transaction in recentTransactions" :key="transaction.id"
             class="flex justify-between items-center p-3 rounded-md bg-gray-50 border border-gray-200">
           <div>
-            <p class="font-medium">{{ transaction.description }}</p>
-            <p class="text-sm text-gray-500">{{ formatDate(transaction.transaction_date) }} <span v-if="transaction.category_id" class="text-gray-400">({{ getCategoryName(transaction.category_id) }})</span></p>
+            <p class="font-medium text-sm">{{ transaction.description }}</p>
+            <p class="text-xs text-gray-500">{{ formatDate(transaction.transaction_date) }}
+              <span v-if="transaction.category_id" class="text-gray-400">({{ getCategoryName(transaction.category_id) }})</span>
+            </p>
           </div>
           <span :class="{'text-green-600': transaction.type === 'income', 'text-red-600': transaction.type === 'expense'}"
-                class="font-semibold">
+                class="font-semibold text-sm">
             {{ transaction.type === 'income' ? '+' : '-' }} Rp {{ formatCurrency(transaction.amount) }}
           </span>
         </li>
       </ul>
-      <p v-else class="text-center text-gray-500 italic">Belum ada transaksi.</p>
+      <p v-else class="text-center text-gray-400 italic text-sm">Belum ada transaksi.</p>
     </div>
 
-    <!-- Add Transaction Modal -->
+    <!-- Modal -->
     <AddTransactionModal
-  :is-visible="isAddTransactionModalVisible"
-  :categories="categories"
-  @close="isAddTransactionModalVisible = false"
-  @add-transaction="handleModalAddTransaction"
-/>
+      :is-visible="isAddTransactionModalVisible"
+      :expense-categories="expenseCategories"
+      :categories="categories"
+      @close="isAddTransactionModalVisible = false"
+      @add-transaction="handleModalAddTransaction"
+    />
   </div>
 </template>
 
@@ -92,7 +109,8 @@ import {
   WalletIcon,
   ChartBarIcon,
   CalendarDaysIcon,
-  PlusCircleIcon
+  PlusCircleIcon,
+  CurrencyDollarIcon // New icon for daily spending limit
 } from '@heroicons/vue/24/outline';
 import AddTransactionModal from './AddTransactionModal.vue';
 
@@ -137,6 +155,10 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
+  dailySpendingLimit: { // Prop for daily spending limit
+    type: Number,
+    default: 0
+  }
 });
 
 const emit = defineEmits(['add-transaction']);
@@ -172,6 +194,7 @@ onMounted(() => {
   console.log('upcomingBills in DashboardOverview:', props.upcomingBills);
   console.log('expenseCategories in DashboardOverview:', props.expenseCategories);
   console.log('categories in DashboardOverview:', props.categories);
+  console.log('dailySpendingLimit in DashboardOverview:', props.dailySpendingLimit);
 });
 </script>
 
@@ -205,13 +228,13 @@ onMounted(() => {
 
 /* Adjusted hover effects for cards and buttons */
 /* Cards: from transform hover:scale-102 shadow-xl to hover:shadow-lg */
-.bg-white.shadow-xl.transform.hover\:scale-102.transition.duration-300.ease-in-out:hover {
-  transform: scale(1); /* No scale on hover for cards */
-  box-shadow: var(--tw-shadow-lg); /* Softer shadow */
+.bg-white.shadow-xl:hover {
+  box-shadow: 0 15px 20px -5px rgba(0, 0, 0, 0.1), 0 6px 10px -4px rgba(0, 0, 0, 0.08); /* Slightly more pronounced on hover */
+  transform: translateY(-2px); /* Subtle lift */
 }
 
 /* Button: from shadow-md hover:opacity-90 transform hover:scale-105 to softer hover */
-.gen-z-gradient.text-white.py-3.px-4.rounded-lg.font-semibold.text-lg.shadow-md.hover\:opacity-90.transform.hover\:scale-105.transition.duration-300:hover {
+.gen-z-gradient.text-white.py-3.px-4.rounded-lg.font-semibold.text-lg.shadow-md.hover\:opacity-90.transition.duration-300:hover {
   transform: translateY(-1px); /* Slight lift */
   box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* Softer shadow */
   opacity: 0.95; /* Slightly less opacity change */
@@ -224,7 +247,7 @@ ul > li {
   border: initial; /* Reset border */
   min-height: initial; /* Reset min-height */
   opacity: 1; /* Ensure full opacity */
-  display: flex; /* Ensure display */
+  display: flex; /* Ensure flex display */
   visibility: visible; /* Ensure visibility */
 }
 </style>
