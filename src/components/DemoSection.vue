@@ -5,7 +5,12 @@
   >
     <!-- Top Decorative Wave -->
     <div class="absolute top-0 left-0 w-full z-0">
-      <svg viewBox="0 0 1440 200" class="w-full h-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg
+        viewBox="0 0 1440 200"
+        class="w-full h-auto"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
         <path
           fill="url(#waveGradient)"
           d="M0,160 C360,80 1080,240 1440,120 L1440,0 L0,0 Z"
@@ -27,12 +32,15 @@
         Demo Aplikasi Fluidana
       </h2>
       <p class="text-lg text-white/80 mb-16 max-w-2xl mx-auto">
-        Rasakan langsung kemudahan mencatat dan memahami keuanganmu dengan antarmuka yang jernih dan mengalir.
+        Rasakan langsung kemudahan mencatat dan memahami keuanganmu dengan
+        antarmuka yang jernih dan mengalir.
       </p>
 
       <!-- Loading Spinner -->
       <div v-if="isLoading" class="flex justify-center items-center h-40">
-        <div class="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
+        <div
+          class="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"
+        ></div>
       </div>
 
       <!-- Error Message -->
@@ -41,14 +49,12 @@
       </div>
 
       <!-- Demo Cards -->
-      <div
-        v-if="!isLoading && !errorMessage"
-        class="grid md:grid-cols-3 gap-8"
-      >
+      <div v-if="!isLoading && !errorMessage" class="grid md:grid-cols-3 gap-8">
         <div
           v-for="(step, index) in steps"
           :key="index"
-          class="relative group rounded-3xl overflow-hidden p-1 bg-gradient-to-br from-white/10 to-white/5 shadow-2xl hover:scale-[1.02] transition-transform duration-500 backdrop-blur-xl"
+          @click="openModal(step.video)"
+          class="cursor-pointer relative group rounded-3xl overflow-hidden p-1 bg-gradient-to-br from-white/10 to-white/5 shadow-2xl hover:scale-[1.02] transition-transform duration-500 backdrop-blur-xl"
         >
           <!-- Glow Border Animation -->
           <div
@@ -76,9 +82,7 @@
             <h3 :class="`text-xl font-semibold mb-2 ${step.color}`">
               {{ step.title }}
             </h3>
-            <p class="text-sm text-white/80 flex-1">
-              {{ step.desc }}
-            </p>
+            <p class="text-sm text-white/80 flex-1">{{ step.desc }}</p>
           </div>
         </div>
       </div>
@@ -96,7 +100,12 @@
 
     <!-- Bottom Decorative Wave -->
     <div class="absolute bottom-0 left-0 w-full z-0 rotate-180">
-      <svg viewBox="0 0 1440 200" class="w-full h-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg
+        viewBox="0 0 1440 200"
+        class="w-full h-auto"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
         <path
           fill="url(#waveGradientBottom)"
           d="M0,160 C360,80 1080,240 1440,120 L1440,0 L0,0 Z"
@@ -110,58 +119,102 @@
         </defs>
       </svg>
     </div>
+
+    <!-- Video Modal -->
+    <div
+      v-if="showModal"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4"
+    >
+      <div class="relative w-full max-w-4xl px-6">
+        <!-- Close Button -->
+        <button
+          @click="closeModal"
+          class="absolute top-2 right-4 text-white text-2xl hover:text-red-400 transition z-50"
+          aria-label="Close"
+        >
+          &times;
+        </button>
+
+        <!-- Video Player -->
+        <div
+          class="rounded-xl overflow-hidden shadow-lg border border-white/10"
+        >
+          <video
+            :src="selectedVideo"
+            autoplay
+            controls
+            playsinline
+            class="w-full h-auto max-h-[80vh] object-contain bg-black"
+          />
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import supabase from '../lib/supabaseClient'
+import { ref, onMounted } from "vue";
+import supabase from "../lib/supabaseClient";
 
-const isLoading = ref(true)
-const errorMessage = ref('')
-const steps = ref([])
+const isLoading = ref(true);
+const errorMessage = ref("");
+const steps = ref([]);
+
+const showModal = ref(false);
+const selectedVideo = ref("");
+
+function openModal(videoUrl) {
+  selectedVideo.value = videoUrl;
+  showModal.value = true;
+}
+
+function closeModal() {
+  showModal.value = false;
+  selectedVideo.value = "";
+}
 
 onMounted(async () => {
   try {
-    const filenames = ['step1.mp4', 'step2.mp4', 'step3.mp4']
-    const publicUrls = []
+    const filenames = ["step1.mp4", "step2.mp4", "step3.mp4"];
+    const publicUrls = [];
 
     for (const name of filenames) {
-      const { data, error } = supabase.storage.from('video').getPublicUrl(name)
+      const { data, error } = supabase.storage.from("video").getPublicUrl(name);
       if (error || !data?.publicUrl) {
-        console.error(`Gagal mengambil video: ${name}`, error)
-        throw new Error(`Gagal mengambil video ${name}`)
+        console.error(`Gagal mengambil video: ${name}`, error);
+        throw new Error(`Gagal mengambil video ${name}`);
       }
-      publicUrls.push(data.publicUrl)
+      publicUrls.push(data.publicUrl);
     }
 
     steps.value = [
       {
-        title: 'Catat Transaksi',
-        desc: 'Masukkan pengeluaran atau pemasukanmu secara instan, kapan pun dibutuhkan.',
+        title: "Catat Transaksi",
+        desc: "Masukkan pengeluaran atau pemasukanmu secara instan, kapan pun dibutuhkan.",
         video: publicUrls[0],
-        color: 'text-blue-300'
+        color: "text-blue-300",
       },
       {
-        title: 'Pantau Dashboard',
-        desc: 'Lihat ringkasan saldo, grafik harian, dan kategori utama dengan jelas.',
+        title: "Pantau Dashboard",
+        desc: "Lihat ringkasan saldo, grafik harian, dan kategori utama dengan jelas.",
         video: publicUrls[1],
-        color: 'text-teal-300'
+        color: "text-teal-300",
       },
       {
-        title: 'Analisis Pola',
-        desc: 'Identifikasi pola boros dan temukan potensi penghematan lewat visualisasi.',
+        title: "Analisis Pola",
+        desc: "Identifikasi pola boros dan temukan potensi penghematan lewat visualisasi.",
         video: publicUrls[2],
-        color: 'text-purple-300'
-      }
-    ]
+        color: "text-purple-300",
+      },
+    ];
   } catch (err) {
-    errorMessage.value = 'Terjadi kesalahan saat memuat video demo. Silakan coba beberapa saat lagi.'
-    console.error(err)
+    errorMessage.value =
+      "Terjadi kesalahan saat memuat video demo. Silakan coba beberapa saat lagi.";
+    console.error(err);
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-})
+});
 </script>
 
 <style scoped>
