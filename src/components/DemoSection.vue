@@ -1,5 +1,8 @@
 <template>
-  <section id="demo" class="relative overflow-hidden bg-gradient-to-b from-sky-950 via-indigo-950 to-purple-950 py-24 px-6 md:px-12 text-white">
+  <section
+    id="demo"
+    class="relative overflow-hidden bg-gradient-to-b from-sky-950 via-indigo-950 to-purple-950 py-24 px-6 md:px-12 text-white"
+  >
     <!-- Top Decorative Wave -->
     <div class="absolute top-0 left-0 w-full z-0">
       <svg viewBox="0 0 1440 200" class="w-full h-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -10,8 +13,8 @@
         />
         <defs>
           <linearGradient id="waveGradient" x1="0" x2="1" y1="0" y2="1">
-            <stop offset="0%" stop-color="#38bdf8"/>
-            <stop offset="100%" stop-color="#9333ea"/>
+            <stop offset="0%" stop-color="#38bdf8" />
+            <stop offset="100%" stop-color="#9333ea" />
           </linearGradient>
         </defs>
       </svg>
@@ -27,28 +30,61 @@
         Rasakan langsung kemudahan mencatat dan memahami keuanganmu dengan antarmuka yang jernih dan mengalir.
       </p>
 
-      <!-- Demo Steps -->
-      <div class="grid md:grid-cols-3 gap-10">
-        <!-- Step Card -->
-        <div v-for="(step, index) in steps" :key="index" class="bg-white/5 rounded-2xl p-6 shadow-xl hover:scale-[1.03] transition transform duration-300 backdrop-blur-sm">
-          <div class="mb-4 rounded-xl overflow-hidden border border-white/20 shadow-lg">
-            <video
-              autoplay
-              loop
-              muted
-              playsinline
-              class="w-full h-56 object-cover"
-            >
-              <source :src="step.video" type="video/mp4" />
-            </video>
+      <!-- Loading Spinner -->
+      <div v-if="isLoading" class="flex justify-center items-center h-40">
+        <div class="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-transparent"></div>
+      </div>
+
+      <!-- Error Message -->
+      <div v-if="errorMessage" class="text-red-400 text-sm mb-8">
+        {{ errorMessage }}
+      </div>
+
+      <!-- Demo Cards -->
+      <div
+        v-if="!isLoading && !errorMessage"
+        class="grid md:grid-cols-3 gap-8"
+      >
+        <div
+          v-for="(step, index) in steps"
+          :key="index"
+          class="relative group rounded-3xl overflow-hidden p-1 bg-gradient-to-br from-white/10 to-white/5 shadow-2xl hover:scale-[1.02] transition-transform duration-500 backdrop-blur-xl"
+        >
+          <!-- Glow Border Animation -->
+          <div
+            class="absolute -inset-[2px] bg-gradient-to-br from-blue-400/40 to-purple-500/40 blur-xl opacity-0 group-hover:opacity-100 transition duration-700 pointer-events-none"
+          ></div>
+
+          <!-- Inner Card -->
+          <div class="relative z-10 bg-white/5 rounded-[inherit] p-6 flex flex-col h-full">
+            <!-- Video -->
+            <div class="relative rounded-2xl overflow-hidden shadow-lg border border-white/10 mb-4">
+              <video
+                v-if="step.video"
+                autoplay
+                loop
+                muted
+                playsinline
+                class="w-full aspect-video object-cover transition duration-300 group-hover:scale-105"
+              >
+                <source :src="step.video" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+
+            <!-- Title & Description -->
+            <h3 :class="`text-xl font-semibold mb-2 ${step.color}`">
+              {{ step.title }}
+            </h3>
+            <p class="text-sm text-white/80 flex-1">
+              {{ step.desc }}
+            </p>
           </div>
-          <h3 :class="`text-xl font-semibold mb-2 ${step.color}`">{{ step.title }}</h3>
-          <p class="text-sm text-white/80">{{ step.desc }}</p>
         </div>
       </div>
 
       <!-- CTA -->
-      <div class="mt-20">
+      <div v-if="!isLoading" class="mt-20">
         <a
           href="/auth"
           class="inline-block bg-gradient-to-r from-sky-400 to-blue-600 text-white px-10 py-4 rounded-full text-lg font-semibold shadow-lg hover:scale-105 transition duration-300"
@@ -68,8 +104,8 @@
         />
         <defs>
           <linearGradient id="waveGradientBottom" x1="0" x2="1" y1="0" y2="1">
-            <stop offset="0%" stop-color="#38bdf8"/>
-            <stop offset="100%" stop-color="#9333ea"/>
+            <stop offset="0%" stop-color="#38bdf8" />
+            <stop offset="100%" stop-color="#9333ea" />
           </linearGradient>
         </defs>
       </svg>
@@ -78,26 +114,54 @@
 </template>
 
 <script setup>
-const steps = [
-  {
-    title: 'Catat Transaksi',
-    desc: 'Masukkan pengeluaran atau pemasukanmu secara instan, kapan pun dibutuhkan.',
-    video: 'https://videocdn.cdnpk.net/videos/72d0d679-cb78-4bf7-8fa1-ffbbbb06764c/horizontal/previews/clear/small.mp4?token=exp=1753345332~hmac=53bb3c2214a9d088bc7e74688059e67b3e32031ef55c764e942551216a645af8',
-    color: 'text-blue-300'
-  },
-  {
-    title: 'Pantau Dashboard',
-    desc: 'Lihat ringkasan saldo, grafik harian, dan kategori utama dengan jelas.',
-    video: 'https://videocdn.cdnpk.net/videos/72d0d679-cb78-4bf7-8fa1-ffbbbb06764c/horizontal/previews/clear/small.mp4?token=exp=1753345332~hmac=53bb3c2214a9d088bc7e74688059e67b3e32031ef55c764e942551216a645af8',
-    color: 'text-teal-300'
-  },
-  {
-    title: 'Analisis Pola',
-    desc: 'Identifikasi pola boros dan temukan potensi penghematan lewat visualisasi.',
-    video: 'https://videocdn.cdnpk.net/videos/72d0d679-cb78-4bf7-8fa1-ffbbbb06764c/horizontal/previews/clear/small.mp4?token=exp=1753345332~hmac=53bb3c2214a9d088bc7e74688059e67b3e32031ef55c764e942551216a645af8',
-    color: 'text-purple-300'
+import { ref, onMounted } from 'vue'
+import supabase from '../lib/supabaseClient'
+
+const isLoading = ref(true)
+const errorMessage = ref('')
+const steps = ref([])
+
+onMounted(async () => {
+  try {
+    const filenames = ['step1.mp4', 'step2.mp4', 'step3.mp4']
+    const publicUrls = []
+
+    for (const name of filenames) {
+      const { data, error } = supabase.storage.from('video').getPublicUrl(name)
+      if (error || !data?.publicUrl) {
+        console.error(`Gagal mengambil video: ${name}`, error)
+        throw new Error(`Gagal mengambil video ${name}`)
+      }
+      publicUrls.push(data.publicUrl)
+    }
+
+    steps.value = [
+      {
+        title: 'Catat Transaksi',
+        desc: 'Masukkan pengeluaran atau pemasukanmu secara instan, kapan pun dibutuhkan.',
+        video: publicUrls[0],
+        color: 'text-blue-300'
+      },
+      {
+        title: 'Pantau Dashboard',
+        desc: 'Lihat ringkasan saldo, grafik harian, dan kategori utama dengan jelas.',
+        video: publicUrls[1],
+        color: 'text-teal-300'
+      },
+      {
+        title: 'Analisis Pola',
+        desc: 'Identifikasi pola boros dan temukan potensi penghematan lewat visualisasi.',
+        video: publicUrls[2],
+        color: 'text-purple-300'
+      }
+    ]
+  } catch (err) {
+    errorMessage.value = 'Terjadi kesalahan saat memuat video demo. Silakan coba beberapa saat lagi.'
+    console.error(err)
+  } finally {
+    isLoading.value = false
   }
-];
+})
 </script>
 
 <style scoped>
