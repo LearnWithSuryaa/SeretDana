@@ -62,7 +62,7 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
 import { PlusIcon } from '@heroicons/vue/24/outline';
-import AddBudgetModal from './AddBudgetModal.vue';
+import AddBudgetModal from '../modal/AddBudgetModal.vue'; 
 import Chart from 'chart.js/auto'; // Import Chart.js
 
 const props = defineProps({

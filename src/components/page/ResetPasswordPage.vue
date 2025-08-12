@@ -50,7 +50,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import supabase from '../lib/supabaseClient'; // Pastikan path benar
+import supabase from '../../lib/supabaseClient'; // Pastikan path benar
 
 const router = useRouter();
 const route = useRoute();

@@ -83,7 +83,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { PlusIcon, PencilSquareIcon } from "@heroicons/vue/24/outline";
-import AddEditCategoryModal from "./AddEditCategoryModal.vue";
+import AddEditCategoryModal from "../modal/AddEditCategoryModal.vue";
 
 const props = defineProps({
   categories: {

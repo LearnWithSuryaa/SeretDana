@@ -261,7 +261,7 @@
 
 <script setup>
 import { ref } from "vue";
-import supabase from "../lib/supabaseClient";
+import supabase from "../../lib/supabaseClient";
 import {
   EyeIcon,
   EyeSlashIcon,
@@ -270,7 +270,7 @@ import {
   ArrowLeftIcon,
 } from "@heroicons/vue/24/outline";
 import { useRouter } from "vue-router";
-import ForgotPasswordModal from "./ForgotPasswordModal.vue"; // Import the new modal
+import ForgotPasswordModal from "../modal/ForgotPasswordModal.vue"; // Import the new modal
 
 const router = useRouter();
 

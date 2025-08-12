@@ -253,17 +253,17 @@ const menuItems = [
   { key: "profile", label: "Profil", icon: UserCircleIcon },
 ];
 
-import supabase from "../lib/supabaseClient"; // Pastikan path benar
+import supabase from "../../lib/supabaseClient"; // Pastikan path benar
 
 // Import komponen modular
-import DashboardOverview from "./DashboardOverview.vue";
-import TransactionsList from "./TransactionsList.vue";
-import BudgetsAnalytics from "./BudgetsAnalytics.vue";
-import BillsList from "./BillsList.vue";
-import SavingsGoals from "./SavingsGoals.vue";
-import UserProfile from "./UserProfile.vue";
-import CategoriesPage from "./CategoriesPage.vue"; // Import CategoriesPage
-import Modal from "./Modal.vue"; // Modal serbaguna (alert/konfirmasi)
+import DashboardOverview from "../dashboard/DashboardOverview.vue";
+import TransactionsList from "../dashboard/TransactionsList.vue";
+import BudgetsAnalytics from "../dashboard/BudgetsAnalytics.vue";
+import BillsList from "../dashboard/BillsList.vue";
+import SavingsGoals from "../dashboard/SavingsGoals.vue";
+import UserProfile from "../dashboard/UserProfile.vue";
+import CategoriesPage from "../page/CategoriesPage.vue"; // Import CategoriesPage
+import Modal from "../dashboard/Modal.vue"; // Modal serbaguna (alert/konfirmasi)
 
 const router = useRouter();
 
@@ -694,7 +694,7 @@ const categorizeTransactionAutomatically = (
       "mie ayam",
       "pangsit",
       "soto",
-      "gudeg", // Makanan khas Malang/Jawa Timur
+      "gudeg", 
       "kopi susu",
       "matcha",
       "croissant",
@@ -716,7 +716,7 @@ const categorizeTransactionAutomatically = (
       "gofood",
       "shopeefood",
       "traveloka eats",
-      "promo", // Aplikasi & promo
+      "promo", 
     ],
     Transportasi: [
       "ojol",

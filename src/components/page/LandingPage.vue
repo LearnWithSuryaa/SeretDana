@@ -94,96 +94,8 @@
     <!--Feature Section-->
     <FeatureSection />
 
-    <section
-      id="why-us"
-      class="relative py-28 px-6 md:px-12 overflow-hidden bg-gradient-to-br from-sky-50 via-white to-indigo-100 z-10"
-    >
-      <!-- Background Dekoratif SVG -->
-      <div class="absolute inset-0 -z-10">
-        <svg
-          class="absolute top-0 left-0 w-full h-[300px] opacity-20"
-          viewBox="0 0 1440 320"
-        >
-          <path
-            fill="#c4b5fd"
-            fill-opacity="0.3"
-            d="M0,96L80,101.3C160,107,320,117,480,112C640,107,800,85,960,90.7C1120,96,1280,128,1360,144L1440,160L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z"
-          />
-        </svg>
-      </div>
-
-      <div class="max-w-6xl mx-auto text-center">
-        <h2
-          class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-20 leading-tight"
-        >
-          Mengapa
-          <span
-            class="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500"
-            >Fluidana</span
-          >
-          Cocok untuk Mahasiswa Rantau?
-        </h2>
-
-        <!-- Cards -->
-        <div class="grid md:grid-cols-2 gap-10 relative z-10">
-          <!-- Card 1 -->
-          <div
-            class="bg-white p-8 rounded-3xl shadow-2xl relative hover:shadow-indigo-300/30 hover:scale-[1.02] transition duration-300 group"
-          >
-            <div
-              class="absolute -top-6 -left-6 w-14 h-14 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center shadow-md"
-            >
-              <SparklesIcon class="w-7 h-7" />
-            </div>
-            <h3 class="text-xl font-semibold text-sky-600 mt-8 mb-3">
-              Desain Intuitif & Ramah Gen Z
-            </h3>
-            <p class="text-gray-700 text-sm leading-relaxed">
-              Seret Dana didesain dengan antarmuka yang modern, fokus, dan bebas
-              gangguan. Cocok untuk kamu yang punya jadwal padat.
-            </p>
-          </div>
-
-          <!-- Card 2 -->
-          <div
-            class="bg-white p-8 rounded-3xl shadow-2xl relative hover:shadow-green-300/30 hover:scale-[1.02] transition duration-300 group md:-mt-6"
-          >
-            <div
-              class="absolute -top-6 -left-6 w-14 h-14 rounded-full bg-green-100 text-green-600 flex items-center justify-center shadow-md"
-            >
-              <AcademicCapIcon class="w-7 h-7" />
-            </div>
-            <h3 class="text-xl font-semibold text-green-600 mt-8 mb-3">
-              Fokus pada Kebutuhan Mahasiswa
-            </h3>
-            <p class="text-gray-700 text-sm leading-relaxed">
-              Fluidana mengerti kondisi finansial mahasiswa rantau. Dari uang
-              saku hingga pengeluaran harian, semua bisa kamu lacak dengan
-              simpel.
-            </p>
-          </div>
-
-          <!-- Card 3 -->
-          <div
-            class="bg-white p-8 rounded-3xl shadow-2xl relative hover:shadow-purple-300/30 hover:scale-[1.02] transition duration-300 group md:col-span-2 md:-mt-8"
-          >
-            <div
-              class="absolute -top-6 -left-6 w-14 h-14 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center shadow-md"
-            >
-              <LightBulbIcon class="w-7 h-7" />
-            </div>
-            <h3 class="text-xl font-semibold text-purple-600 mt-8 mb-3">
-              Edukasi Finansial Ringan
-            </h3>
-            <p class="text-gray-700 text-sm leading-relaxed max-w-2xl mx-auto">
-              Fluidana bukan hanya alat pencatat, tapi juga sahabat finansial.
-              Memberikan insight sederhana yang membantu kamu membentuk
-              kebiasaan sehat secara perlahan.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
+    <!-- Why Us Section -->
+    <WhyUsSection />
 
     <!-- How It Works Section -->
     <HowItWorks />
@@ -193,77 +105,12 @@
 
     <!-- Testimonials Section -->
     <TestimonialCarousel />
-    <!-- FAQ Section -->
-    <section
-      id="faq"
-      class="py-20 px-6 md:px-12 bg-gradient-to-b from-white via-gray-50 to-white relative z-10"
-    >
-      <div class="container mx-auto max-w-3xl">
-        <h2
-          class="text-3xl md:text-4xl font-extrabold text-center mb-14 bg-gradient-to-r from-pink-500 to-purple-500 text-transparent bg-clip-text animate-fade-up py-1"
-        >
-          Pertanyaan Sering Diajukan (FAQ)
-        </h2>
 
-        <div class="space-y-6">
-          <!-- FAQ Item -->
-          <div
-            v-for="(faq, index) in faqs"
-            :key="index"
-            class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 animate-fade-up"
-            :class="`delay-${index * 100}`"
-          >
-            <details class="group">
-              <summary
-                class="flex justify-between items-center cursor-pointer font-semibold text-lg text-gray-800 transition-colors group-open:text-purple-600"
-              >
-                {{ faq.question }}
-                <span
-                  class="ml-4 transition-transform duration-300 group-open:rotate-180 text-purple-500"
-                >
-                  <ChevronDownIcon class="w-5 h-5" />
-                </span>
-              </summary>
-              <p class="mt-4 text-gray-600 leading-relaxed">
-                {{ faq.answer }}
-              </p>
-            </details>
-          </div>
-        </div>
-      </div>
-    </section>
+    <!-- FAQ Section -->
+    <FaqSection />
 
     <!-- Call to Action Section -->
-    <section
-      class="py-16 px-4 sm:px-6 md:px-12 text-center mt-10 relative overflow-hidden"
-    >
-      <!-- Soft background blobs -->
-      <div
-        class="absolute top-[-100px] left-[-100px] w-[250px] h-[250px] sm:w-[300px] sm:h-[300px] bg-purple-300 opacity-30 rounded-full blur-3xl z-0"
-      ></div>
-      <div
-        class="absolute bottom-[-100px] right-[-100px] w-[250px] h-[250px] sm:w-[300px] sm:h-[300px] bg-pink-300 opacity-30 rounded-full blur-3xl z-0"
-      ></div>
-
-      <div
-        class="container mx-auto max-w-xl sm:max-w-2xl bg-white px-6 sm:px-10 py-10 rounded-2xl shadow-lg relative z-10 border-4 border-purple-200 animate-fade-up"
-      >
-        <h2
-          class="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 gen-z-text-gradient py-1"
-        >
-          Siap Bebas Drama Keuangan?
-        </h2>
-        <p class="text-base sm:text-lg text-gray-700 mb-8">
-          Jangan tunda lagi! Mulai atur keuanganmu sekarang dan rasakan bedanya.
-        </p>
-        <a
-          href="/auth"
-          class="gen-z-gradient text-white px-6 sm:px-10 py-3 sm:py-4 rounded-full text-lg sm:text-xl font-semibold shadow-xl hover:opacity-90 transform hover:scale-105 transition duration-300 btn-primary"
-        >
-          Daftar Gratis Sekarang!
-        </a>
-      </div>
-    </section>
+    <CallToAction />
 
     <!-- Footer -->
     <footer
@@ -288,38 +135,19 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import {
-  ChevronDownIcon,
-  SparklesIcon,
-  AcademicCapIcon,
-  LightBulbIcon,
   Bars3Icon, // For mobile menu hamburger
   XMarkIcon, // For mobile menu close
 } from "@heroicons/vue/24/outline";
 
 // Import the new DemoSection component
-import FeatureSection from "./FeatureSection.vue";
-import HowItWorks from "./HowItWorks.vue";
-import DemoSection from "./DemoSection.vue";
-import TestimonialCarousel from "./TestimonialCarousel.vue";
-import HeroSection from "./HeroSection.vue";
-
-const faqs = [
-  {
-    question: "Apakah Fluidana gratis?",
-    answer:
-      "Ya, Fluidana dapat digunakan secara gratis dengan fitur dasar yang lengkap untuk pencatatan keuangan harian. Mungkin akan ada fitur premium di masa depan, namun fitur inti akan selalu gratis.",
-  },
-  {
-    question: "Bagaimana Fluidana menjaga keamanan data saya?",
-    answer:
-      "Kami menggunakan teknologi enkripsi standar industri dan mengandalkan infrastruktur keamanan dari Supabase untuk melindungi data Anda. Data Anda tidak akan pernah dibagikan kepada pihak ketiga tanpa izin Anda.",
-  },
-  {
-    question: "Apakah Fluidana tersedia di mobile?",
-    answer:
-      "Fluidana didesain responsif dan dapat diakses dengan baik melalui browser di perangkat mobile Anda. Kami sedang merencanakan pengembangan aplikasi native di masa depan!",
-  },
-];
+import FeatureSection from "../landing/FeatureSection.vue";
+import HowItWorks from "../landing/HowItWorks.vue";
+import DemoSection from "../landing/DemoSection.vue";
+import TestimonialCarousel from "../landing/TestimonialCarousel.vue";
+import HeroSection from "../landing/HeroSection.vue";
+import WhyUsSection from "../landing/WhyUsSection.vue";
+import FaqSection from "../landing/FaqSection.vue";
+import CallToAction from "../landing/CallToAction.vue";
 
 // Reactive state for mobile menu
 const isMobileMenuOpen = ref(false);

@@ -34,15 +34,24 @@
     <div class="relative z-10 container mx-auto max-w-4xl">
       <h1
         class="text-4xl md:text-6xl font-extrabold leading-tight mb-6 tracking-tight"
+        data-aos="fade-up"
       >
         Atur Keuangan, Hidup Tenang. <br class="hidden sm:block" />
         <span class="text-blue-400">Fluidana, Mengalirkan Kendali Uangmu.</span>
       </h1>
-      <p class="text-lg md:text-xl mb-10 text-gray-300">
+      <p
+        class="text-lg md:text-xl mb-10 text-gray-300"
+        data-aos="fade-up"
+        data-aos-delay="200"
+      >
         Fluidana adalah aplikasi keuangan harian untuk mahasiswa rantau. Catat
         pengeluaran, kontrol anggaran, dan wujudkan tabungan masa depan — semua dalam satu alur yang simpel dan lancar.
       </p>
-      <div class="flex flex-col sm:flex-row justify-center gap-4">
+      <div
+        class="flex flex-col sm:flex-row justify-center gap-4"
+        data-aos="zoom-in"
+        data-aos-delay="400"
+      >
         <a
           href="/auth"
           class="bg-white text-blue-600 px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:bg-blue-100 hover:scale-105 transition duration-300"
@@ -75,7 +84,9 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const cursor = ref({ x: 0, y: 0 });
 const cursorVisible = ref(false);
@@ -91,6 +102,14 @@ const scrollToSection = (id) => {
   const el = document.getElementById(id);
   if (el) el.scrollIntoView({ behavior: "smooth" });
 };
+
+onMounted(() => {
+  AOS.init({
+    duration: 900,
+    easing: "ease-out-cubic",
+    once: true,
+  });
+});
 </script>
 
 <style scoped>

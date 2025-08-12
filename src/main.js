@@ -8,13 +8,13 @@ import App from "./App.vue";
 import "./style.css"; // Pastikan path ini benar
 
 // Import komponen halaman Anda
-import LandingPage from "./components/LandingPage.vue";
-import AuthPage from "./components/AuthPage.vue";
-import DashboardPage from "./components/DashboardPage.vue";
-import PrivacyPolicyPage from "./components/PrivacyPolicyPage.vue"; // Import Kebijakan Privasi
-import TermsAndConditionsPage from "./components/TermsAndConditionsPage.vue"; // Import Syarat & Ketentuan
-import ContactPage from "./components/ContactPage.vue"; // Import Kontak
-import ResetPasswordPage from "./components/ResetPasswordPage.vue"; // Import ResetPasswordPage
+import LandingPage from "./components/page/LandingPage.vue";
+import AuthPage from "./components/page/AuthPage.vue";
+import DashboardPage from "./components/page/DashboardPage.vue"; // Import DashboardPage
+import PrivacyPolicyPage from "./components/page/PrivacyPolicyPage.vue"; // Import Kebijakan Privasi
+import TermsAndConditionsPage from "./components/page/TermsAndConditionsPage.vue"; // Import Syarat & Ketentuan
+import ContactPage from "./components/page/ContactPage.vue"; // Import Kontak
+import ResetPasswordPage from "./components/page/ResetPasswordPage.vue"; // Import ResetPasswordPage
 import supabase from "./lib/supabaseClient"; // Pastikan path benar
 
 // 1. Definisikan rute-rute Anda

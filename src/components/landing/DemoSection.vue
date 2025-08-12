@@ -28,10 +28,17 @@
     <!-- Container -->
     <div class="relative z-10 max-w-6xl mx-auto text-center">
       <!-- Header -->
-      <h2 class="text-4xl md:text-5xl font-extrabold mb-6 gen-z-text-gradient">
+      <h2
+        class="text-4xl md:text-5xl font-extrabold mb-6 gen-z-text-gradient"
+        data-aos="fade-up"
+      >
         Demo Aplikasi Fluidana
       </h2>
-      <p class="text-lg text-white/80 mb-16 max-w-2xl mx-auto">
+      <p
+        class="text-lg text-white/80 mb-16 max-w-2xl mx-auto"
+        data-aos="fade-up"
+        data-aos-delay="150"
+      >
         Rasakan langsung kemudahan mencatat dan memahami keuanganmu dengan
         antarmuka yang jernih dan mengalir.
       </p>
@@ -44,16 +51,27 @@
       </div>
 
       <!-- Error Message -->
-      <div v-if="errorMessage" class="text-red-400 text-sm mb-8">
+      <div
+        v-if="errorMessage"
+        class="text-red-400 text-sm mb-8"
+        data-aos="fade-up"
+      >
         {{ errorMessage }}
       </div>
 
       <!-- Demo Cards -->
-      <div v-if="!isLoading && !errorMessage" class="grid md:grid-cols-3 gap-8">
+      <div
+        v-if="!isLoading && !errorMessage"
+        class="grid md:grid-cols-3 gap-8"
+        data-aos="fade-up"
+        data-aos-delay="300"
+      >
         <div
           v-for="(step, index) in steps"
           :key="index"
           @click="openModal(step.video)"
+          :data-aos="'zoom-in'"
+          :data-aos-delay="index * 200"
           class="cursor-pointer relative group rounded-3xl overflow-hidden p-1 bg-gradient-to-br from-white/10 to-white/5 shadow-2xl hover:scale-[1.02] transition-transform duration-500 backdrop-blur-xl"
         >
           <!-- Glow Border Animation -->
@@ -88,7 +106,12 @@
       </div>
 
       <!-- CTA -->
-      <div v-if="!isLoading" class="mt-20">
+      <div
+        v-if="!isLoading"
+        class="mt-20"
+        data-aos="fade-up"
+        data-aos-delay="500"
+      >
         <a
           href="/auth"
           class="inline-block bg-gradient-to-r from-sky-400 to-blue-600 text-white px-10 py-4 rounded-full text-lg font-semibold shadow-lg hover:scale-105 transition duration-300"
@@ -154,7 +177,9 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import supabase from "../lib/supabaseClient";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import supabase from "../../lib/supabaseClient";
 
 const isLoading = ref(true);
 const errorMessage = ref("");
@@ -174,6 +199,12 @@ function closeModal() {
 }
 
 onMounted(async () => {
+  AOS.init({
+    duration: 800,
+    once: true,
+    easing: "ease-out-cubic",
+  });
+
   try {
     const filenames = ["step1.mp4", "step2.mp4", "step3.mp4"];
     const publicUrls = [];

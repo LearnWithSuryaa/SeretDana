@@ -51,7 +51,7 @@
 <script setup>
 import { ref } from 'vue';
 import { PlusIcon, PencilSquareIcon } from '@heroicons/vue/24/outline'; // Added PencilSquareIcon for edit button in list if needed
-import AddEditGoalModal from './AddEditGoalModal.vue'; // Import the new modal component
+import AddEditGoalModal from '../modal/AddEditGoalModal.vue'; // Import the new modal component
 
 const props = defineProps({
   savingsGoals: {

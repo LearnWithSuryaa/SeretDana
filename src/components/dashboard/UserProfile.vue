@@ -60,9 +60,9 @@
 
 <script setup>
 import { ref } from 'vue';
-import EditProfileModal from './EditProfileModal.vue';
-import ChangePasswordModal from './ChangePasswordModal.vue'; // Import the new modal component
-import InfoItem from './InfoItem.vue'; // Pastikan InfoItem diimpor
+import EditProfileModal from '../modal/EditProfileModal.vue'; // Import the new modal component
+import ChangePasswordModal from '../modal/ChangePasswordModal.vue'; // Import the new modal component
+import InfoItem from '../dashboard/InfoItem.vue'; // Pastikan InfoItem diimpor
 
 import {
   EnvelopeIcon,

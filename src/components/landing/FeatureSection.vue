@@ -1,5 +1,6 @@
 <template>
   <section
+    id="features"
     class="relative bg-gradient-to-br from-blue-50 via-white to-sky-100 py-24 px-6 md:px-12 lg:px-24 overflow-hidden"
   >
     <!-- Background SVG Wave -->

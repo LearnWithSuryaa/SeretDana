@@ -112,7 +112,7 @@ import {
   PlusCircleIcon,
   CurrencyDollarIcon // New icon for daily spending limit
 } from '@heroicons/vue/24/outline';
-import AddTransactionModal from './AddTransactionModal.vue';
+import AddTransactionModal from '../modal/AddTransactionModal.vue'; 
 
 const props = defineProps({
   userProfile: {
