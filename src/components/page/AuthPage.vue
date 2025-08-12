@@ -1,27 +1,23 @@
 <template>
   <div
-    class="min-h-screen flex items-center justify-center bg-gray-100 p-4 sm:p-6"
+    class="min-h-screen flex items-center justify-center p-4 sm:p-6 font-sans bg-gradient-to-br from-green-100 via-blue-100 to-purple-100"
   >
+    <!-- Central Card with Glassmorphism Effect -->
     <div
-      class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md transform transition-all duration-300 hover:shadow-xl"
+      class="relative bg-white/30 backdrop-blur-lg rounded-3xl shadow-xl border border-white/20 w-full max-w-xl p-8 lg:p-12 transform transition-all duration-700 hover:shadow-2xl"
+      data-aos="zoom-in"
     >
-      <!-- Back Button (Visible on both Login and Registration) -->
-      <div class="flex justify-start mb-4">
-        <button
-          @click.prevent="goBackToLanding"
-          class="text-gray-600 hover:text-blue-500 focus:outline-none p-2 rounded-full hover:bg-gray-100 transition duration-200 cursor-pointer"
-          aria-label="Kembali ke halaman utama"
-        >
-          <ArrowLeftIcon class="w-6 h-6" />
-        </button>
-      </div>
+      <!-- Background Gradient for Card (subtle, as a fallback) -->
+      <div
+        class="absolute inset-0 bg-white/10 rounded-3xl -z-10"
+      ></div>
 
       <!-- Heading -->
-      <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold gen-z-text-gradient mb-2">
+      <div class="text-center mb-8" data-aos="fade-down" data-aos-delay="100">
+        <h1 class="text-4xl font-bold gen-z-text-gradient mb-2">
           {{ isLogin ? "Masuk ke Fluidana" : "Daftar Akun Baru" }}
         </h1>
-        <p class="text-gray-600">
+        <p class="text-gray-700">
           {{
             isLogin
               ? "Kelola keuanganmu dengan mudah."
@@ -30,10 +26,11 @@
         </p>
       </div>
 
-      <!-- Form -->
-      <form @submit.prevent="handleSubmit">
+      <!-- Menambahkan :key untuk memaksa Vue me-render ulang formulir,
+           memastikan AOS dapat mendeteksi elemen baru -->
+      <form @submit.prevent="handleSubmit" :key="isLogin">
         <!-- Email -->
-        <div class="mb-5">
+        <div class="mb-5" data-aos="fade-up" data-aos-delay="200">
           <label
             for="email"
             class="block text-gray-700 text-sm font-semibold mb-2"
@@ -44,7 +41,7 @@
               type="email"
               id="email"
               v-model="email"
-              class="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 focus:outline-none"
+              class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 focus:outline-none bg-white/60 placeholder-gray-500"
               placeholder="contoh@email.com"
               required
             />
@@ -57,7 +54,7 @@
         </div>
 
         <!-- Password -->
-        <div class="mb-5">
+        <div class="mb-5" data-aos="fade-up" data-aos-delay="300">
           <label
             for="password"
             class="block text-gray-700 text-sm font-semibold mb-2"
@@ -68,7 +65,7 @@
               :type="passwordFieldType"
               id="password"
               v-model="password"
-              class="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 focus:outline-none"
+              class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 focus:outline-none bg-white/60 placeholder-gray-500"
               placeholder="Minimal 6 karakter"
               required
             />
@@ -92,7 +89,7 @@
         </div>
 
         <!-- Forgot Password Link (Only visible on login form) -->
-        <div v-if="isLogin" class="text-right mb-5 text-sm">
+        <div v-if="isLogin" class="text-right mb-5 text-sm" data-aos="fade-up" data-aos-delay="400">
           <a
             href="#"
             @click.prevent="isForgotPasswordModalVisible = true"
@@ -103,18 +100,18 @@
 
         <!-- Registration Fields (Only visible during registration) -->
         <div v-if="!isLogin" class="space-y-4 mb-6">
-          <div class="mb-5">
+          <div class="mb-5" data-aos="fade-up" data-aos-delay="400">
             <label
               for="confirm-password"
               class="block text-gray-700 text-sm font-semibold mb-2"
-            >Konfirmasi Password</label
+              >Konfirmasi Password</label
             >
             <div class="relative">
               <input
                 :type="passwordFieldType"
                 id="confirm-password"
                 v-model="confirmPassword"
-                class="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 focus:outline-none"
+                class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 focus:outline-none bg-white/60 placeholder-gray-500"
                 placeholder="Ulangi password Anda"
                 required
               />
@@ -125,86 +122,103 @@
               </div>
             </div>
           </div>
-
-          <!-- Name -->
-          <div>
+          <div data-aos="fade-up" data-aos-delay="500">
             <label
               for="name"
               class="block text-gray-700 text-sm font-semibold mb-2"
-            >Nama Lengkap</label
+              >Nama Lengkap</label
             >
             <input
               type="text"
               id="name"
               v-model="name"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 focus:outline-none"
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 focus:outline-none bg-white/60 placeholder-gray-500"
               placeholder="Nama Lengkap Anda"
               required
             />
           </div>
-
-          <!-- University (Optional) -->
-          <div>
+          <div data-aos="fade-up" data-aos-delay="600">
             <label
               for="university"
               class="block text-gray-700 text-sm font-semibold mb-2"
-            >Universitas (Opsional)</label
+              >Universitas (Opsional)</label
             >
             <input
               type="text"
               id="university"
               v-model="university"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 focus:outline-none"
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 focus:outline-none bg-white/60 placeholder-gray-500"
               placeholder="Contoh: Universitas Maju Jaya"
             />
           </div>
-
-          <!-- Major (Optional) -->
-          <div>
+          <div data-aos="fade-up" data-aos-delay="700">
             <label
               for="major"
               class="block text-gray-700 text-sm font-semibold mb-2"
-            >Jurusan (Opsional)</label
+              >Jurusan (Opsional)</label
             >
             <input
               type="text"
               id="major"
               v-model="major"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 focus:outline-none"
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 focus:outline-none bg-white/60 placeholder-gray-500"
               placeholder="Contoh: Ilmu Komputer"
             />
           </div>
-
-          <!-- Home City (Optional) -->
-          <div>
+          <div data-aos="fade-up" data-aos-delay="800">
             <label
               for="home-city"
               class="block text-gray-700 text-sm font-semibold mb-2"
-            >Kota Asal (Opsional)</label
+              >Kota Asal (Opsional)</label
             >
             <input
               type="text"
               id="home-city"
               v-model="homeCity"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-200 focus:outline-none"
+              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 focus:outline-none bg-white/60 placeholder-gray-500"
               placeholder="Contoh: Bandung"
             />
           </div>
         </div>
 
-        <!-- Submit -->
         <button
           type="submit"
           :disabled="isLoading"
-          class="w-full gen-z-gradient text-white px-6 py-3 rounded-full text-lg font-semibold shadow-md hover:opacity-90 transform hover:scale-105 transition duration-300 btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+          class="w-full gen-z-gradient text-white px-6 py-3 rounded-full text-lg font-semibold shadow-md hover:opacity-90 transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          data-aos="fade-up"
+          :data-aos-delay="isLogin ? '500' : '900'"
         >
           <span v-if="isLoading">Memproses...</span>
           <span v-else>{{ isLogin ? "Masuk" : "Daftar" }}</span>
         </button>
       </form>
 
+      <!-- Divider dan Tombol Google Login -->
+      <div class="flex items-center my-6" data-aos="fade-up" :data-aos-delay="isLogin ? '600' : '1000'">
+        <div class="flex-grow border-t border-gray-300"></div>
+        <span class="mx-4 text-gray-500 text-sm">atau</span>
+        <div class="flex-grow border-t border-gray-300"></div>
+      </div>
+
+      <button
+        type="button"
+        @click.prevent="handleGoogleLogin"
+        :disabled="isLoading"
+        class="w-full flex items-center justify-center px-6 py-3 rounded-full text-lg font-semibold border border-gray-300 bg-white shadow-md hover:bg-gray-50 transform hover:scale-105 hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+        data-aos="fade-up"
+        :data-aos-delay="isLogin ? '700' : '1100'"
+      >
+        <!-- Menggunakan tag <img> untuk logo Google dari folder assets -->
+        <img src="/assets/google.png" alt="Google Logo" class="w-6 h-6 mr-3">
+        <span>Masuk dengan Google</span>
+      </button>
+
       <!-- Switch mode -->
-      <div class="mt-6 text-center text-gray-600">
+      <div
+        class="mt-6 text-center text-gray-600"
+        data-aos="fade-up"
+        :data-aos-delay="isLogin ? '800' : '1200'"
+      >
         <p v-if="isLogin">
           Belum punya akun?
           <a
@@ -213,7 +227,7 @@
               isLogin = false;
               errorMessage = '';
               successMessage = '';
-              resetRegistrationFields(); // Reset fields when switching to register
+              resetRegistrationFields();
             "
             class="text-blue-600 hover:underline font-semibold"
             >Daftar Sekarang</a
@@ -227,7 +241,7 @@
               isLogin = true;
               errorMessage = '';
               successMessage = '';
-              resetRegistrationFields(); // Reset fields when switching to login
+              resetRegistrationFields();
             "
             class="text-blue-600 hover:underline font-semibold"
             >Masuk</a
@@ -239,18 +253,19 @@
       <div
         v-if="errorMessage"
         class="mt-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm text-center"
+        data-aos="fade-up"
       >
         {{ errorMessage }}
       </div>
       <div
         v-if="successMessage"
         class="mt-4 p-3 bg-green-100 text-green-700 rounded-lg text-sm text-center"
+        data-aos="fade-up"
       >
         {{ successMessage }}
       </div>
     </div>
 
-    <!-- Forgot Password Modal -->
     <ForgotPasswordModal
       :is-visible="isForgotPasswordModalVisible"
       @close="isForgotPasswordModalVisible = false"
@@ -260,17 +275,16 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watch, nextTick } from "vue";
 import supabase from "../../lib/supabaseClient";
 import {
   EyeIcon,
   EyeSlashIcon,
   EnvelopeIcon,
   LockClosedIcon,
-  ArrowLeftIcon,
 } from "@heroicons/vue/24/outline";
 import { useRouter } from "vue-router";
-import ForgotPasswordModal from "../modal/ForgotPasswordModal.vue"; // Import the new modal
+import ForgotPasswordModal from "../modal/ForgotPasswordModal.vue";
 
 const router = useRouter();
 
@@ -286,8 +300,7 @@ const passwordFieldType = ref("password");
 const errorMessage = ref("");
 const successMessage = ref("");
 const isLoading = ref(false);
-
-const isForgotPasswordModalVisible = ref(false); // New state for forgot password modal
+const isForgotPasswordModalVisible = ref(false);
 
 const togglePasswordVisibility = () => {
   passwordFieldType.value =
@@ -301,14 +314,6 @@ const resetRegistrationFields = () => {
   homeCity.value = "";
   password.value = "";
   confirmPassword.value = "";
-};
-
-const goBackToLanding = () => {
-  router.push("/");
-  errorMessage.value = "";
-  successMessage.value = "";
-  isLogin.value = true;
-  resetRegistrationFields();
 };
 
 const handleSubmit = async () => {
@@ -351,7 +356,6 @@ const handleSubmit = async () => {
     let data, error;
 
     if (isLogin.value) {
-      // Login
       ({ data, error } = await supabase.auth.signInWithPassword({
         email: email.value,
         password: password.value,
@@ -364,7 +368,6 @@ const handleSubmit = async () => {
         router.push("/dashboard");
       }, 1000);
     } else {
-      // Register
       ({ data, error } = await supabase.auth.signUp({
         email: email.value,
         password: password.value,
@@ -378,7 +381,8 @@ const handleSubmit = async () => {
         },
       }));
       if (error) throw error;
-      successMessage.value = "Registrasi berhasil! Silakan cek email Anda untuk verifikasi.";
+      successMessage.value =
+        "Registrasi berhasil! Silakan cek email Anda untuk verifikasi.";
       isLogin.value = true;
       resetRegistrationFields();
     }
@@ -392,36 +396,76 @@ const handleSubmit = async () => {
 
 const handleForgotPassword = async (userEmail) => {
   isLoading.value = true;
-  errorMessage.value = '';
-  successMessage.value = '';
+  errorMessage.value = "";
+  successMessage.value = "";
 
   try {
     const { error } = await supabase.auth.resetPasswordForEmail(userEmail, {
-      redirectTo: `${window.location.origin}/reset-password`, 
+      redirectTo: `${window.location.origin}/reset-password`,
     });
 
     if (error) throw error;
 
-    successMessage.value = 'Tautan reset password telah dikirim ke email Anda. Silakan cek inbox Anda.';
-    isForgotPasswordModalVisible.value = false; // Close the modal
+    successMessage.value =
+      "Tautan reset password telah dikirim ke email Anda. Silakan cek inbox Anda.";
+    isForgotPasswordModalVisible.value = false;
   } catch (err) {
     console.error("Forgot password error:", err.message);
-    errorMessage.value = err.message || "Gagal mengirim tautan reset password. Pastikan email benar.";
+    errorMessage.value =
+      err.message || "Gagal mengirim tautan reset password. Pastikan email benar.";
   } finally {
     isLoading.value = false;
   }
 };
 
+const handleGoogleLogin = async () => {
+  isLoading.value = true;
+  errorMessage.value = "";
+
+  try {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`
+      }
+    });
+
+    if (error) throw error;
+
+  } catch (err) {
+    console.error("Google login error:", err.message);
+    errorMessage.value = err.message || "Gagal login dengan Google. Silakan coba lagi.";
+  } finally {
+    isLoading.value = false;
+  }
+};
 
 const isValidEmail = (email) => {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return re.test(email.toLowerCase());
 };
+
+// Fungsi untuk mereset AOS
+const resetAos = () => {
+  nextTick(() => {
+    if (window.AOS) {
+      window.AOS.refreshHard();
+    }
+  });
+};
+
+// Menggunakan watch untuk memanggil resetAos setiap kali `isLogin` berubah
+watch(isLogin, (newValue, oldValue) => {
+  if (newValue !== oldValue) {
+    resetAos();
+  }
+});
 </script>
 
 <style scoped>
 .gen-z-gradient {
   background: linear-gradient(135deg, #6ee7b7, #3b82f6, #9333ea);
+  transition: all 0.3s ease-in-out;
 }
 .gen-z-text-gradient {
   background-clip: text;

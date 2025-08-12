@@ -1,8 +1,11 @@
-// main.js
 import { createApp } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
 import { MotionPlugin } from '@vueuse/motion'
 import App from "./App.vue";
+
+// Impor AOS dan CSS-nya
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 // Impor gaya global Anda
 import "./style.css"; // Pastikan path ini benar
@@ -10,12 +13,12 @@ import "./style.css"; // Pastikan path ini benar
 // Import komponen halaman Anda
 import LandingPage from "./components/page/LandingPage.vue";
 import AuthPage from "./components/page/AuthPage.vue";
-import DashboardPage from "./components/page/DashboardPage.vue"; // Import DashboardPage
-import PrivacyPolicyPage from "./components/page/PrivacyPolicyPage.vue"; // Import Kebijakan Privasi
-import TermsAndConditionsPage from "./components/page/TermsAndConditionsPage.vue"; // Import Syarat & Ketentuan
-import ContactPage from "./components/page/ContactPage.vue"; // Import Kontak
-import ResetPasswordPage from "./components/page/ResetPasswordPage.vue"; // Import ResetPasswordPage
-import supabase from "./lib/supabaseClient"; // Pastikan path benar
+import DashboardPage from "./components/page/DashboardPage.vue";
+import PrivacyPolicyPage from "./components/page/PrivacyPolicyPage.vue";
+import TermsAndConditionsPage from "./components/page/TermsAndConditionsPage.vue";
+import ContactPage from "./components/page/ContactPage.vue";
+import ResetPasswordPage from "./components/page/ResetPasswordPage.vue";
+import supabase from "./lib/supabaseClient";
 
 // 1. Definisikan rute-rute Anda
 const routes = [
@@ -56,10 +59,10 @@ const routes = [
     meta: { requiresAuth: false },
   },
   {
-    path: "/reset-password", // Rute untuk halaman reset password
+    path: "/reset-password",
     name: "ResetPassword",
     component: ResetPasswordPage,
-    meta: { requiresAuth: false }, // Tidak memerlukan autentikasi
+    meta: { requiresAuth: false },
   },
   // 404 fallback
   {
@@ -70,10 +73,9 @@ const routes = [
 
 // 2. Buat instance router
 const router = createRouter({
-  history: createWebHistory(), // Menggunakan history mode untuk URL yang bersih
+  history: createWebHistory(),
   routes,
   scrollBehavior(to, from, savedPosition) {
-    // Selalu scroll ke atas saat navigasi ke rute baru
     return { top: 0, behavior: "smooth" };
   },
 });
@@ -83,24 +85,29 @@ router.beforeEach(async (to, from, next) => {
   const {
     data: { session },
   } = await supabase.auth.getSession();
-  const isAuthenticated = !!session; // Cek apakah user terautentikasi
+  const isAuthenticated = !!session;
 
   if (to.meta.requiresAuth && !isAuthenticated) {
-    // Jika rute memerlukan autentikasi tapi user belum login, arahkan ke halaman login
     next({ name: "Auth" });
   }
-  // Jika user sudah login dan mencoba mengakses halaman Auth, Landing, TAPI BUKAN ResetPassword, arahkan ke dashboard
   else if ((to.name === "Auth" || to.name === "Landing") && isAuthenticated && to.name !== "ResetPassword") {
     next({ name: "Dashboard" });
   }
   else {
-    // Lanjutkan navigasi
     next();
   }
 });
 
 // 4. Buat dan mount aplikasi Vue
 const app = createApp(App);
-app.use(MotionPlugin); // Gunakan Motion Plugin
-app.use(router); // Gunakan router di aplikasi Vue
+app.use(MotionPlugin);
+app.use(router);
 app.mount("#app");
+
+// 5. Inisialisasi AOS setelah aplikasi dimount
+AOS.init({
+   offset: 50,
+   duration: 800,
+   easing: 'ease-in-sine',
+   delay: 100,
+});
