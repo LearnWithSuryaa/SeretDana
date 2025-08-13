@@ -5,7 +5,7 @@
     <!-- Central Card with Glassmorphism Effect -->
     <div
       class="relative bg-white/30 backdrop-blur-lg rounded-3xl shadow-xl border border-white/20 w-full max-w-xl p-8 lg:p-12 transform transition-all duration-700 hover:shadow-2xl"
-      data-aos="zoom-in"
+      data-aos="fade-in"
     >
       <!-- Background Gradient for Card (subtle, as a fallback) -->
       <div
@@ -117,69 +117,69 @@
               />
               <div
                 class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
-              >
-                <LockClosedIcon class="w-5 h-5 text-gray-400" />
+                >
+                  <LockClosedIcon class="w-5 h-5 text-gray-400" />
+                </div>
               </div>
             </div>
+            <div data-aos="fade-up" data-aos-delay="500">
+              <label
+                for="name"
+                class="block text-gray-700 text-sm font-semibold mb-2"
+                >Nama Lengkap</label
+              >
+              <input
+                type="text"
+                id="name"
+                v-model="name"
+                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 focus:outline-none bg-white/60 placeholder-gray-500"
+                placeholder="Nama Lengkap Anda"
+                required
+              />
+            </div>
+            <div data-aos="fade-up" data-aos-delay="600">
+              <label
+                for="university"
+                class="block text-gray-700 text-sm font-semibold mb-2"
+                >Universitas (Opsional)</label
+              >
+              <input
+                type="text"
+                id="university"
+                v-model="university"
+                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 focus:outline-none bg-white/60 placeholder-gray-500"
+                placeholder="Contoh: Universitas Maju Jaya"
+              />
+            </div>
+            <div data-aos="fade-up" data-aos-delay="700">
+              <label
+                for="major"
+                class="block text-gray-700 text-sm font-semibold mb-2"
+                >Jurusan (Opsional)</label
+              >
+              <input
+                type="text"
+                id="major"
+                v-model="major"
+                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 focus:outline-none bg-white/60 placeholder-gray-500"
+                placeholder="Contoh: Ilmu Komputer"
+              />
+            </div>
+            <div data-aos="fade-up" data-aos-delay="800">
+              <label
+                for="home-city"
+                class="block text-gray-700 text-sm font-semibold mb-2"
+                >Kota Asal (Opsional)</label
+              >
+              <input
+                type="text"
+                id="home-city"
+                v-model="homeCity"
+                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 focus:outline-none bg-white/60 placeholder-gray-500"
+                placeholder="Contoh: Bandung"
+              />
+            </div>
           </div>
-          <div data-aos="fade-up" data-aos-delay="500">
-            <label
-              for="name"
-              class="block text-gray-700 text-sm font-semibold mb-2"
-              >Nama Lengkap</label
-            >
-            <input
-              type="text"
-              id="name"
-              v-model="name"
-              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 focus:outline-none bg-white/60 placeholder-gray-500"
-              placeholder="Nama Lengkap Anda"
-              required
-            />
-          </div>
-          <div data-aos="fade-up" data-aos-delay="600">
-            <label
-              for="university"
-              class="block text-gray-700 text-sm font-semibold mb-2"
-              >Universitas (Opsional)</label
-            >
-            <input
-              type="text"
-              id="university"
-              v-model="university"
-              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 focus:outline-none bg-white/60 placeholder-gray-500"
-              placeholder="Contoh: Universitas Maju Jaya"
-            />
-          </div>
-          <div data-aos="fade-up" data-aos-delay="700">
-            <label
-              for="major"
-              class="block text-gray-700 text-sm font-semibold mb-2"
-              >Jurusan (Opsional)</label
-            >
-            <input
-              type="text"
-              id="major"
-              v-model="major"
-              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 focus:outline-none bg-white/60 placeholder-gray-500"
-              placeholder="Contoh: Ilmu Komputer"
-            />
-          </div>
-          <div data-aos="fade-up" data-aos-delay="800">
-            <label
-              for="home-city"
-              class="block text-gray-700 text-sm font-semibold mb-2"
-              >Kota Asal (Opsional)</label
-            >
-            <input
-              type="text"
-              id="home-city"
-              v-model="homeCity"
-              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 focus:outline-none bg-white/60 placeholder-gray-500"
-              placeholder="Contoh: Bandung"
-            />
-          </div>
-        </div>
 
         <button
           type="submit"
@@ -448,8 +448,8 @@ const isValidEmail = (email) => {
 // Fungsi untuk mereset AOS
 const resetAos = () => {
   nextTick(() => {
-    if (window.AOS) {
-      window.AOS.refreshHard();
+    if (window.Aos) {
+      window.Aos.refreshHard();
     }
   });
 };
