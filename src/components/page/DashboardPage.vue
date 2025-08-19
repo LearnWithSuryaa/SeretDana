@@ -1157,7 +1157,6 @@ const addTransaction = async (newTransactionData) => {
     return;
   }
 
-  // Logika Algoritma Kategorisasi Otomatis
   if (newTransactionData.type === "expense") {
     if (!newTransactionData.category_id) {
       const autoCategorizedId = categorizeTransactionAutomatically(
@@ -1166,9 +1165,6 @@ const addTransaction = async (newTransactionData) => {
       );
       if (autoCategorizedId) {
         newTransactionData.category_id = autoCategorizedId;
-        console.log(
-          `Transaksi pengeluaran otomatis dikategorikan ke ID: ${autoCategorizedId}`
-        );
       } else {
         showModal(
           "Kategori Belum Dipilih",
@@ -1186,45 +1182,30 @@ const addTransaction = async (newTransactionData) => {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) {
-      throw new Error("User not authenticated.");
-    }
+    if (!user) throw new Error("User not authenticated.");
 
     const transactionToInsert = {
       user_id: user.id,
       amount: newTransactionData.amount,
       description: newTransactionData.description,
       type: newTransactionData.type,
-      transaction_date: new Date().toISOString().split("T")[0],
+      // Gunakan tanggal yang dipilih user
+      transaction_date: newTransactionData.transaction_date,
       category_id: newTransactionData.category_id,
+      // created_at otomatis diisi Supabase
     };
 
-    const { error: insertError } = await supabase
+    const { error } = await supabase
       .from("transactions")
       .insert([transactionToInsert]);
 
-    if (insertError) throw insertError;
+    if (error) throw error;
 
     showModal("Berhasil!", "Transaksi berhasil ditambahkan!", "success");
     await fetchDashboardData();
   } catch (err) {
     console.error("Error adding transaction:", err.message);
-    if (
-      err.message.includes("permission denied") ||
-      err.message.includes("violates row-level security policy")
-    ) {
-      showModal(
-        "Error Izin",
-        'Gagal menambahkan transaksi: Pastikan kebijakan RLS INSERT untuk tabel "transactions" sudah benar.',
-        "error"
-      );
-    } else {
-      showModal(
-        "Error",
-        "Gagal menambahkan transaksi: " + err.message,
-        "error"
-      );
-    }
+    showModal("Error", "Gagal menambahkan transaksi: " + err.message, "error");
   }
 };
 

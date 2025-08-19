@@ -64,6 +64,23 @@
               ></textarea>
             </div>
 
+            <!-- Tanggal -->
+            <div>
+              <label
+                for="modal-date"
+                class="block text-sm font-medium text-gray-700"
+              >
+                Tanggal
+              </label>
+              <input
+                type="date"
+                id="modal-date"
+                v-model="newTransaction.transaction_date"
+                required
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 cursor-pointer"
+              />
+            </div>
+
             <!-- Tipe Transaksi -->
             <div>
               <label
@@ -111,7 +128,6 @@
                 </option>
               </select>
 
-              <!-- Info kategori tidak perlu (untuk income) -->
               <p
                 v-if="newTransaction.type === 'income'"
                 class="text-xs text-gray-400 mt-1"
@@ -119,7 +135,6 @@
                 Tidak perlu memilih kategori untuk pemasukan.
               </p>
 
-              <!-- Peringatan kategori kosong (pengeluaran) -->
               <div
                 v-if="
                   newTransaction.type === 'expense' &&
@@ -133,7 +148,7 @@
               </div>
             </div>
 
-            <!-- Peringatan tidak bisa dihapus -->
+            <!-- Peringatan -->
             <div
               class="text-sm text-red-700 bg-red-50 border border-red-200 p-3 rounded"
             >
@@ -180,14 +195,16 @@ const props = defineProps({
 
 const emit = defineEmits(["close", "add-transaction"]);
 
+const today = new Date().toISOString().slice(0, 10);
+
 const newTransaction = ref({
   amount: null,
   description: "",
-  type: "expense", // Default to expense
+  transaction_date: today, // ✅ pakai nama field sesuai DB
+  type: "expense",
   category_id: "",
 });
 
-// Computed property to filter categories based on selected transaction type
 const currentCategories = computed(() => {
   if (!Array.isArray(props.categories)) return [];
   const type = newTransaction.value.type;
@@ -203,30 +220,24 @@ const currentCategories = computed(() => {
   return [];
 });
 
-// Computed property to control submit button disabled state
 const isSubmitDisabled = computed(() => {
-  // If type is expense AND no expense categories are available
   if (
     newTransaction.value.type === "expense" &&
     currentCategories.value.length === 0
   ) {
     return true;
   }
-  // Otherwise, allow submission (HTML 'required' will handle empty amount/description)
   return false;
 });
 
-// Watch for type change to reset category_id
 watch(
   () => newTransaction.value.type,
-  (newType) => {
-    newTransaction.value.category_id = ""; // Clear selected category
+  () => {
+    newTransaction.value.category_id = "";
   }
 );
 
 const submitTransaction = () => {
-  // No need for explicit category_id validation here as the button is disabled
-  // if expense type and no categories.
   emit("add-transaction", { ...newTransaction.value });
   resetForm();
 };
@@ -240,40 +251,63 @@ const resetForm = () => {
   newTransaction.value = {
     amount: null,
     description: "",
-    type: "expense", // Reset to 'expense'
+    transaction_date: today,
+    type: "expense",
     category_id: "",
   };
 };
 </script>
 
-<style scoped lang="postcss">
-.modern-input {
-  @apply mt-1 block w-full rounded-lg border border-gray-300 bg-white shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-400 text-sm p-2 transition;
+<style scoped>
+/* Consistent gradients from DashboardPage */
+.gen-z-gradient {
+  background: linear-gradient(135deg, #6ee7b7, #3b82f6, #9333ea);
+}
+.gen-z-text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(45deg, #6ee7b7, #3b82f6, #9333ea);
 }
 
-/* Modal transition */
+/* Modal transition styles */
 .modal-fade-enter-active,
 .modal-fade-leave-active {
-  transition: all 0.3s ease;
+  transition: opacity 0.3s ease;
 }
+
 .modal-fade-enter-from,
 .modal-fade-leave-to {
   opacity: 0;
-  transform: scale(0.95);
 }
 
-/* Custom content animation */
 .modal-content {
-  animation: pop-in 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  animation: pop-in 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }
+
+.modal-fade-leave-active .modal-content {
+  animation: pop-out 0.3s ease-out forwards;
+}
+
 @keyframes pop-in {
   0% {
-    transform: scale(0.9);
+    transform: scale(0.8);
     opacity: 0;
   }
   100% {
     transform: scale(1);
     opacity: 1;
+  }
+}
+
+@keyframes pop-out {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0;
   }
 }
 </style>

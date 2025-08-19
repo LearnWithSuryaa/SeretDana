@@ -1,9 +1,7 @@
 <template>
   <div class="space-y-6">
     <!-- Heading -->
-    <div
-      class="flex flex-col md:flex-row md:items-center md:justify-between gap-2"
-    >
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
       <h2 class="text-3xl font-bold text-gray-800">Riwayat Transaksi</h2>
       <span class="text-sm text-gray-500">
         {{ filteredTransactions.length }} transaksi ditemukan
@@ -22,9 +20,7 @@
           placeholder="Cari deskripsi..."
           class="w-full bg-gray-50 border border-gray-300 text-sm rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
         />
-        <MagnifyingGlassIcon
-          class="w-5 h-5 absolute left-3 top-2.5 text-gray-400"
-        />
+        <MagnifyingGlassIcon class="w-5 h-5 absolute left-3 top-2.5 text-gray-400" />
       </div>
 
       <!-- Type Selector -->
@@ -37,17 +33,13 @@
         </button>
         <button
           @click="filter.type = 'income'"
-          :class="
-            filter.type === 'income' ? activeFilterClass : inactiveFilterClass
-          "
+          :class="filter.type === 'income' ? activeFilterClass : inactiveFilterClass"
         >
           Pemasukan
         </button>
         <button
           @click="filter.type = 'expense'"
-          :class="
-            filter.type === 'expense' ? activeFilterClass : inactiveFilterClass
-          "
+          :class="filter.type === 'expense' ? activeFilterClass : inactiveFilterClass"
         >
           Pengeluaran
         </button>
@@ -65,11 +57,7 @@
           </option>
         </template>
         <template v-else-if="filter.type === 'expense'">
-          <option
-            v-for="cat in expenseCategories"
-            :key="cat.id"
-            :value="cat.id"
-          >
+          <option v-for="cat in expenseCategories" :key="cat.id" :value="cat.id">
             {{ cat.name }}
           </option>
         </template>
@@ -83,11 +71,7 @@
 
     <!-- Timeline Transactions -->
     <div v-if="Object.keys(groupedTransactions).length > 0" class="space-y-8">
-      <div
-        v-for="(transactions, date) in groupedTransactions"
-        :key="date"
-        class="relative"
-      >
+      <div v-for="(transactions, date) in groupedTransactions" :key="date" class="relative">
         <!-- Date Header -->
         <div
           class="sticky top-0 z-10 bg-gray-50 py-2 px-3 rounded-lg shadow-sm border border-gray-200 inline-block mb-4"
@@ -131,10 +115,7 @@
                 </p>
                 <div class="text-xs text-gray-500">
                   {{ formatTime(transaction.transaction_date) }}
-                  <span
-                    v-if="transaction.category_id"
-                    class="ml-1 text-gray-400"
-                  >
+                  <span v-if="transaction.category_id" class="ml-1 text-gray-400">
                     • {{ getCategoryName(transaction.category_id) }}
                   </span>
                 </div>
@@ -166,6 +147,9 @@
 <script setup>
 import { ref, computed } from "vue";
 import { MagnifyingGlassIcon } from "@heroicons/vue/24/solid";
+import dayjs from "dayjs";
+import "dayjs/locale/id"; // locale indonesia
+dayjs.locale("id");
 
 // Props
 const props = defineProps({
@@ -202,20 +186,19 @@ const filteredTransactions = computed(() => {
     filtered = filtered.filter((t) => t.type === filter.value.type);
   }
   if (filter.value.category_id) {
-    filtered = filtered.filter(
-      (t) => t.category_id === filter.value.category_id
-    );
+    filtered = filtered.filter((t) => t.category_id === filter.value.category_id);
   }
 
+  // sort desc
   return filtered.sort(
-    (a, b) => new Date(b.transaction_date) - new Date(a.transaction_date)
+    (a, b) => dayjs(b.transaction_date).valueOf() - dayjs(a.transaction_date).valueOf()
   );
 });
 
 // Grouped by date
 const groupedTransactions = computed(() => {
   return filteredTransactions.value.reduce((groups, t) => {
-    const dateKey = new Date(t.transaction_date).toISOString().split("T")[0]; // YYYY-MM-DD
+    const dateKey = dayjs(t.transaction_date).format("YYYY-MM-DD");
     if (!groups[dateKey]) groups[dateKey] = [];
     groups[dateKey].push(t);
     return groups;
@@ -224,18 +207,19 @@ const groupedTransactions = computed(() => {
 
 // Helpers
 const formatCurrency = (val) => (val || 0).toLocaleString("id-ID");
-const formatDateHeader = (date) =>
-  new Date(date).toLocaleDateString("id-ID", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-const formatTime = (date) =>
-  new Date(date).toLocaleTimeString("id-ID", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+
+const formatDateHeader = (date) => {
+  if (!date) return "";
+  return dayjs(date).format("dddd, D MMMM YYYY");
+};
+
+const formatTime = (date) => {
+  if (!date) return "-";
+  const d = dayjs(date);
+  if (!d.isValid()) return "-";
+  return d.format("HH:mm");
+};
+
 const getCategoryName = (id) =>
   props.categories.find((cat) => cat.id === id)?.name || "Tidak dikategorikan";
 
