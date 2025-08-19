@@ -81,51 +81,85 @@
       </select>
     </div>
 
-    <!-- Transactions List -->
-    <div class="space-y-3">
-      <template v-if="filteredTransactions.length > 0">
-        <transition-group name="fade" tag="div">
-          <div
-            v-for="transaction in filteredTransactions"
-            :key="transaction.id"
-            class="relative bg-white rounded-xl border-l-4 shadow-sm border-gray-200 p-4 flex justify-between items-center transition duration-300 transform hover:shadow-lg hover:scale-[1.01]"
-            :class="{
-              'border-green-500': transaction.type === 'income',
-              'border-red-500': transaction.type === 'expense',
-            }"
-          >
-            <!-- Info -->
-            <div class="space-y-1">
-              <p class="text-gray-800 font-medium">
-                {{ transaction.description }}
-              </p>
-              <div class="text-xs text-gray-500">
-                {{ formatDate(transaction.transaction_date) }}
-                <span v-if="transaction.category_id" class="ml-1 text-gray-400">
-                  • {{ getCategoryName(transaction.category_id) }}
-                </span>
-              </div>
-            </div>
+    <!-- Timeline Transactions -->
+    <div v-if="Object.keys(groupedTransactions).length > 0" class="space-y-8">
+      <div
+        v-for="(transactions, date) in groupedTransactions"
+        :key="date"
+        class="relative"
+      >
+        <!-- Date Header -->
+        <div
+          class="sticky top-0 z-10 bg-gray-50 py-2 px-3 rounded-lg shadow-sm border border-gray-200 inline-block mb-4"
+        >
+          <h3 class="text-sm font-semibold text-gray-700">
+            {{ formatDateHeader(date) }}
+          </h3>
+        </div>
 
-            <!-- Amount -->
+        <!-- Timeline List -->
+        <div class="relative pl-6 space-y-4">
+          <!-- Vertical Line -->
+          <div
+            class="absolute left-2 top-0 h-full w-0.5 bg-gray-200"
+            aria-hidden="true"
+          ></div>
+
+          <transition-group name="fade" tag="div">
             <div
-              class="text-sm font-bold"
+              v-for="transaction in transactions"
+              :key="transaction.id"
+              class="relative bg-white rounded-xl border shadow-sm p-4 flex justify-between items-center transition duration-300 hover:shadow-md"
               :class="{
-                'text-green-600': transaction.type === 'income',
-                'text-red-600': transaction.type === 'expense',
+                'border-green-200': transaction.type === 'income',
+                'border-red-200': transaction.type === 'expense',
               }"
             >
-              {{ transaction.type === "income" ? "+" : "-" }} Rp
-              {{ formatCurrency(transaction.amount) }}
-            </div>
-          </div>
-        </transition-group>
-      </template>
+              <!-- Timeline Dot -->
+              <span
+                class="absolute -left-2 top-5 w-3 h-3 rounded-full border-2 border-white"
+                :class="{
+                  'bg-green-500': transaction.type === 'income',
+                  'bg-red-500': transaction.type === 'expense',
+                }"
+              ></span>
 
-      <p v-else class="text-center text-gray-400 italic py-12">
-        Tidak ada transaksi yang cocok ditemukan.
-      </p>
+              <!-- Info -->
+              <div class="space-y-1">
+                <p class="text-gray-800 font-medium text-sm">
+                  {{ transaction.description }}
+                </p>
+                <div class="text-xs text-gray-500">
+                  {{ formatTime(transaction.transaction_date) }}
+                  <span
+                    v-if="transaction.category_id"
+                    class="ml-1 text-gray-400"
+                  >
+                    • {{ getCategoryName(transaction.category_id) }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Amount -->
+              <div
+                class="text-sm font-bold"
+                :class="{
+                  'text-green-600': transaction.type === 'income',
+                  'text-red-600': transaction.type === 'expense',
+                }"
+              >
+                {{ transaction.type === "income" ? "+" : "-" }} Rp
+                {{ formatCurrency(transaction.amount) }}
+              </div>
+            </div>
+          </transition-group>
+        </div>
+      </div>
     </div>
+
+    <p v-else class="text-center text-gray-400 italic py-12">
+      Tidak ada transaksi yang cocok ditemukan.
+    </p>
   </div>
 </template>
 
@@ -135,14 +169,8 @@ import { MagnifyingGlassIcon } from "@heroicons/vue/24/solid";
 
 // Props
 const props = defineProps({
-  transactions: {
-    type: Array,
-    default: () => [],
-  },
-  categories: {
-    type: Array,
-    default: () => [],
-  },
+  transactions: { type: Array, default: () => [] },
+  categories: { type: Array, default: () => [] },
 });
 
 // Filter state
@@ -184,13 +212,29 @@ const filteredTransactions = computed(() => {
   );
 });
 
+// Grouped by date
+const groupedTransactions = computed(() => {
+  return filteredTransactions.value.reduce((groups, t) => {
+    const dateKey = new Date(t.transaction_date).toISOString().split("T")[0]; // YYYY-MM-DD
+    if (!groups[dateKey]) groups[dateKey] = [];
+    groups[dateKey].push(t);
+    return groups;
+  }, {});
+});
+
 // Helpers
 const formatCurrency = (val) => (val || 0).toLocaleString("id-ID");
-const formatDate = (date) =>
+const formatDateHeader = (date) =>
   new Date(date).toLocaleDateString("id-ID", {
-    year: "numeric",
-    month: "short",
+    weekday: "long",
     day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+const formatTime = (date) =>
+  new Date(date).toLocaleTimeString("id-ID", {
+    hour: "2-digit",
+    minute: "2-digit",
   });
 const getCategoryName = (id) =>
   props.categories.find((cat) => cat.id === id)?.name || "Tidak dikategorikan";

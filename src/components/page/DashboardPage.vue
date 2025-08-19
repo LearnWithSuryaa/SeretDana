@@ -6,37 +6,26 @@
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full',
         isSidebarCollapsed ? 'md:w-20' : 'md:w-64',
       ]"
-      class="w-full bg-white shadow-lg p-4 flex flex-col fixed inset-y-0 left-0 z-30 md:relative md:translate-x-0 transition-all duration-300 ease-in-out border-r border-gray-100"
+      class="w-full bg-gradient-to-b from-[#5AB2FF] to-[#3A8DDF] text-white shadow-xl p-4 flex flex-col fixed inset-y-0 left-0 z-30 md:relative md:translate-x-0 transition-all duration-300 ease-in-out rounded-r-2xl"
     >
-      <!-- Logo dan Collapse Button -->
-      <div class="flex items-center justify-between mb-8">
-        <!-- Logo -->
-        <span
-          class="text-2xl font-bold text-gray-800 gen-z-text-gradient transition-all"
-          v-show="!isSidebarCollapsed"
-        >
-          Fluidana
-        </span>
-
-        <!-- Collapse Button (Mobile) -->
-        <button
-          @click="toggleSidebar"
-          class="md:hidden text-gray-600 hover:text-blue-500 focus:outline-none"
-        >
-          <XMarkIcon class="w-7 h-7" />
-        </button>
-
-        <!-- Collapse Button (Desktop) -->
-        <button
-          @click="toggleCollapse"
-          class="hidden md:flex items-center justify-center w-9 h-9 ml-2 rounded-full bg-gray-100 hover:bg-gray-200 transition"
-        >
-          <ChevronDoubleLeftIcon
+      <!-- Logo Section -->
+      <div
+        class="flex items-center justify-center mb-6 pb-4 border-b border-white/20"
+      >
+        <transition name="fade" mode="out-in">
+          <span
             v-if="!isSidebarCollapsed"
-            class="w-5 h-5 text-gray-600"
-          />
-          <ChevronDoubleRightIcon v-else class="w-5 h-5 text-gray-600" />
-        </button>
+            class="text-2xl font-bold tracking-wide"
+          >
+            Fluidana
+          </span>
+        </transition>
+        <img
+          v-show="isSidebarCollapsed"
+          src="/logo.png"
+          alt="Logo"
+          class="w-10 h-10 object-contain"
+        />
       </div>
 
       <!-- Navigation Menu -->
@@ -50,12 +39,18 @@
                 toggleSidebar();
               "
               :class="[
-                'flex items-center gap-3 px-3 py-2 rounded-xl font-medium transition duration-200 group',
+                'relative flex items-center gap-3 px-3 py-2 rounded-xl font-medium transition-all duration-300 group',
                 activeTab === item.key
-                  ? 'bg-blue-100 text-blue-700'
-                  : 'text-gray-600 hover:bg-gray-50',
+                  ? 'bg-white/20 text-white shadow-md'
+                  : 'hover:bg-white/10 text-white/80',
               ]"
             >
+              <!-- Active Indicator -->
+              <span
+                v-if="activeTab === item.key"
+                class="absolute left-0 top-1 bottom-1 w-1 rounded-full bg-white"
+              ></span>
+
               <component
                 :is="item.icon"
                 :class="[
@@ -65,7 +60,7 @@
               />
               <span
                 v-show="!isSidebarCollapsed"
-                class="hidden md:inline transition-opacity duration-200"
+                class="hidden md:inline transition-opacity duration-300"
               >
                 {{ item.label }}
               </span>
@@ -74,33 +69,39 @@
         </ul>
       </nav>
 
-      <!-- Logout Button -->
-      <div class="mt-8 pt-4 border-t border-gray-200">
+      <!-- Footer Section (Collapse + Logout) -->
+      <div class="mt-6 pt-4 border-t border-white/20 flex flex-col gap-2">
+        <!-- Collapse Button -->
+        <button
+          @click="toggleCollapse"
+          class="flex items-center justify-center gap-2 px-3 py-2 rounded-xl font-medium bg-white/10 hover:bg-white/20 transition duration-200"
+        >
+          <ChevronDoubleLeftIcon v-if="!isSidebarCollapsed" class="w-5 h-5" />
+          <ChevronDoubleRightIcon v-else class="w-5 h-5" />
+          <span v-show="!isSidebarCollapsed">Sembunyikan</span>
+        </button>
+
+        <!-- Logout Button -->
         <button
           @click="handleLogout"
-          class="flex items-center gap-3 px-3 py-2 rounded-xl font-medium text-red-600 hover:bg-red-50 w-full transition duration-200 cursor-pointer"
+          class="flex items-center gap-3 px-3 py-2 rounded-xl font-medium bg-red-500/20 text-red-100 hover:bg-red-500/30 transition duration-200"
         >
           <ArrowLeftOnRectangleIcon
             :class="[isSidebarCollapsed ? 'w-6 h-6' : 'w-5 h-5']"
           />
-          <span
-            v-show="!isSidebarCollapsed"
-            class="hidden md:inline transition-opacity duration-200"
-          >
-            Logout
-          </span>
+          <span v-show="!isSidebarCollapsed">Logout</span>
         </button>
       </div>
     </aside>
 
     <!-- Main Content Area -->
     <main class="flex-1 p-6 md:p-10 overflow-auto">
-      <!-- Mobile Header for Dashboard -->
+      <!-- Mobile Header -->
       <div class="md:hidden flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold gen-z-text-gradient">Dashboard</h1>
+        <h1 class="text-2xl font-bold text-[#5AB2FF]">Dashboard</h1>
         <button
           @click="toggleSidebar"
-          class="text-gray-600 hover:text-blue-500 focus:outline-none"
+          class="text-gray-600 hover:text-[#5AB2FF] focus:outline-none"
         >
           <Bars3Icon class="w-7 h-7" />
         </button>
@@ -694,7 +695,7 @@ const categorizeTransactionAutomatically = (
       "mie ayam",
       "pangsit",
       "soto",
-      "gudeg", 
+      "gudeg",
       "kopi susu",
       "matcha",
       "croissant",
@@ -716,7 +717,7 @@ const categorizeTransactionAutomatically = (
       "gofood",
       "shopeefood",
       "traveloka eats",
-      "promo", 
+      "promo",
     ],
     Transportasi: [
       "ojol",
