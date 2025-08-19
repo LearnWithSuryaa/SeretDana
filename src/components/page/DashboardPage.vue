@@ -10,12 +10,12 @@
     >
       <!-- Logo Section -->
       <div
-        class="flex items-center justify-center mb-6 pb-4 border-b border-white/20"
+        class="flex items-center justify-center mb-6 pb-4 border-b border-white/20 relative"
       >
-        <transition name="fade" mode="out-in">
+        <transition name="fade-scale" mode="out-in">
           <span
             v-if="!isSidebarCollapsed"
-            class="text-2xl font-bold tracking-wide"
+            class="text-2xl font-bold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-sky-600 via-blue-400 to-blue-600"
           >
             Fluidana
           </span>
