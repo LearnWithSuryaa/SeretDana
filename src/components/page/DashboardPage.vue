@@ -6,25 +6,26 @@
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full',
         isSidebarCollapsed ? 'md:w-20' : 'md:w-64',
       ]"
-      class="w-full bg-gradient-to-b from-[#5AB2FF] to-[#3A8DDF] text-white shadow-xl p-4 flex flex-col fixed inset-y-0 left-0 z-30 md:relative md:translate-x-0 transition-all duration-300 ease-in-out rounded-r-2xl"
+      class="w-full py-10 backdrop-blur-lg bg-gradient-to-b from-[#5AB2FF]/90 to-[#3A8DDF]/90 text-white shadow-2xl p-4 flex flex-col fixed inset-y-0 left-0 z-30 md:relative md:translate-x-0 transition-all duration-300 ease-in-out rounded-r-3xl border-r border-white/20"
     >
       <!-- Logo Section -->
       <div
-        class="flex items-center justify-center mb-6 pb-4 border-b border-white/20 relative"
+        class="flex items-center justify-center mb-10 pb-6 border-b border-white/20 relative"
       >
         <transition name="fade-scale" mode="out-in">
           <span
             v-if="!isSidebarCollapsed"
-            class="text-2xl font-bold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-sky-600 via-blue-400 to-blue-600"
+            class="text-3xl font-extrabold italic tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-white via-sky-200 to-blue-300 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"
           >
             Fluidana
           </span>
         </transition>
+
         <img
           v-show="isSidebarCollapsed"
           src="/logo.png"
           alt="Logo"
-          class="w-10 h-10 object-contain"
+          class="w-12 h-12 object-contain drop-shadow-lg"
         />
       </div>
 
@@ -41,21 +42,25 @@
               :class="[
                 'relative flex items-center gap-3 px-3 py-2 rounded-xl font-medium transition-all duration-300 group',
                 activeTab === item.key
-                  ? 'bg-white/20 text-white shadow-md'
-                  : 'hover:bg-white/10 text-white/80',
+                  ? 'bg-gradient-to-r from-white/30 to-white/10 text-white shadow-lg backdrop-blur-md'
+                  : 'hover:bg-white/10 hover:shadow-md text-white/80',
               ]"
             >
               <!-- Active Indicator -->
               <span
                 v-if="activeTab === item.key"
-                class="absolute left-0 top-1 bottom-1 w-1 rounded-full bg-white"
+                class="absolute left-0 top-1 bottom-1 w-1 rounded-full bg-gradient-to-b from-white to-blue-200 shadow-md"
               ></span>
 
+              <!-- Icon -->
               <component
                 :is="item.icon"
                 :class="[
                   isSidebarCollapsed ? 'w-6 h-6' : 'w-5 h-5',
-                  'transition-all duration-200',
+                  activeTab === item.key
+                    ? 'text-white'
+                    : 'text-white/80 group-hover:text-white',
+                  'transition-all duration-200 drop-shadow-sm',
                 ]"
               />
               <span
@@ -69,12 +74,12 @@
         </ul>
       </nav>
 
-      <!-- Footer Section (Collapse + Logout) -->
-      <div class="mt-6 pt-4 border-t border-white/20 flex flex-col gap-2">
+      <!-- Footer Section -->
+      <div class="mt-6 pt-5 border-t border-white/20 flex flex-col gap-3">
         <!-- Collapse Button -->
         <button
           @click="toggleCollapse"
-          class="flex items-center justify-center gap-2 px-3 py-2 rounded-xl font-medium bg-white/10 hover:bg-white/20 transition duration-200"
+          class="flex items-center justify-center gap-2 px-3 py-2 rounded-xl font-medium bg-white/10 hover:bg-white/20 transition duration-200 shadow-sm hover:shadow-md"
         >
           <ChevronDoubleLeftIcon v-if="!isSidebarCollapsed" class="w-5 h-5" />
           <ChevronDoubleRightIcon v-else class="w-5 h-5" />
@@ -84,7 +89,7 @@
         <!-- Logout Button -->
         <button
           @click="handleLogout"
-          class="flex items-center gap-3 px-3 py-2 rounded-xl font-medium bg-red-500/20 text-red-100 hover:bg-red-500/30 transition duration-200"
+          class="flex items-center gap-3 px-3 py-2 rounded-xl font-medium bg-red-500/20 hover:bg-red-500/30 text-red-100 transition duration-200 shadow-sm hover:shadow-md"
         >
           <ArrowLeftOnRectangleIcon
             :class="[isSidebarCollapsed ? 'w-6 h-6' : 'w-5 h-5']"
@@ -95,7 +100,7 @@
     </aside>
 
     <!-- Main Content Area -->
-    <main class="flex-1 p-6 md:p-10 overflow-auto">
+    <main class="flex-1 p-6 md:p-10 overflow-auto bg-gradient-to-br from-[#E8F5FF] via-[#F9FBFF] to-[#FFFFFF]">
       <!-- Mobile Header -->
       <div class="md:hidden flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold text-[#5AB2FF]">Dashboard</h1>
