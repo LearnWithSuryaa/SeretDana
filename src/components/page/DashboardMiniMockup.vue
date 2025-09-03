@@ -135,7 +135,7 @@ const navItems = [
 ];
 
 // --- Data Dummy untuk Demo ---
-const userProfile = ref({ name: "Surya" });
+const userProfile = ref({ name: "Mahasiswa" });
 const currentBalance = ref(2350000);
 const lastUpdate = ref(new Date().toLocaleDateString("id-ID"));
 const monthlyBudgetTotal = ref(3000000);
