@@ -1,39 +1,45 @@
 <template>
-  <div class="space-y-8 bg-gradient-to-br from-[#E8F5FF] via-[#F9FBFF] to-[#FFFFFF]">
+  <div
+    class="space-y-6 bg-gradient-to-br from-[#E8F5FF] via-[#F9FBFF] to-[#FFFFFF] p-3 sm:p-4"
+  >
     <!-- Heading -->
     <div
-      class="flex flex-col md:flex-row md:items-center md:justify-between gap-2"
+      class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
     >
-      <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">
-        Riwayat Transaksi
+      <h2
+        class="text-xl sm:text-3xl font-extrabold text-gray-900 tracking-tight"
+      >
+        Riwayat
       </h2>
-      <span class="text-sm text-gray-500">
-        {{ filteredTransactions.length }} transaksi ditemukan
+      <span class="text-xs sm:text-sm text-gray-500">
+        {{ filteredTransactions.length }} transaksi
       </span>
     </div>
 
     <!-- Filter Toolbar -->
+    <!-- Filter Toolbar -->
     <div
-      class="w-full bg-white/60 backdrop-blur-xl border border-white/40 rounded-2xl px-4 py-4 shadow-md flex flex-col md:flex-row md:items-center md:gap-4 gap-3"
+      class="w-full bg-white/70 backdrop-blur-xl border border-white/40 rounded-xl px-3 py-3 shadow-md space-y-3"
     >
       <!-- Search -->
-      <div class="relative w-full md:w-auto flex-1">
+      <div class="relative w-full">
         <input
           v-model="filter.search"
           type="text"
-          placeholder="Cari deskripsi..."
-          class="w-full bg-white/70 border border-gray-300 text-sm rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-[#5AB2FF] focus:outline-none shadow-sm"
+          placeholder="Cari transaksi..."
+          class="w-full bg-white/80 border border-gray-300 text-sm rounded-lg pl-9 pr-3 py-2 focus:ring-2 focus:ring-[#5AB2FF] focus:outline-none shadow-sm"
         />
         <MagnifyingGlassIcon
-          class="w-5 h-5 absolute left-3 top-2.5 text-gray-400"
+          class="w-5 h-5 absolute left-2.5 top-2.5 text-gray-400"
         />
       </div>
 
-      <!-- Type Selector -->
-      <div class="flex items-center gap-2">
+      <!-- Type Selector (Horizontal Pills) -->
+      <div class="flex overflow-x-auto gap-2 no-scrollbar">
         <button
           @click="filter.type = ''"
           :class="filter.type === '' ? activeFilterClass : inactiveFilterClass"
+          class="flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap"
         >
           Semua
         </button>
@@ -42,6 +48,7 @@
           :class="
             filter.type === 'income' ? activeFilterClass : inactiveFilterClass
           "
+          class="flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap"
         >
           Pemasukan
         </button>
@@ -50,6 +57,7 @@
           :class="
             filter.type === 'expense' ? activeFilterClass : inactiveFilterClass
           "
+          class="flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap"
         >
           Pengeluaran
         </button>
@@ -58,7 +66,7 @@
       <!-- Category Filter -->
       <select
         v-model="filter.category_id"
-        class="bg-white/70 border border-gray-300 text-sm rounded-lg py-2 px-3 focus:ring-2 focus:ring-[#5AB2FF] focus:outline-none w-full md:w-auto shadow-sm"
+        class="bg-white/80 border border-gray-300 text-sm rounded-lg py-2 px-3 focus:ring-2 focus:ring-[#5AB2FF] focus:outline-none w-full shadow-sm"
       >
         <option value="">Semua Kategori</option>
         <template v-if="filter.type === 'income'">
@@ -84,7 +92,7 @@
     </div>
 
     <!-- Timeline Transactions -->
-    <div v-if="Object.keys(groupedTransactions).length > 0" class="space-y-10">
+    <div v-if="Object.keys(groupedTransactions).length > 0" class="space-y-8">
       <div
         v-for="(transactions, date) in groupedTransactions"
         :key="date"
@@ -92,15 +100,15 @@
       >
         <!-- Date Header -->
         <div
-          class="sticky top-0 z-10 inline-block mb-4 px-4 py-2 bg-gradient-to-r from-[#EAF6FF] to-[#F8FBFF] text-[#3A8DDF] rounded-full shadow-sm border border-white/60"
+          class="sticky top-0 z-10 inline-block mb-3 px-3 py-1 bg-gradient-to-r from-[#EAF6FF] to-[#F8FBFF] text-[#3A8DDF] rounded-full shadow-sm border border-white/60"
         >
-          <h3 class="text-xs font-semibold tracking-wide">
+          <h3 class="text-[10px] sm:text-xs font-semibold tracking-wide">
             {{ formatDateHeader(date) }}
           </h3>
         </div>
 
         <!-- Timeline List -->
-        <div class="relative pl-6 space-y-4">
+        <div class="relative pl-5 space-y-3">
           <!-- Vertical Gradient Line -->
           <div
             class="absolute left-2 top-0 h-full w-0.5 bg-gradient-to-b from-[#5AB2FF] to-[#A0DEFF] opacity-40"
@@ -110,11 +118,11 @@
             <div
               v-for="transaction in transactions"
               :key="transaction.id"
-              class="relative bg-white/70 backdrop-blur-lg rounded-xl border border-white/40 shadow-sm p-4 flex justify-between items-center transition duration-300 hover:scale-[1.01] hover:shadow-md"
+              class="relative bg-white/80 backdrop-blur-lg rounded-lg border border-white/40 shadow-sm p-3 flex justify-between items-center transition duration-300 hover:scale-[1.01] hover:shadow-md"
             >
               <!-- Timeline Dot -->
               <span
-                class="absolute -left-2 top-5 w-3 h-3 rounded-full border-2 border-white shadow"
+                class="absolute -left-2 top-4 w-2.5 h-2.5 rounded-full border-2 border-white shadow"
                 :class="{
                   'bg-green-500 shadow-green-200/70':
                     transaction.type === 'income',
@@ -124,11 +132,13 @@
               ></span>
 
               <!-- Info -->
-              <div class="space-y-1">
-                <p class="text-gray-800 font-medium text-sm">
+              <div class="space-y-0.5 max-w-[60%]">
+                <p
+                  class="text-gray-800 font-medium text-xs sm:text-sm truncate"
+                >
                   {{ transaction.description }}
                 </p>
-                <div class="text-xs text-gray-500">
+                <div class="text-[10px] sm:text-xs text-gray-500 truncate">
                   {{ formatTime(transaction.created_at) }}
                   <span
                     v-if="transaction.category_id"
@@ -141,7 +151,7 @@
 
               <!-- Amount -->
               <div
-                class="text-base font-bold"
+                class="text-sm sm:text-base font-bold flex-shrink-0 ml-2"
                 :class="{
                   'text-green-600': transaction.type === 'income',
                   'text-red-600': transaction.type === 'expense',
@@ -156,8 +166,8 @@
       </div>
     </div>
 
-    <p v-else class="text-center text-gray-400 italic py-12">
-      Tidak ada transaksi yang cocok ditemukan.
+    <p v-else class="text-center text-gray-400 italic py-10 text-sm">
+      Tidak ada transaksi ditemukan.
     </p>
   </div>
 </template>
