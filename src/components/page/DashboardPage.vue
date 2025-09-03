@@ -1,121 +1,60 @@
 <template>
   <div class="min-h-screen flex flex-col md:flex-row bg-gray-100 font-inter">
-    <!-- Sidebar / Navigation -->
+    <!-- Desktop Mini Sidebar -->
     <aside
-      :class="[
-        isSidebarOpen ? 'translate-x-0' : '-translate-x-full',
-        isSidebarCollapsed ? 'md:w-20' : 'md:w-64',
-      ]"
-      class="w-full py-10 backdrop-blur-lg bg-gradient-to-b from-[#5AB2FF]/90 to-[#3A8DDF]/90 text-white shadow-2xl p-4 flex flex-col fixed inset-y-0 left-0 z-30 md:relative md:translate-x-0 transition-all duration-300 ease-in-out rounded-r-3xl border-r border-white/20"
+      class="hidden md:flex flex-col w-20 py-10 bg-gradient-to-b from-[#5AB2FF]/80 to-[#3A8DDF]/80 text-white shadow-2xl rounded-r-3xl border-r border-white/20 backdrop-blur-md transition-all duration-300"
     >
-      <!-- Logo Section -->
-      <div
-        class="flex items-center justify-center mb-10 pb-6 border-b border-white/20 relative"
-      >
-        <transition name="fade-scale" mode="out-in">
-          <span
-            v-if="!isSidebarCollapsed"
-            class="text-3xl font-extrabold italic tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-white via-sky-200 to-blue-300 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"
-          >
-            Fluidana
-          </span>
-        </transition>
-
+      <!-- Logo -->
+      <div class="flex items-center justify-center mb-12">
         <img
-          v-show="isSidebarCollapsed"
           src="/logo.png"
           alt="Logo"
-          class="w-12 h-12 object-contain drop-shadow-lg"
+          class="w-12 h-12 object-contain drop-shadow-xl"
         />
       </div>
 
-      <!-- Navigation Menu -->
-      <nav class="flex-grow">
-        <ul class="space-y-2">
-          <li v-for="item in menuItems" :key="item.key">
-            <a
-              href="#"
-              @click.prevent="
-                activeTab = item.key;
-                toggleSidebar();
-              "
-              :class="[
-                'relative flex items-center gap-3 px-3 py-2 rounded-xl font-medium transition-all duration-300 group',
-                activeTab === item.key
-                  ? 'bg-gradient-to-r from-white/30 to-white/10 text-white shadow-lg backdrop-blur-md'
-                  : 'hover:bg-white/10 hover:shadow-md text-white/80',
-              ]"
-            >
-              <!-- Active Indicator -->
-              <span
-                v-if="activeTab === item.key"
-                class="absolute left-0 top-1 bottom-1 w-1 rounded-full bg-gradient-to-b from-white to-blue-200 shadow-md"
-              ></span>
-
-              <!-- Icon -->
-              <component
-                :is="item.icon"
-                :class="[
-                  isSidebarCollapsed ? 'w-6 h-6' : 'w-5 h-5',
-                  activeTab === item.key
-                    ? 'text-white'
-                    : 'text-white/80 group-hover:text-white',
-                  'transition-all duration-200 drop-shadow-sm',
-                ]"
-              />
-              <span
-                v-show="!isSidebarCollapsed"
-                class="hidden md:inline transition-opacity duration-300"
-              >
-                {{ item.label }}
-              </span>
-            </a>
-          </li>
-        </ul>
-      </nav>
-
-      <!-- Footer Section -->
-      <div class="mt-6 pt-5 border-t border-white/20 flex flex-col gap-3">
-        <!-- Collapse Button -->
+      <!-- Menu Items -->
+      <nav class="flex-grow flex flex-col gap-6">
         <button
-          @click="toggleCollapse"
-          class="flex items-center justify-center gap-2 px-3 py-2 rounded-xl font-medium bg-white/10 hover:bg-white/20 transition duration-200 shadow-sm hover:shadow-md"
+          v-for="item in menuItems"
+          :key="item.key"
+          @click="activeTab = item.key"
+          class="relative flex items-center justify-center w-full h-14 rounded-xl transition-all duration-300 group hover:bg-white/20"
+          :aria-label="item.label"
         >
-          <ChevronDoubleLeftIcon v-if="!isSidebarCollapsed" class="w-5 h-5" />
-          <ChevronDoubleRightIcon v-else class="w-5 h-5" />
-          <span v-show="!isSidebarCollapsed">Sembunyikan</span>
-        </button>
-
-        <!-- Logout Button -->
-        <button
-          @click="handleLogout"
-          class="flex items-center gap-3 px-3 py-2 rounded-xl font-medium bg-red-500/20 hover:bg-red-500/30 text-red-100 transition duration-200 shadow-sm hover:shadow-md"
-        >
-          <ArrowLeftOnRectangleIcon
-            :class="[isSidebarCollapsed ? 'w-6 h-6' : 'w-5 h-5']"
+          <!-- Icon -->
+          <component
+            :is="item.icon"
+            class="w-6 h-6 text-white/80 group-hover:text-white transition-colors duration-200"
           />
-          <span v-show="!isSidebarCollapsed">Logout</span>
+
+          <!-- Tooltip -->
+          <span
+            class="absolute left-20 bg-black/80 text-white text-sm px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap translate-x-2 group-hover:translate-x-0 z-50 shadow-lg"
+          >
+            {{ item.label }}
+          </span>
+
+          <!-- Active Indicator -->
+          <span
+            v-if="activeTab === item.key"
+            class="absolute left-0 top-2 bottom-2 w-1.5 rounded-full bg-white shadow-md"
+          ></span>
         </button>
-      </div>
+      </nav>
     </aside>
 
     <!-- Main Content Area -->
-    <main class="flex-1 p-6 md:p-10 overflow-auto bg-gradient-to-br from-[#E8F5FF] via-[#F9FBFF] to-[#FFFFFF]">
-      <!-- Mobile Header -->
-      <div class="md:hidden flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold text-[#5AB2FF]">Dashboard</h1>
-        <button
-          @click="toggleSidebar"
-          class="text-gray-600 hover:text-[#5AB2FF] focus:outline-none"
-        >
-          <Bars3Icon class="w-7 h-7" />
-        </button>
-      </div>
-
+    <main
+      class="flex-1 p-6 md:p-10 overflow-auto bg-gradient-to-br from-[#E8F5FF] via-[#F9FBFF] to-[#FFFFFF] scrollbar-thin scrollbar-thumb-[#5AB2FF]/50 scrollbar-track-[#E8F5FF]/50"
+    >
       <!-- Loading Indicator -->
-      <div v-if="isLoading" class="flex items-center justify-center h-64">
+      <div
+        v-if="isLoading"
+        class="flex flex-col items-center justify-center h-64 gap-2 text-gray-600"
+      >
         <svg
-          class="animate-spin h-8 w-8 text-blue-500"
+          class="animate-spin h-10 w-10 text-blue-500"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -134,13 +73,13 @@
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
           ></path>
         </svg>
-        <p class="ml-3 text-gray-600">Memuat data...</p>
+        <p>Memuat data...</p>
       </div>
 
       <!-- Error Message -->
       <div
         v-if="error"
-        class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+        class="bg-red-50 border-l-4 border-red-400 text-red-700 px-4 py-3 rounded shadow-sm mb-6"
         role="alert"
       >
         <strong class="font-bold">Error!</strong>
@@ -148,70 +87,106 @@
       </div>
 
       <!-- Render child components based on activeTab -->
-      <DashboardOverview
-        v-if="activeTab === 'overview' && !isLoading && !error"
-        :user-profile="userProfile"
-        :current-balance="currentBalance"
-        :last-update="lastUpdate"
-        :monthly-budget-total="monthlyBudgetTotal"
-        :monthly-budget-spent="monthlyBudgetSpent"
-        :budget-progress="budgetProgress"
-        :upcoming-bills="upcomingBills"
-        :expense-categories="expenseCategories"
-        :recent-transactions="recentTransactions"
-        :categories="categories"
-        :daily-spending-limit="dailySpendingLimit"
-        @add-transaction="addTransaction"
-      />
+      <div class="space-y-6">
+        <DashboardOverview
+          v-if="activeTab === 'overview' && !isLoading && !error"
+          class="bg-white rounded-2xl shadow-lg p-6"
+          :user-profile="userProfile"
+          :current-balance="currentBalance"
+          :last-update="lastUpdate"
+          :monthly-budget-total="monthlyBudgetTotal"
+          :monthly-budget-spent="monthlyBudgetSpent"
+          :budget-progress="budgetProgress"
+          :upcoming-bills="upcomingBills"
+          :expense-categories="expenseCategories"
+          :recent-transactions="recentTransactions"
+          :categories="categories"
+          :daily-spending-limit="dailySpendingLimit"
+          @add-transaction="addTransaction"
+        />
 
-      <TransactionsList
-        v-if="activeTab === 'transactions' && !isLoading && !error"
-        :transactions="transactions"
-        :categories="categories"
-      />
+        <TransactionsList
+          v-if="activeTab === 'transactions' && !isLoading && !error"
+          class="bg-white rounded-2xl shadow-lg p-6"
+          :transactions="transactions"
+          :categories="categories"
+        />
 
-      <BudgetsAnalytics
-        v-if="activeTab === 'budgets' && !isLoading && !error"
-        :budgets="budgets"
-        :transactions="transactions"
-        :categories="categories"
-        @add-budget="addBudget"
-        @update-budget="updateBudget"
-      />
+        <BudgetsAnalytics
+          v-if="activeTab === 'budgets' && !isLoading && !error"
+          class="bg-white rounded-2xl shadow-lg p-6"
+          :budgets="budgets"
+          :transactions="transactions"
+          :categories="categories"
+          @add-budget="addBudget"
+          @update-budget="updateBudget"
+        />
 
-      <BillsList
-        v-if="activeTab === 'bills' && !isLoading && !error"
-        :bills="bills"
-        :categories="categories"
-        @add-bill="addBill"
-        @update-bill="updateBill"
-      />
+        <BillsList
+          v-if="activeTab === 'bills' && !isLoading && !error"
+          class="bg-white rounded-2xl shadow-lg p-6"
+          :bills="bills"
+          :categories="categories"
+          @add-bill="addBill"
+          @update-bill="updateBill"
+        />
 
-      <SavingsGoals
-        v-if="activeTab === 'goals' && !isLoading && !error"
-        :savings-goals="savingsGoals"
-        @add-goal="addGoal"
-        @update-goal="updateGoal"
-      />
+        <SavingsGoals
+          v-if="activeTab === 'goals' && !isLoading && !error"
+          class="bg-white rounded-2xl shadow-lg p-6"
+          :savings-goals="savingsGoals"
+          @add-goal="addGoal"
+          @update-goal="updateGoal"
+        />
 
-      <CategoriesPage
-        v-if="activeTab === 'categories' && !isLoading && !error"
-        :categories="categories"
-        @add-category="addCategory"
-        @update-category="updateCategory"
-        @delete-category="deleteCategory"
-        @show-modal="showModal"
-      />
+        <CategoriesPage
+          v-if="activeTab === 'categories' && !isLoading && !error"
+          class="bg-white rounded-2xl shadow-lg p-6"
+          :categories="categories"
+          @add-category="addCategory"
+          @update-category="updateCategory"
+          @delete-category="deleteCategory"
+          @show-modal="showModal"
+        />
 
-      <UserProfile
-        v-if="activeTab === 'profile' && !isLoading && !error"
-        :user-profile="userProfile"
-        @update-profile="updateProfile"
-        @change-password="changePassword"
-      />
+        <UserProfile
+          v-if="activeTab === 'profile' && !isLoading && !error"
+          class="bg-white rounded-2xl shadow-lg p-6"
+          :user-profile="userProfile"
+          @update-profile="updateProfile"
+          @change-password="changePassword"
+        />
+      </div>
     </main>
 
-    <!-- Custom Modal Component (General purpose alerts/confirmations) -->
+    <!-- Mobile Bottom Navigation + FAB -->
+    <nav
+      class="fixed bottom-4 left-2 right-2 md:hidden bg-white/90 backdrop-blur-xl rounded-2xl flex justify-around items-center h-16 shadow-2xl z-50 px-2"
+    >
+      <button
+        v-for="item in menuItems"
+        :key="item.key"
+        @click="activeTab = item.key"
+        class="flex flex-col items-center justify-center text-gray-400 hover:text-[#5AB2FF] relative transition-colors duration-300 flex-1"
+        :aria-label="item.label"
+      >
+        <!-- Icon -->
+        <component :is="item.icon" class="w-6 h-6" />
+
+        <!-- Label -->
+        <span class="text-[9px] mt-1 font-medium truncate">{{
+          item.label
+        }}</span>
+
+        <!-- Active Indicator -->
+        <span
+          v-if="activeTab === item.key"
+          class="absolute -bottom-1 w-1/2 h-1 rounded-full bg-gradient-to-r from-[#5AB2FF] to-[#3A8DDF] transition-all duration-300"
+        ></span>
+      </button>
+    </nav>
+
+    <!-- Custom Modal -->
     <Modal
       :is-visible="isModalVisible"
       :title="modalTitle"
@@ -222,6 +197,7 @@
       @confirm="handleModalConfirm"
       @cancel="handleModalCancel"
       @close="closeModal"
+      class="backdrop-blur-md transition-all duration-300"
     />
   </div>
 </template>
@@ -269,7 +245,7 @@ import BillsList from "../dashboard/BillsList.vue";
 import SavingsGoals from "../dashboard/SavingsGoals.vue";
 import UserProfile from "../dashboard/UserProfile.vue";
 import CategoriesPage from "../page/CategoriesPage.vue"; // Import CategoriesPage
-import Modal from "../dashboard/Modal.vue"; // Modal serbaguna (alert/konfirmasi)
+import Modal from "../modal/Modal.vue"; // Modal serbaguna (alert/konfirmasi)
 
 const router = useRouter();
 

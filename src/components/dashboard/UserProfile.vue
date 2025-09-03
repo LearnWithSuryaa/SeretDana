@@ -4,41 +4,53 @@
     <div class="relative bg-[#5AB2FF] rounded-2xl shadow-xl overflow-hidden">
       <div class="absolute inset-0 bg-black/10"></div>
       <div
-        class="p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between relative z-10"
+        class="p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between relative z-10"
       >
+        <!-- Avatar + Info -->
         <div class="flex items-center space-x-4">
           <img
             :src="
               userProfile.avatar ||
               'https://ui-avatars.com/api/?name=' + userProfile.name
             "
-            class="w-20 h-20 rounded-full border-4 border-white shadow-md object-cover"
+            class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-white shadow-md object-cover"
           />
           <div>
-            <h2 class="text-2xl font-bold text-white">
+            <h2 class="text-xl sm:text-2xl font-bold text-white">
               {{ userProfile.name || "Pengguna Baru" }}
             </h2>
-            <p class="text-white/80">{{ userProfile.email }}</p>
+            <p class="text-white/80 text-sm sm:text-base">
+              {{ userProfile.email }}
+            </p>
             <span
-              class="mt-2 inline-block bg-white/20 text-white text-sm px-3 py-1 rounded-full"
+              class="mt-2 inline-block bg-white/20 text-white text-xs sm:text-sm px-3 py-1 rounded-full"
             >
               Mahasiswa • {{ userProfile.university || "Belum diisi" }}
             </span>
           </div>
         </div>
-        <!-- Quick Actions -->
-        <div class="mt-6 sm:mt-0 flex space-x-3">
+
+        <!-- Quick Actions + Logout -->
+        <div
+          class="mt-4 sm:mt-0 flex flex-wrap gap-2 sm:gap-3 justify-start sm:justify-end"
+        >
           <button
             @click="isEditProfileModalVisible = true"
-            class="bg-white text-[#5AB2FF] px-4 py-2 rounded-full font-semibold hover:bg-[#FFF9D0] transition shadow"
+            class="bg-white text-[#5AB2FF] px-4 py-2 rounded-full font-semibold hover:bg-[#FFF9D0] transition shadow text-sm sm:text-base"
           >
             Edit Profil
           </button>
           <button
             @click="isChangePasswordModalVisible = true"
-            class="bg-[#A0DEFF] text-white px-4 py-2 rounded-full font-semibold hover:bg-[#5AB2FF] transition shadow"
+            class="bg-[#A0DEFF] text-white px-4 py-2 rounded-full font-semibold hover:bg-[#5AB2FF] transition shadow text-sm sm:text-base"
           >
             Ubah Password
+          </button>
+          <button
+            @click="isLogoutModalVisible = true"
+            class="bg-red-500 text-white px-4 py-2 rounded-full font-semibold hover:bg-red-600 transition shadow text-sm sm:text-base"
+          >
+            Logout
           </button>
         </div>
       </div>
@@ -111,7 +123,7 @@
       </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Modal Edit Profil -->
     <EditProfileModal
       :is-visible="isEditProfileModalVisible"
       :initial-profile="userProfile"
@@ -119,18 +131,34 @@
       @update-profile="handleModalUpdateProfile"
     />
 
+    <!-- Modal Ubah Password -->
     <ChangePasswordModal
       :is-visible="isChangePasswordModalVisible"
       @close="isChangePasswordModalVisible = false"
       @change-password="handleModalChangePassword"
+    />
+
+    <!-- Modal Logout -->
+    <Modal
+      :is-visible="isLogoutModalVisible"
+      title="Konfirmasi Logout"
+      message="Apakah Anda yakin ingin keluar?"
+      type="confirm"
+      confirm-button-text="Ya, Logout"
+      :cancel-button="true"
+      cancel-button-text="Batal"
+      @confirm="confirmLogout"
+      @close="isLogoutModalVisible = false"
     />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import EditProfileModal from "../modal/EditProfileModal.vue";
 import ChangePasswordModal from "../modal/ChangePasswordModal.vue";
+import Modal from "../modal/Modal.vue";
 import {
   AcademicCapIcon,
   BookOpenIcon,
@@ -142,6 +170,7 @@ const props = defineProps({
   userProfile: {
     type: Object,
     default: () => ({
+      id: null,
       email: "",
       name: "",
       university: "",
@@ -152,10 +181,12 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["update-profile", "change-password"]);
+const emit = defineEmits(["update-profile", "change-password", "logout"]);
+const router = useRouter();
 
 const isEditProfileModalVisible = ref(false);
 const isChangePasswordModalVisible = ref(false);
+const isLogoutModalVisible = ref(false);
 
 const stats = ref({
   transactions: 0,
@@ -170,6 +201,22 @@ const handleModalUpdateProfile = (profileData) => {
 const handleModalChangePassword = (passwordData) => {
   emit("change-password", passwordData);
   isChangePasswordModalVisible.value = false;
+};
+
+// Mekanisme Logout menggunakan Modal.vue
+const confirmLogout = async () => {
+  try {
+    const { error: logoutError } = await supabase.auth.signOut();
+    if (logoutError) throw logoutError;
+    console.log("User logged out.");
+    emit("logout");
+    router.push({ name: "Landing" });
+  } catch (err) {
+    console.error("Error logging out:", err.message);
+    // Bisa tampilkan modal error lain jika perlu
+  } finally {
+    isLogoutModalVisible.value = false;
+  }
 };
 
 // Hitung kelengkapan profil
@@ -222,28 +269,15 @@ onMounted(async () => {
   background-image: linear-gradient(45deg, #6ee7b7, #3b82f6, #9333ea);
 }
 
-/* Adjusted styles for a more modern look (consistent with other components) */
+/* Adjusted styles for modern look */
 .bg-white.shadow-xl {
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -4px rgba(0, 0, 0, 0.05); /* Softer shadow */
+    0 4px 6px -4px rgba(0, 0, 0, 0.05);
 }
 
 .bg-white.shadow-xl:hover {
   box-shadow: 0 15px 20px -5px rgba(0, 0, 0, 0.1),
-    0 6px 10px -4px rgba(0, 0, 0, 0.08); /* Slightly more pronounced on hover */
-  transform: translateY(-2px); /* Subtle lift */
-}
-
-/* Button styles (consistent with other buttons) */
-.gen-z-gradient.text-white.px-5.py-2.rounded-full.font-semibold.shadow-md.hover\:opacity-90.transition.duration-300:hover {
-  transform: translateY(-1px); /* Slight lift */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Softer shadow */
-  opacity: 0.95; /* Slightly less opacity change */
-}
-
-/* New button style for secondary action */
-.bg-gray-200.text-gray-700.px-5.py-2.rounded-full.font-semibold.shadow-md.hover\:bg-gray-300.transition.duration-300:hover {
-  transform: translateY(-1px); /* Slight lift */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Softer shadow */
+    0 6px 10px -4px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
 }
 </style>
