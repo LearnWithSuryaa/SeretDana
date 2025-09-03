@@ -45,7 +45,8 @@
         data-aos-delay="200"
       >
         Fluidana adalah aplikasi keuangan harian untuk mahasiswa rantau. Catat
-        pengeluaran, kontrol anggaran, dan wujudkan tabungan masa depan — semua dalam satu alur yang simpel dan lancar.
+        pengeluaran, kontrol anggaran, dan wujudkan tabungan masa depan — semua
+        dalam satu alur yang simpel dan lancar.
       </p>
       <div
         class="flex flex-col sm:flex-row justify-center gap-4"
@@ -58,13 +59,12 @@
         >
           Mulai Sekarang Gratis
         </a>
-        <a
-          href="#how-it-works"
-          @click.prevent="scrollToSection('how-it-works')"
+        <router-link
+          to="/features"
           class="border border-white text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-white hover:text-blue-600 hover:scale-105 transition duration-300"
         >
           Jelajahi Fiturnya
-        </a>
+        </router-link>
       </div>
     </div>
 

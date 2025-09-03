@@ -2,45 +2,39 @@
   <div class="min-h-screen flex flex-col md:flex-row bg-gray-100 font-inter">
     <!-- Desktop Mini Sidebar -->
     <aside
-      class="hidden md:flex flex-col w-20 py-10 bg-gradient-to-b from-[#5AB2FF]/80 to-[#3A8DDF]/80 text-white shadow-2xl rounded-r-3xl border-r border-white/20 backdrop-blur-md transition-all duration-300"
+      class="hidden md:flex flex-col w-20 bg-gradient-to-b from-[#5AB2FF] to-[#3A8DDF] items-center py-10 relative rounded-r-3xl border-r border-white/20 shadow-2xl"
     >
       <!-- Logo -->
-      <div class="flex items-center justify-center mb-12">
-        <img
-          src="/logo.png"
-          alt="Logo"
-          class="w-12 h-12 object-contain drop-shadow-xl"
-        />
+      <div
+        class="flex items-center justify-center w-12 h-12 bg-white rounded-2xl shadow-md"
+      >
+        <img src="/logo.png" alt="Fluidana" class="w-8 h-8 object-contain" />
       </div>
 
-      <!-- Menu Items -->
-      <nav class="flex-grow flex flex-col gap-6">
-        <button
+      <!-- Navigation -->
+      <nav class="flex flex-col items-center mt-12 w-full space-y-8">
+        <div
           v-for="item in menuItems"
           :key="item.key"
-          @click="activeTab = item.key"
-          class="relative flex items-center justify-center w-full h-14 rounded-xl transition-all duration-300 group hover:bg-white/20"
-          :aria-label="item.label"
+          class="relative flex items-center justify-center w-full"
         >
+          <!-- Active Background Circle -->
+          <span
+            v-if="activeTab === item.key"
+            class="absolute w-12 h-12 bg-white/20 rounded-full transition-all duration-300"
+          ></span>
+
           <!-- Icon -->
           <component
             :is="item.icon"
-            class="w-6 h-6 text-white/80 group-hover:text-white transition-colors duration-200"
+            class="w-6 h-6 transition-colors duration-200 cursor-pointer relative z-10"
+            :class="{
+              'text-white': activeTab === item.key,
+              'text-white/70 hover:text-white': activeTab !== item.key,
+            }"
+            @click="activeTab = item.key"
           />
-
-          <!-- Tooltip -->
-          <span
-            class="absolute left-20 bg-black/80 text-white text-sm px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-all duration-300 whitespace-nowrap translate-x-2 group-hover:translate-x-0 z-50 shadow-lg"
-          >
-            {{ item.label }}
-          </span>
-
-          <!-- Active Indicator -->
-          <span
-            v-if="activeTab === item.key"
-            class="absolute left-0 top-2 bottom-2 w-1.5 rounded-full bg-white shadow-md"
-          ></span>
-        </button>
+        </div>
       </nav>
     </aside>
 
@@ -244,7 +238,7 @@ import BudgetsAnalytics from "../dashboard/BudgetsAnalytics.vue";
 import BillsList from "../dashboard/BillsList.vue";
 import SavingsGoals from "../dashboard/SavingsGoals.vue";
 import UserProfile from "../dashboard/UserProfile.vue";
-import CategoriesPage from "../page/CategoriesPage.vue"; // Import CategoriesPage
+import CategoriesPage from "../dashboard/CategoriesPage.vue";
 import Modal from "../modal/Modal.vue"; // Modal serbaguna (alert/konfirmasi)
 
 const router = useRouter();

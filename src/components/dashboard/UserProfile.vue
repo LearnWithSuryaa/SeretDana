@@ -1,121 +1,177 @@
 <template>
-  <div class="space-y-8">
-    <!-- Header Profil -->
-    <div class="relative bg-[#5AB2FF] rounded-2xl shadow-xl overflow-hidden">
-      <div class="absolute inset-0 bg-black/10"></div>
-      <div
-        class="p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between relative z-10"
-      >
-        <!-- Avatar + Info -->
-        <div class="flex items-center space-x-4">
-          <img
-            :src="
-              userProfile.avatar ||
-              'https://ui-avatars.com/api/?name=' + userProfile.name
-            "
-            class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-4 border-white shadow-md object-cover"
-          />
-          <div>
-            <h2 class="text-xl sm:text-2xl font-bold text-white">
-              {{ userProfile.name || "Pengguna Baru" }}
-            </h2>
-            <p class="text-white/80 text-sm sm:text-base">
-              {{ userProfile.email }}
-            </p>
+  <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+    <!-- User Card -->
+    <div
+      class="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 sm:p-6 mb-6 flex flex-col md:flex-row items-start md:items-center justify-between transition-all duration-300 ease-in-out hover:shadow-xl"
+    >
+      <div class="flex items-center space-x-4 sm:space-x-5 w-full md:w-auto">
+        <img
+          :src="
+            userProfile.avatar ||
+            'https://ui-avatars.com/api/?name=' +
+              (userProfile.name || 'Pengguna') +
+              '&background=D1E9FF&color=3A8DDF&size=128'
+          "
+          class="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-white shadow-md object-cover flex-shrink-0"
+          alt="User Avatar"
+        />
+        <div class="flex-1 min-w-0">
+          <h2
+            class="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 truncate"
+          >
+            {{ userProfile.name || "Pengguna Baru" }}
+          </h2>
+          <p class="text-gray-600 text-sm sm:text-lg truncate">
+            {{ userProfile.email || "email@example.com" }}
+          </p>
+          <div
+            v-if="userProfile.university || userProfile.major"
+            class="flex flex-wrap items-center text-gray-500 text-xs sm:text-sm mt-2 gap-2 sm:gap-3"
+          >
             <span
-              class="mt-2 inline-block bg-white/20 text-white text-xs sm:text-sm px-3 py-1 rounded-full"
+              v-if="userProfile.university"
+              class="flex items-center truncate"
             >
-              Mahasiswa • {{ userProfile.university || "Belum diisi" }}
+              <AcademicCapIcon
+                class="w-4 h-4 mr-1 text-gray-400 flex-shrink-0"
+              />
+              {{ userProfile.university }}
+            </span>
+            <span v-if="userProfile.major" class="flex items-center truncate">
+              <BookOpenIcon class="w-4 h-4 mr-1 text-gray-400 flex-shrink-0" />
+              {{ userProfile.major }}
             </span>
           </div>
         </div>
+      </div>
 
-        <!-- Quick Actions + Logout -->
-        <div
-          class="mt-4 sm:mt-0 flex flex-wrap gap-2 sm:gap-3 justify-start sm:justify-end"
+      <div
+        class="mt-4 md:mt-0 flex flex-col sm:flex-row gap-2 sm:gap-3 w-full md:w-auto"
+      >
+        <button
+          @click="isEditProfileModalVisible = !isDemoMode"
+          :disabled="isDemoMode"
+          :class="{ 'opacity-50 cursor-not-allowed': isDemoMode }"
+          class="w-full sm:w-auto px-4 py-2 sm:px-6 sm:py-3 bg-blue-600 text-white rounded-full font-medium shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-200"
         >
-          <button
-            @click="isEditProfileModalVisible = true"
-            class="bg-white text-[#5AB2FF] px-4 py-2 rounded-full font-semibold hover:bg-[#FFF9D0] transition shadow text-sm sm:text-base"
-          >
-            Edit Profil
-          </button>
-          <button
-            @click="isChangePasswordModalVisible = true"
-            class="bg-[#A0DEFF] text-white px-4 py-2 rounded-full font-semibold hover:bg-[#5AB2FF] transition shadow text-sm sm:text-base"
-          >
-            Ubah Password
-          </button>
-          <button
-            @click="isLogoutModalVisible = true"
-            class="bg-red-500 text-white px-4 py-2 rounded-full font-semibold hover:bg-red-600 transition shadow text-sm sm:text-base"
-          >
-            Logout
-          </button>
+          Edit Profil
+        </button>
+        <button
+          @click="isChangePasswordModalVisible = !isDemoMode"
+          :disabled="isDemoMode"
+          :class="{ 'opacity-50 cursor-not-allowed': isDemoMode }"
+          class="w-full sm:w-auto px-4 py-2 sm:px-6 sm:py-3 bg-gray-200 text-gray-800 rounded-full font-medium shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75 transition-all duration-200"
+        >
+          Ubah Kata Sandi
+        </button>
+        <button
+          @click="isLogoutModalVisible = !isDemoMode"
+          :disabled="isDemoMode"
+          :class="{ 'opacity-50 cursor-not-allowed': isDemoMode }"
+          class="w-full sm:w-auto px-4 py-2 sm:px-6 sm:py-3 bg-red-600 text-white rounded-full font-medium shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 transition-all duration-200"
+        >
+          Logout
+        </button>
+      </div>
+    </div>
+
+    <!-- Profile Completion & Stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6 overflow-x-auto">
+      <!-- Profile Completion -->
+      <div
+        class="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 sm:p-6 transition-all duration-300 ease-in-out hover:shadow-xl min-w-[220px]"
+      >
+        <h3 class="text-lg sm:text-xl font-semibold text-gray-800 mb-3">
+          Kelengkapan Profil
+        </h3>
+        <div class="w-full bg-gray-200 rounded-full h-3">
+          <div
+            class="bg-blue-500 h-3 rounded-full transition-all duration-500"
+            :style="{ width: profileCompletion + '%' }"
+          ></div>
+        </div>
+        <p class="text-xs sm:text-sm text-gray-500 mt-2 text-right">
+          {{ profileCompletion }}% Lengkap
+        </p>
+      </div>
+
+      <!-- Quick Stats -->
+      <div
+        class="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 sm:p-6 transition-all duration-300 ease-in-out hover:shadow-xl min-w-[220px]"
+      >
+        <h3 class="text-lg sm:text-xl font-semibold text-gray-800 mb-3">
+          Statistik Cepat
+        </h3>
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div class="p-3 rounded-lg bg-blue-50">
+            <p class="text-xl sm:text-2xl font-bold text-blue-700">
+              {{ stats.transactions }}
+            </p>
+            <p class="text-xs sm:text-sm text-gray-500">Transaksi</p>
+          </div>
+          <div class="p-3 rounded-lg bg-green-50">
+            <p class="text-xl sm:text-2xl font-bold text-green-700">
+              {{ stats.budgets }}
+            </p>
+            <p class="text-xs sm:text-sm text-gray-500">Anggaran</p>
+          </div>
+          <div class="p-3 rounded-lg bg-purple-50">
+            <p class="text-xl sm:text-2xl font-bold text-purple-700">
+              {{ stats.goals }}
+            </p>
+            <p class="text-xs sm:text-sm text-gray-500">Tujuan</p>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Progress Kelengkapan Profil -->
-    <div class="bg-white p-6 rounded-2xl shadow-md">
-      <h3 class="font-semibold text-gray-700 mb-3">Kelengkapan Profil</h3>
-      <div class="w-full bg-gray-200 rounded-full h-3">
-        <div
-          class="bg-[#5AB2FF] h-3 rounded-full transition-all duration-500"
-          :style="{ width: profileCompletion + '%' }"
-        ></div>
-      </div>
-      <p class="text-sm text-gray-500 mt-2">{{ profileCompletion }}% lengkap</p>
-    </div>
-
-    <!-- Quick Stats -->
-    <div class="grid grid-cols-3 gap-4">
-      <div class="bg-[#5AB2FF] text-white p-4 rounded-xl shadow-md text-center">
-        <p class="text-lg font-bold">{{ stats.transactions }}</p>
-        <p class="text-sm opacity-80">Transaksi</p>
-      </div>
-      <div class="bg-[#A0DEFF] text-white p-4 rounded-xl shadow-md text-center">
-        <p class="text-lg font-bold">{{ stats.budgets }}</p>
-        <p class="text-sm opacity-80">Budget</p>
-      </div>
+    <!-- Detailed Info -->
+    <div
+      class="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 sm:p-6 transition-all duration-300 ease-in-out hover:shadow-xl"
+    >
+      <h3 class="text-lg sm:text-xl font-semibold text-gray-800 mb-4">
+        Detail Informasi
+      </h3>
       <div
-        class="bg-[#CAF4FF] text-gray-800 p-4 rounded-xl shadow-md text-center"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
       >
-        <p class="text-lg font-bold">{{ stats.goals }}</p>
-        <p class="text-sm opacity-80">Goals</p>
-      </div>
-    </div>
-
-    <!-- Informasi Tambahan -->
-    <div class="bg-white p-6 rounded-2xl shadow-md space-y-6">
-      <h3 class="font-semibold text-gray-700 mb-4">Informasi Tambahan</h3>
-
-      <div class="grid gap-4 md:grid-cols-3">
-        <div class="flex items-center space-x-3 bg-[#A0DEFF] p-4 rounded-xl">
-          <AcademicCapIcon class="w-6 h-6 text-[#5AB2FF]" />
+        <div
+          class="flex items-center space-x-3 sm:space-x-4 p-3 sm:p-4 bg-gray-50 rounded-lg"
+        >
+          <AcademicCapIcon
+            class="w-6 h-6 sm:w-7 sm:h-7 text-blue-500 flex-shrink-0"
+          />
           <div>
-            <p class="text-sm text-gray-500">Universitas</p>
-            <p class="text-gray-800 font-medium">
+            <p class="text-xs sm:text-sm text-gray-500">Universitas</p>
+            <p class="text-sm sm:text-base text-gray-800 font-medium">
               {{ userProfile.university || "Belum diisi" }}
             </p>
           </div>
         </div>
 
-        <div class="flex items-center space-x-3 bg-[#CAF4FF] p-4 rounded-xl">
-          <BookOpenIcon class="w-6 h-6 text-[#5AB2FF]" />
+        <div
+          class="flex items-center space-x-3 sm:space-x-4 p-3 sm:p-4 bg-gray-50 rounded-lg"
+        >
+          <BookOpenIcon
+            class="w-6 h-6 sm:w-7 sm:h-7 text-green-500 flex-shrink-0"
+          />
           <div>
-            <p class="text-sm text-gray-500">Jurusan</p>
-            <p class="text-gray-800 font-medium">
+            <p class="text-xs sm:text-sm text-gray-500">Jurusan</p>
+            <p class="text-sm sm:text-base text-gray-800 font-medium">
               {{ userProfile.major || "Belum diisi" }}
             </p>
           </div>
         </div>
 
-        <div class="flex items-center space-x-3 bg-[#A0DEFF] p-4 rounded-xl">
-          <MapPinIcon class="w-6 h-6 text-[#5AB2FF]" />
+        <div
+          class="flex items-center space-x-3 sm:space-x-4 p-3 sm:p-4 bg-gray-50 rounded-lg"
+        >
+          <MapPinIcon
+            class="w-6 h-6 sm:w-7 sm:h-7 text-purple-500 flex-shrink-0"
+          />
           <div>
-            <p class="text-sm text-gray-500">Kota Asal</p>
-            <p class="text-gray-800 font-medium">
+            <p class="text-xs sm:text-sm text-gray-500">Kota Asal</p>
+            <p class="text-sm sm:text-base text-gray-800 font-medium">
               {{ userProfile.home_city || "Belum diisi" }}
             </p>
           </div>
@@ -123,7 +179,7 @@
       </div>
     </div>
 
-    <!-- Modal Edit Profil -->
+    <!-- Modals -->
     <EditProfileModal
       :is-visible="isEditProfileModalVisible"
       :initial-profile="userProfile"
@@ -131,18 +187,16 @@
       @update-profile="handleModalUpdateProfile"
     />
 
-    <!-- Modal Ubah Password -->
     <ChangePasswordModal
       :is-visible="isChangePasswordModalVisible"
       @close="isChangePasswordModalVisible = false"
       @change-password="handleModalChangePassword"
     />
 
-    <!-- Modal Logout -->
     <Modal
       :is-visible="isLogoutModalVisible"
       title="Konfirmasi Logout"
-      message="Apakah Anda yakin ingin keluar?"
+      message="Apakah Anda yakin ingin keluar dari akun ini?"
       type="confirm"
       confirm-button-text="Ya, Logout"
       :cancel-button="true"
@@ -179,6 +233,10 @@ const props = defineProps({
       avatar: "",
     }),
   },
+  isDemoMode: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(["update-profile", "change-password", "logout"]);
@@ -195,16 +253,21 @@ const stats = ref({
 });
 
 const handleModalUpdateProfile = (profileData) => {
+  if (props.isDemoMode) return;
   emit("update-profile", profileData);
   isEditProfileModalVisible.value = false;
 };
 const handleModalChangePassword = (passwordData) => {
+  if (props.isDemoMode) return;
   emit("change-password", passwordData);
   isChangePasswordModalVisible.value = false;
 };
 
-// Mekanisme Logout menggunakan Modal.vue
 const confirmLogout = async () => {
+  if (props.isDemoMode) {
+    isLogoutModalVisible.value = false;
+    return;
+  }
   try {
     const { error: logoutError } = await supabase.auth.signOut();
     if (logoutError) throw logoutError;
@@ -213,15 +276,13 @@ const confirmLogout = async () => {
     router.push({ name: "Landing" });
   } catch (err) {
     console.error("Error logging out:", err.message);
-    // Bisa tampilkan modal error lain jika perlu
   } finally {
     isLogoutModalVisible.value = false;
   }
 };
 
-// Hitung kelengkapan profil
 const profileCompletion = computed(() => {
-  let total = 5;
+  let total = 5; // name, email, university, major, home_city
   let filled = 0;
   if (props.userProfile.name) filled++;
   if (props.userProfile.email) filled++;
@@ -231,8 +292,16 @@ const profileCompletion = computed(() => {
   return Math.round((filled / total) * 100);
 });
 
-// Ambil data Quick Stats dari Supabase
 onMounted(async () => {
+  if (props.isDemoMode) {
+    stats.value = {
+      transactions: 25,
+      budgets: 4,
+      goals: 2,
+    };
+    return;
+  }
+
   if (!props.userProfile?.id) return;
 
   const { count: trxCount } = await supabase
@@ -257,27 +326,3 @@ onMounted(async () => {
   };
 });
 </script>
-
-<style scoped>
-.gen-z-gradient {
-  background: linear-gradient(135deg, #6ee7b7, #3b82f6, #9333ea);
-}
-.gen-z-text-gradient {
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  background-image: linear-gradient(45deg, #6ee7b7, #3b82f6, #9333ea);
-}
-
-/* Adjusted styles for modern look */
-.bg-white.shadow-xl {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -4px rgba(0, 0, 0, 0.05);
-}
-
-.bg-white.shadow-xl:hover {
-  box-shadow: 0 15px 20px -5px rgba(0, 0, 0, 0.1),
-    0 6px 10px -4px rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px);
-}
-</style>

@@ -127,8 +127,13 @@
         <div class="relative">
           <h3 class="text-lg font-semibold mb-4">Catat Transaksi Baru</h3>
           <button
-            @click="isAddTransactionModalVisible = true"
-            class="w-full bg-white text-[#5AB2FF] py-3 px-4 rounded-lg font-semibold text-base shadow hover:bg-gray-100 transition"
+            @click="!isDemoMode && (isAddTransactionModalVisible = true)"
+            :disabled="isDemoMode"
+            class="w-full bg-white text-[#5AB2FF] py-3 px-4 rounded-lg font-semibold text-base shadow transition"
+            :class="{
+              'opacity-50 cursor-not-allowed': isDemoMode,
+              'hover:bg-gray-100': !isDemoMode,
+            }"
           >
             <span class="flex items-center justify-center">
               <PlusCircleIcon class="w-5 h-5 mr-2" /> Tambah Transaksi Cepat
@@ -216,6 +221,7 @@ const props = defineProps({
   recentTransactions: { type: Array, default: () => [] },
   categories: { type: Array, default: () => [] },
   dailySpendingLimit: { type: Number, default: 0 },
+  isDemoMode: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(["add-transaction"]);

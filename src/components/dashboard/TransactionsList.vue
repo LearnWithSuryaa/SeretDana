@@ -17,7 +17,6 @@
     </div>
 
     <!-- Filter Toolbar -->
-    <!-- Filter Toolbar -->
     <div
       class="w-full bg-white/70 backdrop-blur-xl border border-white/40 rounded-xl px-3 py-3 shadow-md space-y-3"
     >

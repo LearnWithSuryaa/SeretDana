@@ -131,7 +131,11 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import { PlusIcon, PencilSquareIcon } from "@heroicons/vue/24/outline"; // Import PencilSquareIcon for edit button
+import {
+  PlusIcon,
+  PencilSquareIcon,
+  MagnifyingGlassIcon,
+} from "@heroicons/vue/24/outline";
 import AddEditBillModal from "../modal/AddEditBillModal.vue"; // Import the new modal component
 
 const props = defineProps({
