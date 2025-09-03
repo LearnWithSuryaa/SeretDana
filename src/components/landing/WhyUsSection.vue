@@ -46,7 +46,7 @@
             Desain Intuitif & Ramah Gen Z
           </h3>
           <p class="text-gray-700 text-sm leading-relaxed">
-            Seret Dana didesain dengan antarmuka yang modern, fokus, dan bebas
+            Fluidana didesain dengan antarmuka yang modern, fokus, dan bebas
             gangguan. Cocok untuk kamu yang punya jadwal padat.
           </p>
         </div>
