@@ -19,12 +19,19 @@
                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
                      placeholder="Contoh: Sewa Kosan, Uang Semester">
             </div>
+
+            <!-- 💰 Bagian Jumlah (Rp) dengan Format Otomatis -->
             <div>
               <label for="modal-bill-amount" class="block text-sm font-medium text-gray-700">Jumlah (Rp)</label>
-              <input type="number" id="modal-bill-amount" v-model.number="newBill.amount" required
+              <input type="text" id="modal-bill-amount"
+                     v-model="formattedAmount"
+                     @input="formatRupiahInput"
+                     inputmode="numeric"
+                     required
                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
-                     placeholder="Contoh: 800000">
+                     placeholder="Contoh: 800.000">
             </div>
+
             <div>
               <label for="modal-bill-due-date" class="block text-sm font-medium text-gray-700">Tanggal Jatuh Tempo</label>
               <input type="date" id="modal-bill-due-date" v-model="newBill.due_date" required
@@ -75,24 +82,24 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  expenseCategories: { // Only expense categories are relevant for bills
+  expenseCategories: {
     type: Array,
     default: () => []
   },
-  initialBill: { // New prop for editing existing bill
+  initialBill: {
     type: Object,
-    default: null // Default to null for add mode
+    default: null
   }
 });
 
 const emit = defineEmits(['close', 'add-bill', 'update-bill']);
 
 const newBill = ref({
-  id: null, // Will be set if editing
+  id: null,
   name: '',
   amount: null,
-  due_date: '', // YYYY-MM-DD format
-  frequency: 'monthly', // Default frequency
+  due_date: '',
+  frequency: 'monthly',
   category_id: null,
   is_paid_current_period: false,
 });
@@ -104,27 +111,21 @@ const frequencies = ref([
   { name: 'Satu Kali', value: 'one-time' }
 ]);
 
-// Computed property for modal title
 const modalTitle = computed(() => {
   return props.initialBill ? 'Edit Tagihan' : 'Tambah Tagihan Baru';
 });
 
-// Computed property for submit button text
 const submitButtonText = computed(() => {
   return props.initialBill ? 'Simpan Perubahan' : 'Tambah Tagihan';
 });
 
-// Watch for changes in initialBill prop to populate the form
 watch(() => props.initialBill, (newVal) => {
   if (newVal) {
-    // Populate form fields with existing bill data
-    // Ensure due_date is in YYYY-MM-DD format for input type="date"
     newBill.value = {
       ...newVal,
       due_date: newVal.due_date ? new Date(newVal.due_date).toISOString().split('T')[0] : ''
     };
   } else {
-    // Reset form for add mode
     newBill.value = {
       id: null,
       name: '',
@@ -135,22 +136,43 @@ watch(() => props.initialBill, (newVal) => {
       is_paid_current_period: false,
     };
   }
-}, { immediate: true }); // Run immediately when component mounts or initialBill changes
+}, { immediate: true });
+
+const formattedAmount = ref('');
+
+// Saat data tagihan berubah (misal sedang edit), langsung format nilainya
+watch(() => newBill.value.amount, (val) => {
+  if (val !== null && val !== undefined) {
+    formattedAmount.value = formatRupiah(val.toString());
+  } else {
+    formattedAmount.value = '';
+  }
+});
+
+// Fungsi untuk memformat angka menjadi format Rupiah
+function formatRupiah(value) {
+  const numberString = value.replace(/[^\d]/g, '');
+  if (!numberString) return '';
+  return 'Rp ' + new Intl.NumberFormat('id-ID').format(numberString);
+}
+
+// Event saat user mengetik angka di input
+function formatRupiahInput(e) {
+  const rawValue = e.target.value.replace(/[^\d]/g, ''); // hanya angka
+  formattedAmount.value = formatRupiah(rawValue);
+  newBill.value.amount = Number(rawValue); // simpan angka murni
+}
 
 const submitBill = () => {
   if (props.initialBill) {
-    // If initialBill exists, it's an update operation
     emit('update-bill', newBill.value);
   } else {
-    // Otherwise, it's an add operation
     emit('add-bill', newBill.value);
   }
-  // Close modal after submission (handled by parent's event listener)
 };
 
 const close = () => {
   emit('close');
-  // Reset form when modal is closed, regardless of save or cancel
   newBill.value = {
     id: null,
     name: '',
@@ -164,7 +186,6 @@ const close = () => {
 </script>
 
 <style scoped>
-/* Consistent gradients from DashboardPage */
 .gen-z-gradient {
   background: linear-gradient(135deg, #6EE7B7, #3B82F6, #9333EA);
 }
@@ -175,7 +196,6 @@ const close = () => {
   background-image: linear-gradient(45deg, #6EE7B7, #3B82F6, #9333EA);
 }
 
-/* Modal transition styles (copied from Modal.vue for consistency) */
 .modal-fade-enter-active,
 .modal-fade-leave-active {
   transition: opacity 0.3s ease;

@@ -19,18 +19,30 @@
                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
                      placeholder="Contoh: Liburan Akhir Semester">
             </div>
+
+            <!-- 💰 Target Jumlah (Rp) dengan format otomatis -->
             <div>
               <label for="modal-goal-target-amount" class="block text-sm font-medium text-gray-700">Target Jumlah (Rp)</label>
-              <input type="number" id="modal-goal-target-amount" v-model.number="newGoal.target_amount" required
+              <input type="text" id="modal-goal-target-amount"
+                     v-model="formattedTargetAmount"
+                     @input="onTargetInput"
+                     inputmode="numeric"
+                     required
                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
-                     placeholder="Contoh: 2000000">
+                     placeholder="Contoh: 2.000.000">
             </div>
+
+            <!-- 💰 Jumlah Tersimpan (Rp) dengan format otomatis -->
             <div>
               <label for="modal-goal-saved-amount" class="block text-sm font-medium text-gray-700">Jumlah Tersimpan (Rp)</label>
-              <input type="number" id="modal-goal-saved-amount" v-model.number="newGoal.saved_amount"
+              <input type="text" id="modal-goal-saved-amount"
+                     v-model="formattedSavedAmount"
+                     @input="onSavedInput"
+                     inputmode="numeric"
                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2"
-                     placeholder="Contoh: 500000 (default 0)">
+                     placeholder="Contoh: 500.000 (default 0)">
             </div>
+
             <div>
               <label for="modal-goal-due-date" class="block text-sm font-medium text-gray-700">Tanggal Target (Opsional)</label>
               <input type="date" id="modal-goal-due-date" v-model="newGoal.due_date"
@@ -65,45 +77,38 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  initialGoal: { // New prop for editing existing goal
+  initialGoal: {
     type: Object,
-    default: null // Default to null for add mode
+    default: null
   }
 });
 
-// Emit different events based on add/edit mode
 const emit = defineEmits(['close', 'add-goal', 'update-goal']);
 
 const newGoal = ref({
-  id: null, // Will be set if editing
+  id: null,
   name: '',
   target_amount: null,
-  saved_amount: 0, // Default to 0
-  due_date: '', // YYYY-MM-DD format
+  saved_amount: 0,
+  due_date: '',
   is_completed: false,
 });
 
-// Computed property for modal title
 const modalTitle = computed(() => {
   return props.initialGoal ? 'Edit Tujuan Keuangan' : 'Tambah Tujuan Keuangan Baru';
 });
 
-// Computed property for submit button text
 const submitButtonText = computed(() => {
   return props.initialGoal ? 'Simpan Perubahan' : 'Tambah Tujuan';
 });
 
-// Watch for changes in initialGoal prop to populate the form
 watch(() => props.initialGoal, (newVal) => {
   if (newVal) {
-    // Populate form fields with existing goal data
-    // Ensure due_date is in YYYY-MM-DD format for input type="date"
     newGoal.value = {
       ...newVal,
       due_date: newVal.due_date ? new Date(newVal.due_date).toISOString().split('T')[0] : ''
     };
   } else {
-    // Reset form for add mode
     newGoal.value = {
       id: null,
       name: '',
@@ -113,22 +118,59 @@ watch(() => props.initialGoal, (newVal) => {
       is_completed: false,
     };
   }
-}, { immediate: true }); // Run immediately when component mounts or initialGoal changes
+}, { immediate: true });
+
+// Reactive display values
+const formattedTargetAmount = ref('');
+const formattedSavedAmount = ref('');
+
+// Format watcher untuk mode edit
+watch(() => newGoal.value.target_amount, (val) => {
+  if (val !== null && val !== undefined) {
+    formattedTargetAmount.value = formatRupiah(val.toString());
+  } else {
+    formattedTargetAmount.value = '';
+  }
+});
+
+watch(() => newGoal.value.saved_amount, (val) => {
+  if (val !== null && val !== undefined) {
+    formattedSavedAmount.value = formatRupiah(val.toString());
+  } else {
+    formattedSavedAmount.value = '';
+  }
+});
+
+// Fungsi format Rupiah
+function formatRupiah(value) {
+  const numberString = value.replace(/[^\d]/g, '');
+  if (!numberString) return '';
+  return 'Rp ' + new Intl.NumberFormat('id-ID').format(numberString);
+}
+
+// Event handler input untuk kedua field
+function onTargetInput(e) {
+  const raw = e.target.value.replace(/[^\d]/g, '');
+  formattedTargetAmount.value = formatRupiah(raw);
+  newGoal.value.target_amount = Number(raw);
+}
+
+function onSavedInput(e) {
+  const raw = e.target.value.replace(/[^\d]/g, '');
+  formattedSavedAmount.value = formatRupiah(raw);
+  newGoal.value.saved_amount = Number(raw);
+}
 
 const submitGoal = () => {
   if (props.initialGoal) {
-    // If initialGoal exists, it's an update operation
     emit('update-goal', newGoal.value);
   } else {
-    // Otherwise, it's an add operation
     emit('add-goal', newGoal.value);
   }
-  // Close modal after submission (handled by parent's event listener)
 };
 
 const close = () => {
   emit('close');
-  // Reset form when modal is closed, regardless of save or cancel
   newGoal.value = {
     id: null,
     name: '',
@@ -141,7 +183,6 @@ const close = () => {
 </script>
 
 <style scoped>
-/* Consistent gradients from DashboardPage */
 .gen-z-gradient {
   background: linear-gradient(135deg, #6EE7B7, #3B82F6, #9333EA);
 }
@@ -152,7 +193,6 @@ const close = () => {
   background-image: linear-gradient(45deg, #6EE7B7, #3B82F6, #9333EA);
 }
 
-/* Modal transition styles (copied from Modal.vue for consistency) */
 .modal-fade-enter-active,
 .modal-fade-leave-active {
   transition: opacity 0.3s ease;

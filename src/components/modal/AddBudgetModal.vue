@@ -17,6 +17,8 @@
               <strong class="font-bold">Perhatian!</strong>
               <span class="block sm:inline">Anda belum memiliki kategori pengeluaran. Silakan buat di halaman Kategori terlebih dahulu.</span>
             </div>
+
+            <!-- Kategori -->
             <div>
               <label for="modal-budget-category" class="block text-sm font-medium text-gray-700">Kategori</label>
               <select id="modal-budget-category" v-model="newBudget.category_id" required
@@ -26,13 +28,27 @@
                 <option v-for="cat in expenseCategories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
               </select>
             </div>
+
+            <!-- Batas Anggaran -->
             <div>
               <label for="modal-budget-amount" class="block text-sm font-medium text-gray-700">Batas Anggaran (Rp)</label>
-              <input type="number" id="modal-budget-amount" v-model.number="newBudget.limit_amount" required
-                     :disabled="expenseCategories.length === 0"
-                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 disabled:bg-gray-50 disabled:cursor-not-allowed"
-                     placeholder="Contoh: 500000">
+              <div class="relative">
+                <span class="absolute inset-y-0 left-3 flex items-center text-gray-400 text-sm">Rp</span>
+                <input
+                  type="text"
+                  id="modal-budget-amount"
+                  v-model="formattedAmount"
+                  @input="handleAmountInput"
+                  inputmode="numeric"
+                  required
+                  :disabled="expenseCategories.length === 0"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 pl-10 disabled:bg-gray-50 disabled:cursor-not-allowed"
+                  placeholder="Contoh: 500.000"
+                />
+              </div>
             </div>
+
+            <!-- Bulan -->
             <div>
               <label for="modal-budget-month" class="block text-sm font-medium text-gray-700">Bulan</label>
               <select id="modal-budget-month" v-model.number="newBudget.month" required
@@ -41,6 +57,8 @@
                 <option v-for="m in months" :key="m.value" :value="m.value">{{ m.name }}</option>
               </select>
             </div>
+
+            <!-- Tahun -->
             <div>
               <label for="modal-budget-year" class="block text-sm font-medium text-gray-700">Tahun</label>
               <input type="number" id="modal-budget-year" v-model.number="newBudget.year" required
@@ -48,6 +66,8 @@
                      class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 disabled:bg-gray-50 disabled:cursor-not-allowed"
                      placeholder="Contoh: 2025">
             </div>
+
+            <!-- Tombol -->
             <div class="flex justify-end space-x-3 pt-4">
               <button type="button" @click="close" class="px-5 py-2 rounded-full border border-gray-300 text-gray-700 hover:bg-gray-50 transition duration-200 cursor-pointer">
                 Batal
@@ -69,18 +89,9 @@ import { ref, watch, computed, onMounted } from 'vue';
 import { XMarkIcon } from '@heroicons/vue/24/outline';
 
 const props = defineProps({
-  isVisible: {
-    type: Boolean,
-    default: false
-  },
-  expenseCategories: {
-    type: Array,
-    default: () => []
-  },
-  initialBudget: {
-    type: Object,
-    default: null
-  }
+  isVisible: { type: Boolean, default: false },
+  expenseCategories: { type: Array, default: () => [] },
+  initialBudget: { type: Object, default: null }
 });
 
 const emit = defineEmits(['close', 'add-budget', 'update-budget']);
@@ -92,6 +103,21 @@ const newBudget = ref({
   year: new Date().getFullYear(),
 });
 
+const formattedAmount = ref('');
+const handleAmountInput = (e) => {
+  const raw = e.target.value.replace(/\D/g, '');
+  const number = parseInt(raw || '0', 10);
+  newBudget.value.limit_amount = number;
+  formattedAmount.value = number ? number.toLocaleString('id-ID') : '';
+};
+
+watch(
+  () => newBudget.value.limit_amount,
+  (val) => {
+    if (!val) formattedAmount.value = '';
+  }
+);
+
 const months = ref([
   { name: 'Januari', value: 1 }, { name: 'Februari', value: 2 }, { name: 'Maret', value: 3 },
   { name: 'April', value: 4 }, { name: 'Mei', value: 5 }, { name: 'Juni', value: 6 },
@@ -99,17 +125,15 @@ const months = ref([
   { name: 'Oktober', value: 10 }, { name: 'November', value: 11 }, { name: 'Desember', value: 12 }
 ]);
 
-const modalTitle = computed(() => {
-  return props.initialBudget ? 'Edit Anggaran' : 'Atur Anggaran Baru';
-});
-
-const submitButtonText = computed(() => {
-  return props.initialBudget ? 'Simpan Perubahan' : 'Simpan Anggaran';
-});
+const modalTitle = computed(() => props.initialBudget ? 'Edit Anggaran' : 'Atur Anggaran Baru');
+const submitButtonText = computed(() => props.initialBudget ? 'Simpan Perubahan' : 'Simpan Anggaran');
 
 watch(() => props.initialBudget, (newVal) => {
   if (newVal) {
     newBudget.value = { ...newVal };
+    formattedAmount.value = newVal.limit_amount
+      ? newVal.limit_amount.toLocaleString('id-ID')
+      : '';
   } else {
     newBudget.value = {
       category_id: '',
@@ -117,6 +141,7 @@ watch(() => props.initialBudget, (newVal) => {
       month: new Date().getMonth() + 1,
       year: new Date().getFullYear(),
     };
+    formattedAmount.value = '';
   }
 }, { immediate: true });
 
@@ -137,6 +162,7 @@ const close = () => {
     month: new Date().getMonth() + 1,
     year: new Date().getFullYear(),
   };
+  formattedAmount.value = '';
 };
 
 onMounted(() => {
@@ -145,7 +171,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Consistent gradients from DashboardPage */
 .gen-z-gradient {
   background: linear-gradient(135deg, #6EE7B7, #3B82F6, #9333EA);
 }
@@ -156,30 +181,25 @@ onMounted(() => {
   background-image: linear-gradient(45deg, #6EE7B7, #3B82F6, #9333EA);
 }
 
-/* Modal transition styles (copied from Modal.vue for consistency) */
+/* Modal transition styles */
 .modal-fade-enter-active,
 .modal-fade-leave-active {
   transition: opacity 0.3s ease;
 }
-
 .modal-fade-enter-from,
 .modal-fade-leave-to {
   opacity: 0;
 }
-
 .modal-content {
   animation: pop-in 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }
-
 .modal-fade-leave-active .modal-content {
   animation: pop-out 0.3s ease-out forwards;
 }
-
 @keyframes pop-in {
   0% { transform: scale(0.8); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
 }
-
 @keyframes pop-out {
   0% { transform: scale(1); opacity: 1; }
   100% { transform: scale(0.8); opacity: 0; }

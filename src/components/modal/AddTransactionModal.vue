@@ -37,11 +37,13 @@
                   >Rp</span
                 >
                 <input
-                  type="number"
+                  type="text"
                   id="modal-amount"
-                  v-model.number="newTransaction.amount"
+                  v-model="formattedAmount"
+                  @input="handleAmountInput"
+                  inputmode="numeric"
                   required
-                  placeholder="Contoh: 50000"
+                  placeholder="Contoh: 50.000"
                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm pl-10 p-2"
                 />
               </div>
@@ -201,10 +203,26 @@ const today = new Date().toISOString().slice(0, 10);
 const newTransaction = ref({
   amount: null,
   description: "",
-  transaction_date: today, // ✅ pakai nama field sesuai DB
+  transaction_date: today,
   type: "expense",
   category_id: "",
 });
+
+const formattedAmount = ref("");
+const handleAmountInput = (e) => {
+  const raw = e.target.value.replace(/\D/g, ""); // ambil hanya angka
+  const number = parseInt(raw || "0", 10);
+  newTransaction.value.amount = number;
+  formattedAmount.value = number
+    ? number.toLocaleString("id-ID")
+    : "";
+};
+watch(
+  () => newTransaction.value.amount,
+  (val) => {
+    if (!val) formattedAmount.value = "";
+  }
+);
 
 const currentCategories = computed(() => {
   if (!Array.isArray(props.categories)) return [];
@@ -256,11 +274,11 @@ const resetForm = () => {
     type: "expense",
     category_id: "",
   };
+  formattedAmount.value = "";
 };
 </script>
 
 <style scoped>
-/* Consistent gradients from DashboardPage */
 .gen-z-gradient {
   background: linear-gradient(135deg, #6ee7b7, #3b82f6, #9333ea);
 }
@@ -271,25 +289,20 @@ const resetForm = () => {
   background-image: linear-gradient(45deg, #6ee7b7, #3b82f6, #9333ea);
 }
 
-/* Modal transition styles */
 .modal-fade-enter-active,
 .modal-fade-leave-active {
   transition: opacity 0.3s ease;
 }
-
 .modal-fade-enter-from,
 .modal-fade-leave-to {
   opacity: 0;
 }
-
 .modal-content {
   animation: pop-in 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }
-
 .modal-fade-leave-active .modal-content {
   animation: pop-out 0.3s ease-out forwards;
 }
-
 @keyframes pop-in {
   0% {
     transform: scale(0.8);
@@ -300,7 +313,6 @@ const resetForm = () => {
     opacity: 1;
   }
 }
-
 @keyframes pop-out {
   0% {
     transform: scale(1);
