@@ -366,11 +366,9 @@ const dailySpendingLimit = computed(() => {
   const currentMonth = today.getMonth(); // 0-11
   const currentYear = today.getFullYear();
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const daysRemaining = daysInMonth - today.getDate() + 1;
+  const daysRemaining = Math.max(1, daysInMonth - today.getDate()); // Hindari pembagi nol
 
-  if (daysRemaining <= 0) return currentBalance.value;
-
-  // 1. Hitung pengeluaran bulan ini
+  // --- 1️⃣ Hitung total pengeluaran bulan ini ---
   const expensesThisMonth = transactions.value
     .filter((t) => {
       const date = new Date(t.transaction_date);
@@ -382,47 +380,64 @@ const dailySpendingLimit = computed(() => {
     })
     .reduce((sum, t) => sum + t.amount, 0);
 
-  // 2. Total anggaran esensial bulan ini
+  // --- 2️⃣ Hitung total anggaran esensial bulan ini ---
   const essentialBudgetTotal = budgets.value
-    .filter((b) => b.month === currentMonth + 1 && b.year === currentYear)
+    .filter((b) => b.month === currentMonth + 1 && b.year === currentYear) // pastikan b.month format 1–12
     .reduce((sum, b) => sum + b.limit_amount, 0);
 
-  // 3. Tagihan jatuh tempo bulan ini atau bulan depan & belum dibayar
+  // --- 3️⃣ Hitung total tagihan jatuh tempo bulan ini & depan ---
   const upcomingBillsAmount = bills.value
     .filter((bill) => {
       const due = new Date(bill.due_date);
       const dueMonth = due.getMonth();
       const dueYear = due.getFullYear();
-      return (
+
+      // Tagihan bulan ini, bulan depan, dan handle Desember → Januari
+      const isUpcoming =
         !bill.is_paid_current_period &&
         ((dueYear === currentYear &&
           (dueMonth === currentMonth || dueMonth === currentMonth + 1)) ||
           (currentMonth === 11 &&
             dueMonth === 0 &&
-            dueYear === currentYear + 1))
-      );
+            dueYear === currentYear + 1));
+
+      return isUpcoming;
     })
     .reduce((sum, bill) => sum + bill.amount, 0);
 
-  // 4. Total kekurangan dari tujuan tabungan
+  // --- 4️⃣ Hitung total kekurangan target tabungan ---
   const totalSavingsGoalsRemaining = savingsGoals.value
     .filter((goal) => !goal.is_completed)
     .reduce((sum, goal) => sum + (goal.target_amount - goal.saved_amount), 0);
 
-  // 5. Hitung dana tersedia (setelah dipotong tagihan & tabungan)
+  // --- 5️⃣ Dana bersih yang benar-benar tersedia ---
   const disposableIncome =
     currentBalance.value - upcomingBillsAmount - totalSavingsGoalsRemaining;
 
-  // 6. Tentukan sisa budget berdasarkan anggaran atau saldo
-  let remainingBudget = disposableIncome;
+  // --- 6️⃣ Tentukan remaining budget berdasarkan kondisi user ---
+  let remainingBudget;
+
   if (essentialBudgetTotal > 0) {
+    // Jika user memiliki anggaran bulanan → gunakan budget
     remainingBudget = essentialBudgetTotal - expensesThisMonth;
+  } else {
+    // Jika user tidak memiliki anggaran → gunakan saldo aktual
+    remainingBudget = disposableIncome - expensesThisMonth;
   }
 
-  // 7. Hitung batas pengeluaran harian
+  // --- 7️⃣ Fallback bila budget sudah habis tapi saldo masih cukup ---
+  if (remainingBudget <= 0 && disposableIncome > expensesThisMonth) {
+    remainingBudget = disposableIncome - expensesThisMonth;
+  }
+
+  // --- 8️⃣ Jika hasil tetap negatif, maka user sudah melebihi batas ---
+  if (remainingBudget <= 0) return 0;
+
+  // --- 9️⃣ Hitung batas pengeluaran harian ---
   const limit = remainingBudget / daysRemaining;
 
-  return Math.max(0, Math.floor(limit)); // pembulatan ke bawah agar aman
+  // --- 🔟 Return hasil akhir dengan pembulatan konservatif ---
+  return Math.max(0, Math.floor(limit));
 });
 
 // Modal functions (untuk alert/konfirmasi umum)
@@ -739,6 +754,7 @@ const categorizeTransactionAutomatically = (
       "bagasi",
       "tarif",
       "ongkos",
+      "bensin",
       "pulang",
       "liburan",
     ],
