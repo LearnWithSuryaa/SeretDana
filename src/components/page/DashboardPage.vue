@@ -97,6 +97,7 @@
           :categories="categories"
           :daily-spending-limit="dailySpendingLimit"
           @add-transaction="addTransaction"
+          @toggle-bill-status="handleToggleBillStatus"
         />
 
         <TransactionsList
@@ -204,14 +205,9 @@ import {
   ListBulletIcon,
   ChartPieIcon,
   UserCircleIcon,
-  ArrowLeftOnRectangleIcon,
-  Bars3Icon,
-  XMarkIcon,
   SparklesIcon,
   ReceiptPercentIcon,
   TagIcon,
-  ChevronDoubleLeftIcon,
-  ChevronDoubleRightIcon,
 } from "@heroicons/vue/24/outline";
 
 const isSidebarCollapsed = ref(false);
@@ -339,7 +335,6 @@ const upcomingBills = computed(() => {
       const dateB = new Date(b.due_date || 0).getTime();
       return dateA - dateB;
     })
-    .slice(0, 3);
 });
 
 const expenseCategories = computed(() => {
@@ -1457,6 +1452,78 @@ const updateBill = async (updatedBillData) => {
     } else {
       showModal("Error", "Gagal memperbarui tagihan: " + err.message, "error");
     }
+  }
+};
+
+// 📍 TAMBAHKAN FUNCTION INI SETELAH function updateBill()
+// (Sekitar baris 785, setelah closing bracket updateBill)
+
+const handleToggleBillStatus = async (updatedBill) => {
+  try {
+    console.log("🔄 Toggling bill status:", updatedBill);
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      throw new Error("User not authenticated.");
+    }
+
+    // Update di Supabase
+    const { data, error: updateError } = await supabase
+      .from("bills")
+      .update({
+        is_paid_current_period: updatedBill.is_paid_current_period,
+      })
+      .eq("id", updatedBill.id)
+      .eq("user_id", user.id)
+      .select();
+
+    if (updateError) throw updateError;
+
+    // ✅ Update local state - INI PENTING untuk sinkronisasi real-time
+    const index = bills.value.findIndex((b) => b.id === updatedBill.id);
+    if (index !== -1) {
+      bills.value[index] = {
+        ...bills.value[index],
+        is_paid_current_period: updatedBill.is_paid_current_period,
+      };
+    }
+
+    console.log("✅ Bill status updated successfully:", data[0]);
+
+    // Show notification
+    const statusText = updatedBill.is_paid_current_period
+      ? "lunas"
+      : "belum dibayar";
+    showModal(
+      "Status Diperbarui!",
+      `Tagihan "${updatedBill.name}" ditandai sebagai ${statusText}.`,
+      "success"
+    );
+  } catch (err) {
+    console.error("❌ Error toggling bill status:", err.message);
+
+    if (
+      err.message.includes("permission denied") ||
+      err.message.includes("violates row-level security policy")
+    ) {
+      showModal(
+        "Error Izin",
+        'Gagal mengubah status tagihan: Pastikan kebijakan RLS UPDATE untuk tabel "bills" sudah benar.',
+        "error"
+      );
+    } else {
+      showModal(
+        "Error",
+        "Gagal mengubah status tagihan: " + err.message,
+        "error"
+      );
+    }
+
+    // Revert local state jika gagal
+    await fetchDashboardData();
   }
 };
 
