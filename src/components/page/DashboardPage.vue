@@ -40,7 +40,7 @@
 
     <!-- Main Content Area -->
     <main
-      class="flex-1 p-6 md:p-10 overflow-auto bg-gradient-to-br from-[#E8F5FF] via-[#F9FBFF] to-[#FFFFFF] scrollbar-thin scrollbar-thumb-[#5AB2FF]/50 scrollbar-track-[#E8F5FF]/50"
+      class="flex-1 p-3 md:p-6 overflow-auto bg-gradient-to-br from-[#E8F5FF] via-[#F9FBFF] to-[#FFFFFF] scrollbar-thin scrollbar-thumb-[#5AB2FF]/50 scrollbar-track-[#E8F5FF]/50"
     >
       <!-- Loading Indicator -->
       <div
@@ -81,10 +81,10 @@
       </div>
 
       <!-- Render child components based on activeTab -->
-      <div class="space-y-6">
+      <div class="space-y-3">
         <DashboardOverview
           v-if="activeTab === 'overview' && !isLoading && !error"
-          class="bg-white rounded-2xl shadow-lg p-6"
+          class="bg-white rounded-2xl shadow-lg p-4 md:p-5"
           :user-profile="userProfile"
           :current-balance="currentBalance"
           :last-update="lastUpdate"
@@ -96,20 +96,23 @@
           :recent-transactions="recentTransactions"
           :categories="categories"
           :daily-spending-limit="dailySpendingLimit"
+          :budgets="budgets"
+          :transactions="transactions"
           @add-transaction="addTransaction"
           @toggle-bill-status="handleToggleBillStatus"
+          @navigate-to-budget="navigateToBudgetTab"
         />
 
         <TransactionsList
           v-if="activeTab === 'transactions' && !isLoading && !error"
-          class="bg-white rounded-2xl shadow-lg p-6"
+          class="bg-white rounded-2xl shadow-lg p-4 md:p-5"
           :transactions="transactions"
           :categories="categories"
         />
 
         <BudgetsAnalytics
           v-if="activeTab === 'budgets' && !isLoading && !error"
-          class="bg-white rounded-2xl shadow-lg p-6"
+          class="bg-white rounded-2xl shadow-lg p-4 md:p-5"
           :budgets="budgets"
           :transactions="transactions"
           :categories="categories"
@@ -119,7 +122,7 @@
 
         <BillsList
           v-if="activeTab === 'bills' && !isLoading && !error"
-          class="bg-white rounded-2xl shadow-lg p-6"
+          class="bg-white rounded-2xl shadow-lg p-4 md:p-5"
           :bills="bills"
           :categories="categories"
           @add-bill="addBill"
@@ -128,7 +131,7 @@
 
         <SavingsGoals
           v-if="activeTab === 'goals' && !isLoading && !error"
-          class="bg-white rounded-2xl shadow-lg p-6"
+          class="bg-white rounded-2xl shadow-lg p-4 md:p-5"
           :savings-goals="savingsGoals"
           @add-goal="addGoal"
           @update-goal="updateGoal"
@@ -136,7 +139,7 @@
 
         <CategoriesPage
           v-if="activeTab === 'categories' && !isLoading && !error"
-          class="bg-white rounded-2xl shadow-lg p-6"
+          class="bg-white rounded-2xl shadow-lg p-4 md:p-5"
           :categories="categories"
           @add-category="addCategory"
           @update-category="updateCategory"
@@ -146,7 +149,7 @@
 
         <UserProfile
           v-if="activeTab === 'profile' && !isLoading && !error"
-          class="bg-white rounded-2xl shadow-lg p-6"
+          class="bg-white rounded-2xl shadow-lg p-4 md:p-5"
           :user-profile="userProfile"
           @update-profile="updateProfile"
           @change-password="changePassword"
@@ -269,6 +272,12 @@ const budgets = ref([]);
 const savingsGoals = ref([]);
 const bills = ref([]);
 
+function navigateToBudgetTab() {
+  activeTab.value = "budgets";
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 // --- Computed Properties (Mengagregasi/memproses data dari berbagai sumber) ---
 const currentBalance = computed(() => {
   if (!Array.isArray(transactions.value)) return 0;
@@ -334,7 +343,7 @@ const upcomingBills = computed(() => {
       const dateA = new Date(a.due_date || 0).getTime();
       const dateB = new Date(b.due_date || 0).getTime();
       return dateA - dateB;
-    })
+    });
 });
 
 const expenseCategories = computed(() => {
