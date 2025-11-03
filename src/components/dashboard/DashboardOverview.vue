@@ -4,7 +4,7 @@
   >
     <!-- Header -->
     <div
-      class="flex flex-col md:flex-row items-center justify-between text-center md:text-left py-3 gap-4"
+      class="flex flex-col md:flex-row items-center justify-between text-center md:text-left py-8 gap-4"
     >
       <div>
         <h2
